@@ -1,0 +1,36 @@
+import React from 'react';
+import { Flex, Box, Text, Link as ChakraLink } from '@chakra-ui/react';
+
+function Footer() {
+  return (
+    <Flex
+      as="footer"
+      align="center"
+      justify="space-between"
+      wrap="wrap"
+      bg="black"
+      color="white"
+      p={4}
+      position="fixed"
+      bottom="0"
+      width="100%"
+    >
+      <Box>
+        <Text>© 2024 Hostel Management System</Text>
+      </Box>
+      <Box>
+        <ChakraLink href="#" mr={4}>
+          Privacy Policy
+        </ChakraLink>
+        <ChakraLink href="#" mr={4}>
+          Terms of Service
+        </ChakraLink>
+        <ChakraLink href="#">
+          Contact Us
+        </ChakraLink>
+      </Box>
+    </Flex>
+  );
+}
+
+export default Footer;
