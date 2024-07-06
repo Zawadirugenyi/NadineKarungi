@@ -8,7 +8,7 @@ function Footer() {
       align="center"
       justify="space-between"
       wrap="wrap"
-      bg="black"
+      bg="#073d47"
       color="white"
       p={4}
       position="fixed"

@@ -7,14 +7,14 @@ function Navbar() {
   return (
     <Flex
       p={4}
-      bg="#56aeff"
+      bg="#0097b2"
       color="white"
       align="center"
       wrap="wrap"
       justify="space-between"
     >
       <Flex align="center" mr={5}>
-        <Image src={logo} alt="SmartHostelPro Logo" h="24" /> {/* Adjust height as needed */}
+        <Image src={logo} alt="SmartHostelPro Logo" h="20" /> {/* Adjust height as needed */}
         <Heading fontFamily="Railways" size={{ base: 'md', md: 'lg' }} ml={3}>
           SmartHostelPro
         </Heading>
