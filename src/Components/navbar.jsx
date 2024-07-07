@@ -20,19 +20,19 @@ function Navbar() {
         </Heading>
       </Flex>
       <Box display={{ base: 'none', md: 'block' }}>
-        <Button as={Link} to="/" variant="link" color="white" mr={4}>
+        <Button as={Link} to="/" variant="link" color="white" mr={4} _hover={{ color: 'black' }}>
           Home
         </Button>
-        <Button as={Link} to="/maintenance" variant="link" color="white" mr={4}>
+        <Button as={Link} to="/maintenance" variant="link" color="white" mr={4} _hover={{ color: 'black' }}>
           About Us
         </Button>
-        <Button as={Link} to="/booking" variant="link" color="white" mr={4}>
+        <Button as={Link} to="/booking" variant="link" color="white" mr={4} _hover={{ color: 'black' }}>
           Contact Us
         </Button>
       </Box>
       <Box display={{ base: 'block', md: 'none' }}>
         {/* Add a responsive menu icon or drawer for smaller screens */}
-        <Button variant="link" color="white">
+        <Button variant="link" color="white" _hover={{ color: 'black' }}>
           {/* Use a suitable icon for the menu */}
           Menu
         </Button>

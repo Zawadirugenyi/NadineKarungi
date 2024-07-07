@@ -1,36 +1,16 @@
 import React from 'react';
+import { Box, Image, Text } from '@chakra-ui/react';
 
-
-function Hostel_Card() {
-  // Example hostel data (replace with your actual data or fetch from API)
-  const hostels = [
-    {
-      name: 'Sample Hostel 1',
-      address: '123 Sample St, Sample City',
-      image: 'https://example.com/sample-image.jpg', // Replace with actual image URL
-    },
-    {
-      name: 'Sample Hostel 2',
-      address: '456 Example Ave, Example Town',
-      image: 'https://example.com/another-image.jpg', // Replace with actual image URL
-    },
-  ];
+function HostelCard({ name, address, image }) {
+  console.log('Image URL:', image); 
 
   return (
-    <div>
-      <h1>Hostels</h1>
-      <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
-        {hostels.map((hostel, index) => (
-          <Hostel_Card
-            key={index}
-            name={hostel.name}
-            address={hostel.address}
-            image={hostel.image}
-          />
-        ))}
-      </div>
-    </div>
+    <Box borderWidth="1px" borderRadius="lg" overflow="hidden" p={4} bg="white" boxShadow="sm">
+      <Image src={image} alt="Hostel Image" borderRadius="md" mb={4} /> {/* Use 'image' prop here */}
+      <Text fontSize="xl" fontWeight="bold">{name}</Text>
+      <Text>{address}</Text>
+    </Box>
   );
 }
 
-export default Hostel_Card;
+export default HostelCard;
