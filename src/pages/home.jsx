@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Heading, Flex } from '@chakra-ui/react';
+import { Box, Heading, Grid } from '@chakra-ui/react';
 import HostelCard from '../Components/hostel_card';
 
 function Home() {
@@ -20,7 +20,6 @@ function Home() {
         }
 
         const data = await response.json();
-        console.log('Fetched hostels:', data); // Log fetched data to inspect in console
         setHostels(data);
       } catch (error) {
         console.error('Error fetching hostels:', error);
@@ -33,7 +32,10 @@ function Home() {
   return (
     <Box p={4}>
       <Heading mb={6}>Hostels</Heading>
-      <Flex gap={4} flexWrap="wrap">
+      <Grid 
+        templateColumns={{ base: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }} 
+        gap={4}
+      >
         {hostels.map((hostel, index) => (
           <HostelCard
             key={index}
@@ -42,7 +44,7 @@ function Home() {
             image={`http://127.0.0.1:8000${hostel.image}`} // Construct the correct URL
           />
         ))}
-      </Flex>
+      </Grid>
     </Box>
   );
 }

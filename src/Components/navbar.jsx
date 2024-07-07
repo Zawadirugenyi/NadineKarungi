@@ -1,6 +1,7 @@
 import React from 'react';
-import { Flex, Box, Heading, Spacer, Button, Image } from '@chakra-ui/react';
+import { Flex, Box, Heading, Button, Image, Menu, MenuButton, MenuList, MenuItem, IconButton } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
+import { HamburgerIcon } from '@chakra-ui/icons';
 import logo from './Assets/logo.png';
 
 function Navbar() {
@@ -31,11 +32,29 @@ function Navbar() {
         </Button>
       </Box>
       <Box display={{ base: 'block', md: 'none' }}>
-        {/* Add a responsive menu icon or drawer for smaller screens */}
-        <Button variant="link" color="white" _hover={{ color: 'black' }}>
-          {/* Use a suitable icon for the menu */}
-          Menu
-        </Button>
+        <Menu>
+          <MenuButton
+            as={IconButton}
+            icon={<HamburgerIcon />}
+            variant="outline"
+            color="white"
+            _hover={{ color: 'black' }}
+          />
+          <MenuList >
+            <MenuItem as={Link} to="/"  color="#0097b2">
+              Home
+            </MenuItem >
+            <MenuItem as={Link} to="/maintenance"  color="#0097b2">
+              About Us
+            </MenuItem>
+            <MenuItem as={Link} to="/booking"  color="#0097b2">
+              Contact Us
+            </MenuItem>
+             <MenuItem as={Link} to="/Filter"  color="#0097b2">
+              Filter
+            </MenuItem>
+          </MenuList>
+        </Menu>
       </Box>
     </Flex>
   );

@@ -42,6 +42,7 @@ function Filter({ onFilterChange }) {
           bg="#0097b2"
           color="white"
           _hover={{ bg: "#073d47" }}
+          width={{ base: '100%', md: 'auto' }} // Make the button responsive
         >
           Search
         </Button>
