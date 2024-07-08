@@ -5,6 +5,9 @@ import Footer from './Components/footer';
 import Filter from './Components/filter';
 import Home from './pages/home';
 import RoomPage from './pages/room';
+import Signup from './pages/signup';
+
+
 
 function App() {
   return (
@@ -15,6 +18,7 @@ function App() {
         <Route path="/" element={<Home />} />
            <Route path="/rooms/:hostelId" element={<RoomPage />} />
         <Route path="room/" element={<RoomPage />} />
+        <Route path="signup/" element={<Signup />} />
       </Routes>
       <Footer />
     </Router>
