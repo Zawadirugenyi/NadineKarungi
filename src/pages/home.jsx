@@ -39,6 +39,7 @@ function Home() {
         {hostels.map((hostel, index) => (
           <HostelCard
             key={index}
+            id={hostel.id}
             name={hostel.name}
             address={hostel.address}
             image={`http://127.0.0.1:8000${hostel.image}`} // Construct the correct URL
