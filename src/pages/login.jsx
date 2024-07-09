@@ -1,66 +1,68 @@
-
-
 import React, { useState } from 'react';
-import axios from 'axios';
-import { useHistory } from 'react-router-dom';
-import {
-  Box,
-  Button,
-  Input,
-  FormControl,
-  FormLabel,
-  Heading,
-  VStack,
-  Text,
-} from '@chakra-ui/react';
+import { Box, FormControl, FormLabel, Input, Button, Heading, Text, VStack } from '@chakra-ui/react';
+import { Link } from 'react-router-dom';
 
-const LoginForm = () => {
+function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
-  const history = useHistory();
 
-  const handleSubmit = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    axios.post('http://127.0.0.1:8000/login/', { email, password })
-      .then((response) => {
-        localStorage.setItem('token', response.data.token);
-        setMessage('Login successful!');
-        setTimeout(() => history.push('/dashboard'), 2000);
-      })
-      .catch((error) => {
-        setMessage('Login failed: ' + error.response.data.error);
-      });
+    // Handle login logic here
+    // You might want to call an API endpoint to authenticate the user
+    console.log('Logging in with:', { email, password });
   };
 
   return (
-    <Box
-      w="400px"
-      p="8"
-      borderWidth="1px"
-      borderRadius="lg"
-      boxShadow="lg"
-      bg="white"
+    <Box 
+      minH="100vh"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      bg="gray.50"
     >
-      <VStack spacing="4">
-        <Heading as="h2" size="lg">Login</Heading>
-        <form onSubmit={handleSubmit}>
-          <FormControl id="email" isRequired>
-            <FormLabel>Email</FormLabel>
-            <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-          </FormControl>
-          <FormControl id="password" isRequired>
-            <FormLabel>Password</FormLabel>
-            <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-          </FormControl>
-          <Button type="submit" colorScheme="blue" mt="4" width="full">
-            Login
-          </Button>
+      <Box 
+        maxW="sm"
+        w="full"
+        p={6}
+        bg="white"
+        boxShadow="lg"
+        rounded="md"
+      >
+        <Heading mb={6}>Login</Heading>
+        <form onSubmit={handleLogin}>
+          <VStack spacing={4}>
+            <FormControl id="email" isRequired>
+              <FormLabel>Email</FormLabel>
+              <Input 
+                type="email" 
+                value={email} 
+                onChange={(e) => setEmail(e.target.value)} 
+              />
+            </FormControl>
+            <FormControl id="password" isRequired>
+              <FormLabel>Password</FormLabel>
+              <Input 
+                type="password" 
+                value={password} 
+                onChange={(e) => setPassword(e.target.value)} 
+              />
+            </FormControl>
+            <Button 
+              type="submit" 
+              colorScheme="teal" 
+              width="full"
+            >
+              Login
+            </Button>
+          </VStack>
         </form>
-        {message && <Text color="red.500">{message}</Text>}
-      </VStack>
+        <Text mt={4} textAlign="center">
+          Don't have an account? <Link to="/signup" color="teal.500">Sign Up</Link>
+        </Text>
+      </Box>
     </Box>
   );
-};
+}
 
-export default LoginForm;
+export default Login;
