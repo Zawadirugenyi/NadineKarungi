@@ -44,9 +44,29 @@ function Signup() {
       setPhoneNumber('');
       setPassword('');
 
-      // Redirect to login page after successful registration
-      navigate('/login');
+      // Log in the user after successful registration
+      const loginResponse = await fetch('http://127.0.0.1:8000/users/login/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      });
 
+      if (!loginResponse.ok) {
+        throw new Error('Failed to log in');
+      }
+
+      const loginData = await loginResponse.json();
+      console.log('User logged in:', loginData);
+
+      // Store the token (assuming the login response contains a token)
+      localStorage.setItem('token', loginData.token);
+
+      navigate('/'); // Redirect to the home page
     } catch (error) {
       console.error('Error:', error);
       setMessage({ type: 'error', text: error.message });
