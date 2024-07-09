@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Box, FormControl, FormLabel, Input, Button, Heading, Text, VStack, Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton } from '@chakra-ui/react';
 import { Link, useNavigate } from 'react-router-dom';
 
+import backgroundImage from '../Components/Assets/Room2.webp'; // Replace with your actual image path
+
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -39,7 +41,7 @@ function Login() {
       setPassword('');
 
       // Redirect to home page after successful login
-      navigate('/');
+      navigate('/room');
 
       // Hide message after 5 seconds
       setTimeout(() => {
@@ -53,17 +55,20 @@ function Login() {
   };
 
   return (
-    <Box 
-      minH="100vh"
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      bg="gray.50"
-      margin="100px"
-    >
-      <Box 
-        maxW="sm"
-        w="full"
+    <Box display="flex" justifyContent="center">
+      <Box
+        w="800px"
+        p={6}
+        height="500px"
+        bg="gray.100"
+        boxShadow="lg"
+        bgSize="cover"
+        bgPosition="center"
+        mr={6} // Margin right to create space between image and form
+        style={{ backgroundImage: `url(${backgroundImage})` }}
+      />
+      <Box
+        w="500px"
         p={6}
         bg="white"
         boxShadow="lg"
@@ -98,15 +103,17 @@ function Login() {
             </FormControl>
             <Button 
               type="submit" 
-              colorScheme="teal" 
+              bg="#0097b2"
+              color="white"
+              _hover={{ bg: "#073d47" }}
               width="full"
             >
               Login
             </Button>
           </VStack>
         </form>
-        <Text mt={4} textAlign="center">
-          Don't have an account? <Link to="/signup" color="teal.500">Sign Up</Link>
+        <Text mt={4} textAlign="center" >
+          Don't have an account? <Link to="/signup" color="teal.500" >Sign Up</Link>
         </Text>
       </Box>
     </Box>

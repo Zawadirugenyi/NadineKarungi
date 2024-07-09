@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Box, FormControl, FormLabel, Input, Button, Heading, Text, VStack, Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton } from '@chakra-ui/react';
 import { Link, useNavigate } from 'react-router-dom';
 
+import backgroundImage from '../Components/Assets/superior-room-1.jpeg'; // Replace with your actual image path
+
 function Signup() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -66,7 +68,7 @@ function Signup() {
       // Store the token (assuming the login response contains a token)
       localStorage.setItem('token', loginData.token);
 
-      navigate('/'); // Redirect to the home page
+      navigate('/login'); // Redirect to the login page
     } catch (error) {
       console.error('Error:', error);
       setMessage({ type: 'error', text: error.message });
@@ -74,22 +76,27 @@ function Signup() {
   };
 
   return (
-    <Box 
-      minH="100vh"
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      bg="gray.50"
-    >
-      <Box 
-        maxW="sm"
-        w="full"
+    <Box display="flex" justifyContent="center">
+      <Box
+        w="800px"
         p={6}
+        bg="gray.200"
+        boxShadow="lg"
+        rounded="md"
+        bgSize="cover"
+        bgPosition="center"
+        mr={3} // Margin right to create space between image and form
+        style={{ backgroundImage: `url(${backgroundImage})` }}
+      />
+      <Box
+        w="500px"
+        p={3}
+        bgPosition="center"
         bg="white"
         boxShadow="lg"
         rounded="md"
       >
-        <Heading mb={6}>Sign Up</Heading>
+        <Heading mb={1} >Sign Up</Heading>
         {message.text && (
           <Alert status={message.type} mb={4}>
             <AlertIcon />
@@ -99,7 +106,7 @@ function Signup() {
           </Alert>
         )}
         <form onSubmit={handleSignup}>
-          <VStack spacing={4}>
+          <VStack spacing={1}>
             <FormControl id="first-name" isRequired>
               <FormLabel>First Name</FormLabel>
               <Input 
@@ -142,14 +149,16 @@ function Signup() {
             </FormControl>
             <Button 
               type="submit" 
-              colorScheme="teal" 
+              bg="#0097b2"
+              _hover={{ bg: "#073d47" }}
+              color="white"
               width="full"
             >
               Sign Up
             </Button>
           </VStack>
         </form>
-        <Text mt={4} textAlign="center">
+        <Text mt={3} textAlign="center">
           Already have an account? <Link to="/login" color="teal.500">Login</Link>
         </Text>
       </Box>
