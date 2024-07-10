@@ -7,6 +7,8 @@ import Home from './pages/home';
 import RoomPage from './pages/room';
 import Signup from './pages/signup';
 import Login from './pages/login';
+import RoomDetail from './pages/room_detail';
+
 
 
 
@@ -17,10 +19,11 @@ function App() {
       <Filter />
       <Routes>
         <Route path="/" element={<Home />} />
-           <Route path="/rooms/:hostelId" element={<RoomPage />} />
+        <Route path="/rooms/:hostelId" element={<RoomPage />} />
         <Route path="room/" element={<RoomPage />} />
         <Route path="signup/" element={<Signup />} />
         <Route path='login/' element={ <Login/>}/>
+        <Route path="room_detail/" element={ <RoomDetail />}/>
       </Routes>
       <Footer />
     </Router>
