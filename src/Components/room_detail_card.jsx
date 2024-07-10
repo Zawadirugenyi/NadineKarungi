@@ -17,10 +17,18 @@ const RoomDetail = ({ roomDescription }) => {
     <Box p={6} bg="gray.100" boxShadow="lg" borderRadius="md">
       <VStack align="start" spacing={4} direction={{ base: 'column', md: 'row' }}>
         <Box flex="1">
-          <Image src={sitting_room_image} alt={`Image of ${room.number} sitting room`} maxH="300px" objectFit="cover" borderRadius="md" />
-          <Image src={bedroom_image} alt={`Image of ${room.number} bedroom`} maxH="300px" objectFit="cover" borderRadius="md" mt={4} />
-          <Image src={kitchen_image} alt={`Image of ${room.number} kitchen`} maxH="300px" objectFit="cover" borderRadius="md" mt={4} />
-          <Image src={bathroom_image} alt={`Image of ${room.number} bathroom`} maxH="300px" objectFit="cover" borderRadius="md" mt={4} />
+          {sitting_room_image && (
+            <Image src={`http://127.0.0.1:8000${sitting_room_image}`} alt={`Sitting room of ${room.number}`} maxH="300px" objectFit="cover" borderRadius="md" />
+          )}
+          {bedroom_image && (
+            <Image src={`http://127.0.0.1:8000${bedroom_image}`} alt={`Bedroom of ${room.number}`} maxH="300px" objectFit="cover" borderRadius="md" mt={4} />
+          )}
+          {kitchen_image && (
+            <Image src={`http://127.0.0.1:8000${kitchen_image}`} alt={`Kitchen of ${room.number}`} maxH="300px" objectFit="cover" borderRadius="md" mt={4} />
+          )}
+          {bathroom_image && (
+            <Image src={`http://127.0.0.1:8000${bathroom_image}`} alt={`Bathroom of ${room.number}`} maxH="300px" objectFit="cover" borderRadius="md" mt={4} />
+          )}
         </Box>
         <Spacer />
         <Box flex="1" ml={{ base: 0, md: 4 }}>
