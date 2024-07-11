@@ -8,6 +8,7 @@ function RoomCard({ number, roomType, image, hostelName }) {
       <Text fontSize="xl" fontWeight="bold">Room Number: {number}</Text>
       <Text>Room Type: {roomType}</Text>
       <Text>Hostel: {hostelName}</Text>
+      
     </Box>
   );
 }

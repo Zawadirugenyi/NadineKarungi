@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import { Box, Text, VStack, Center, Button } from '@chakra-ui/react';
 import axios from 'axios';
 
@@ -41,42 +40,49 @@ const RoomDetail = ({ roomDescription }) => {
 };
 
 const RoomDetails = () => {
-  const { roomId } = useParams();
-  const [roomDescription, setRoomDescription] = useState(null);
+  const [roomDescriptions, setRoomDescriptions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchRoomDescription = async () => {
+    const fetchRoomDescriptions = async () => {
       try {
         const token = 'b17ecd1e7ab8b13a1c98c81fefad7c8839252b63';
-        const response = await axios.get(`http://127.0.0.1:8000/api/room-descriptions/${roomId}/`, {
+        const response = await axios.get(`http://127.0.0.1:8000/api/room-descriptions/`, {
           headers: {
             Authorization: `Token ${token}`,
           },
         });
-        setRoomDescription(response.data);
+        setRoomDescriptions(response.data);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching room description:', error);
+        console.error('Error fetching room descriptions:', error);
+        setError(error.message || 'Failed to fetch room descriptions');
         setLoading(false);
       }
     };
 
-    if (roomId) {
-      fetchRoomDescription();
-    }
-  }, [roomId]);
+    fetchRoomDescriptions();
+  }, []);
+
+  useEffect(() => {
+    console.log('Room Descriptions:', roomDescriptions);
+  }, [roomDescriptions]);
 
   if (loading) {
     return <p>Loading...</p>;
   }
 
-  if (!roomDescription) {
-    return <p>Room description not found.</p>;
+  if (error) {
+    return <p>Error: {error}</p>;
   }
 
   return (
-    <RoomDetail roomDescription={roomDescription} />
+    <div>
+      {roomDescriptions.map((roomDescription) => (
+        <RoomDetail key={roomDescription.room.id} roomDescription={roomDescription} />
+      ))}
+    </div>
   );
 };
 

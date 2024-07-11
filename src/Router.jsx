@@ -7,7 +7,7 @@ import Home from './pages/home';
 import RoomPage from './pages/room';
 import Signup from './pages/signup';
 import Login from './pages/login';
-import RoomDetail from './pages/room_detail';
+import RoomDetails from './pages/roomDescription.jsx';
 
 
 
@@ -23,7 +23,7 @@ function App() {
         <Route path="room/" element={<RoomPage />} />
         <Route path="signup/" element={<Signup />} />
         <Route path='login/' element={ <Login/>}/>
-        <Route path="room_detail/" element={ <RoomDetail />}/>
+        <Route path="roomDescription/" element={ <RoomDetails/>}/>
       </Routes>
       <Footer />
     </Router>
