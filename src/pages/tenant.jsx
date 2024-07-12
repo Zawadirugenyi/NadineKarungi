@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, FormControl, FormLabel, Input, Grid, GridItem, Text, useToast } from '@chakra-ui/react';
+import { Box, Button, FormControl, FormLabel, Input, Grid, GridItem, Heading, Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton, useToast } from '@chakra-ui/react';
 import axios from 'axios';
 
 const Tenant = () => {
@@ -16,8 +16,7 @@ const Tenant = () => {
         passport_photo: null,
         position: ''
     });
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
+    const [message, setMessage] = useState({ type: '', text: '' });
     const toast = useToast();
 
     const handleChange = (e) => {
@@ -37,7 +36,7 @@ const Tenant = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         try {
             const token = localStorage.getItem('token');
             if (!token) {
@@ -56,8 +55,7 @@ const Tenant = () => {
                 }
             });
 
-            setSuccess('Registration successful');
-            setError('');
+            setMessage({ type: 'success', text: 'Registration successful' });
             toast({
                 title: 'Registration successful.',
                 description: 'You have successfully registered.',
@@ -72,22 +70,20 @@ const Tenant = () => {
                 gender: '',
                 nationality: '',
                 passport: '',
-                passport_photo: null,
                 phone_number: '',
                 email: '',
                 parent: '',
+                passport_photo: null,
                 position: ''
             });
         } catch (error) {
-            setError('Registration failed');
-            setSuccess('');
+            const errorMsg = error.response?.data || 'Registration failed';
+            const errorText = typeof errorMsg === 'string' ? errorMsg : JSON.stringify(errorMsg);
+            setMessage({ type: 'error', text: errorText });
             console.error('Error during registration:', error);
-            if (error.response && error.response.data) {
-                console.log('Validation errors:', error.response.data);
-            }
             toast({
                 title: 'Registration failed.',
-                description: 'There was an error with your registration.',
+                description: errorText,
                 status: 'error',
                 duration: 5000,
                 isClosable: true,
@@ -97,94 +93,94 @@ const Tenant = () => {
 
     return (
         <Box w="1200px" mx="auto" mt={10} p={5} borderWidth={1} borderRadius="lg">
+            <Heading mb={6}>Tenant Registration</Heading>
+            {message.text && (
+                <Alert status={message.type} mb={4}>
+                    <AlertIcon />
+                    <AlertTitle mr={2}>{message.type === 'success' ? 'Success' : 'Error'}!</AlertTitle>
+                    <AlertDescription>{message.text}</AlertDescription>
+                    <CloseButton position="absolute" right="8px" top="8px" onClick={() => setMessage({ type: '', text: '' })} />
+                </Alert>
+            )}
             <form onSubmit={handleSubmit}>
                 <Grid templateColumns="repeat(3, 1fr)" gap={6}>
                     <GridItem colSpan={1}>
-                        <FormControl id="name">
+                        <FormControl id="name" isRequired>
                             <FormLabel>Name</FormLabel>
                             <Input type="text" name="name" value={formData.name} onChange={handleChange} />
                         </FormControl>
                     </GridItem>
 
                     <GridItem colSpan={1}>
-                        <FormControl id="major">
+                        <FormControl id="major" isRequired>
                             <FormLabel>Major</FormLabel>
                             <Input type="text" name="major" value={formData.major} onChange={handleChange} />
                         </FormControl>
                     </GridItem>
 
                     <GridItem colSpan={1}>
-                        <FormControl id="admin_number">
+                        <FormControl id="admin_number" isRequired>
                             <FormLabel>Admin Number</FormLabel>
                             <Input type="text" name="admin_number" value={formData.admin_number} onChange={handleChange} />
                         </FormControl>
                     </GridItem>
 
                     <GridItem colSpan={1}>
-                        <FormControl id="gender">
+                        <FormControl id="gender" isRequired>
                             <FormLabel>Gender</FormLabel>
                             <Input type="text" name="gender" value={formData.gender} onChange={handleChange} />
                         </FormControl>
                     </GridItem>
 
                     <GridItem colSpan={1}>
-                        <FormControl id="nationality">
+                        <FormControl id="nationality" isRequired>
                             <FormLabel>Nationality</FormLabel>
                             <Input type="text" name="nationality" value={formData.nationality} onChange={handleChange} />
                         </FormControl>
                     </GridItem>
 
                     <GridItem colSpan={1}>
-                        <FormControl id="passport">
+                        <FormControl id="passport" isRequired>
                             <FormLabel>National ID/Passport</FormLabel>
                             <Input type="text" name="passport" value={formData.passport} onChange={handleChange} />
                         </FormControl>
                     </GridItem>
 
                     <GridItem colSpan={1}>
-                        <FormControl id="passport_photo">
+                        <FormControl id="passport_photo" isRequired>
                             <FormLabel>Passport Photo</FormLabel>
                             <Input type="file" name="passport_photo" onChange={handleChange} />
                         </FormControl>
                     </GridItem>
 
                     <GridItem colSpan={1}>
-                        <FormControl id="phone_number">
+                        <FormControl id="phone_number" isRequired>
                             <FormLabel>Phone Number</FormLabel>
                             <Input type="text" name="phone_number" value={formData.phone_number} onChange={handleChange} />
                         </FormControl>
                     </GridItem>
 
                     <GridItem colSpan={1}>
-                        <FormControl id="email">
+                        <FormControl id="email" isRequired>
                             <FormLabel>Email</FormLabel>
                             <Input type="email" name="email" value={formData.email} onChange={handleChange} />
                         </FormControl>
                     </GridItem>
 
                     <GridItem colSpan={1}>
-                        <FormControl id="parent">
+                        <FormControl id="parent" isRequired>
                             <FormLabel>Sponsor</FormLabel>
                             <Input type="text" name="parent" value={formData.parent} onChange={handleChange} />
                         </FormControl>
                     </GridItem>
 
                     <GridItem colSpan={1}>
-                        <FormControl id="position">
+                        <FormControl id="position" isRequired>
                             <FormLabel>Position</FormLabel>
                             <Input type="text" name="position" value={formData.position} onChange={handleChange} />
                         </FormControl>
                     </GridItem>
-
-                         <GridItem colSpan={1}>
-                        <FormControl id="phone_number">
-                            <FormLabel>Phone Number</FormLabel>
-                            <Input type="text" name="phone_number" value={formData.phone_number} onChange={handleChange} />
-                        </FormControl>
-                    </GridItem>
                 </Grid>
-
-             
 
                 <Box textAlign="center" mt={6}>
                     <Button type="submit" bg="#0097b2" color="white" width="400px" _hover={{ bg: "#073d47" }}>
@@ -193,8 +189,11 @@ const Tenant = () => {
                 </Box>
             </form>
 
-            {error && <Text color="red.500" mt={4}>{error}</Text>}
-            {success && <Text color="green.500" mt={4}>{success}</Text>}
+            {message.text && (
+                <Box mt={4} color={message.type === 'success' ? 'green.500' : 'red.500'}>
+                    {message.text}
+                </Box>
+            )}
         </Box>
     );
 };
