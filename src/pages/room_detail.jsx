@@ -52,10 +52,10 @@ const RoomDescription = () => {
       
       <Grid 
         templateColumns={{ base: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }} 
-        gap={4}
+        gap={4} alignItems="center" marginLeft="100px"
       >
         {roomDescriptions.map((roomDescription, index) => (
-          <Box key={index} p={9} shadow="md" borderWidth="1px" width="1200px">
+          <Box key={index} p={9} shadow="md" borderWidth="1px" width="1180px">
             <Heading as="h2" size="lg" mb={4}>
               Room {roomDescription.room.number} Description
             </Heading>

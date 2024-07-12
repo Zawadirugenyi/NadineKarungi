@@ -8,6 +8,7 @@ import RoomPage from './pages/room';
 import Signup from './pages/signup';
 import Login from './pages/login';
 import RoomDescription from './pages/room_detail';
+import Tenant from './pages/tenant';
 
 
 
@@ -24,6 +25,7 @@ function App() {
         <Route path="signup/" element={<Signup />} />
         <Route path='login/' element={ <Login/>}/>
         <Route path="room_detail/" element={ <RoomDescription/>}/>
+        <Route path = "tenant/" element= { <Tenant/>}/>
       </Routes>
       <Footer />
     </Router>
