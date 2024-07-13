@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, FormControl, FormLabel, Input, Button, Heading, Text, VStack, Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton } from '@chakra-ui/react';
 import { Link, useNavigate } from 'react-router-dom';
 
-import backgroundImage from '../Components/Assets/Room2.webp'; // Replace with your actual image path
+import backgroundImage from '../Components/Assets/Room2.webp'; 
 
 function Login() {
   const [email, setEmail] = useState('');
