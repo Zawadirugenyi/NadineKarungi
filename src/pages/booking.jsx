@@ -86,9 +86,9 @@ const Booking = () => {
   };
 
   return (
-    <Grid templateColumns="repeat(2, 1fr)" gap={6} w="900px" mx="auto" mt={10} p={5}>
+    <Grid templateColumns="repeat(2, 1fr)" gap={6} w="800px" mx="auto" mt={10} p={5}>
       <GridItem>
-        <Box borderWidth={1} borderRadius="lg" p={5} w="500px">
+        <Box borderWidth={1} borderRadius="lg" p={5} w="450px" marginLeft="-240px">
           <form onSubmit={handleSubmit}>
             <FormControl id="room" mb={4}>
               <FormLabel>Room</FormLabel>
@@ -124,7 +124,9 @@ const Booking = () => {
               <Input type="date" name="check_out_date" value={formData.check_out_date} onChange={handleChange} />
             </FormControl>
 
-            <Button type="submit" colorScheme="teal" width="full" mt={4}>
+            <Button type="submit"   bg="#0097b2"
+              color="white"
+              _hover={{ bg: "#073d47" }} width="full" mt={4}>
               Create Booking
             </Button>
           </form>
@@ -135,11 +137,11 @@ const Booking = () => {
       </GridItem>
       
       <GridItem>
-        <Box borderWidth={1} borderRadius="lg" p={5} textAlign="center">
-         <Box
-        w="500px"
+        <Box borderWidth={1} borderRadius="lg" p={5} textAlign="center" >
+         <Box 
+        w="700px"
         p={6}
-        height="300px"
+        height="340px"
         bg="gray.100"
         boxShadow="lg"
         bgSize="cover"
@@ -152,7 +154,7 @@ const Booking = () => {
             Book Your Stay
           </Box>
           <Box mt={2} color="gray.500">
-            Find the perfect room and enjoy your stay at our hostel.
+            Find the perfect room and enjoy your stay at our SmartHostelPro.
           </Box>
         </Box>
       </GridItem>
