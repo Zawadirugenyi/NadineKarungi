@@ -88,7 +88,7 @@ const Booking = () => {
   return (
     <Grid templateColumns="repeat(2, 1fr)" gap={6} w="900px" mx="auto" mt={10} p={5}>
       <GridItem>
-        <Box borderWidth={1} borderRadius="lg" p={5}>
+        <Box borderWidth={1} borderRadius="lg" p={5} w="500px">
           <form onSubmit={handleSubmit}>
             <FormControl id="room" mb={4}>
               <FormLabel>Room</FormLabel>
@@ -137,14 +137,14 @@ const Booking = () => {
       <GridItem>
         <Box borderWidth={1} borderRadius="lg" p={5} textAlign="center">
          <Box
-        w="800px"
+        w="500px"
         p={6}
-        height="500px"
+        height="300px"
         bg="gray.100"
         boxShadow="lg"
         bgSize="cover"
         bgPosition="center"
-        mr={6} // Margin right to create space between image and form
+        mr={6} 
         style={{ backgroundImage: `url(${backgroundImage})` }}
       />
 
