@@ -4,6 +4,8 @@ import HostelCard from '../Components/hostel_card';
 
 function Home() {
   const [hostels, setHostels] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchHostels = async () => {
@@ -21,13 +23,24 @@ function Home() {
 
         const data = await response.json();
         setHostels(data);
+        setIsLoading(false);
       } catch (error) {
         console.error('Error fetching hostels:', error);
+        setError(error.message);
+        setIsLoading(false);
       }
     };
 
     fetchHostels();
   }, []);
+
+  if (isLoading) {
+    return <Box p={4}>Loading...</Box>;
+  }
+
+  if (error) {
+    return <Box p={4}>Error: {error}</Box>;
+  }
 
   return (
     <Box p={4}>
@@ -36,13 +49,13 @@ function Home() {
         templateColumns={{ base: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }} 
         gap={4}
       >
-        {hostels.map((hostel, index) => (
+        {hostels.map((hostel) => (
           <HostelCard
-            key={index}
+            key={hostel.id} // Use a unique identifier for the key
             id={hostel.id}
             name={hostel.name}
             address={hostel.address}
-            image={`http://127.0.0.1:8000${hostel.image}`} // Construct the correct URL
+            image={`http://127.0.0.1:8000${hostel.image}`} // Adjust URL construction
           />
         ))}
       </Grid>
