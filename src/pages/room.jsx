@@ -12,7 +12,7 @@ function RoomPage() {
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const token = 'b17ecd1e7ab8b13a1c98c81fefad7c8839252b63'; // Replace with your actual token
+        const token = 'b17ecd1e7ab8b13a1c98c81fefad7c8839252b63';
         const url = `http://127.0.0.1:8000/api/rooms/?hostel=${hostelId}&hostel__name=${hostelName}`;
         const response = await fetch(url, {
           headers: {

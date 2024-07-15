@@ -18,8 +18,9 @@ function App() {
   return (
     <Router>
       <Navbar />
-      <Filter />
+      
       <Routes>
+
         <Route path="/" element={<Home />} />
         <Route path="/rooms/:hostelId" element={<RoomPage />} />
         <Route path="room/" element={<RoomPage />} />
@@ -29,7 +30,9 @@ function App() {
         <Route path = "tenant/" element= { <Tenant/>}/>
         <Route path='booking/' element={ <Booking/>}/>
         <Route path='payment/' element={ <Payment/>}/>
+        
       </Routes>
+
       <Footer />
     </Router>
   );

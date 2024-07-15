@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
-import { Box, FormControl, FormLabel, Input, Button, useToast } from '@chakra-ui/react';
 import axios from 'axios';
+import React, { useState } from 'react';
+import { Box, Button, FormControl, FormLabel, Input, Center, VStack, Text, useToast } from '@chakra-ui/react';
 
-const Payment = () => {
+const MpesaPayment = () => {
   const [formData, setFormData] = useState({
     phone_number: '',
     amount: '',
+    account_reference: '',
+    transaction_desc: ''
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -13,11 +15,7 @@ const Payment = () => {
   const toast = useToast();
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
@@ -30,76 +28,115 @@ const Payment = () => {
         throw new Error('Token not found.');
       }
 
-      const response = await axios.post('http://127.0.0.1:8000/api/payments/mpesa/', formData, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Token ${token}`,
-        },
-      });
+      const response = await axios.post(
+        'http://127.0.0.1:8000/api/payments/mpesa/',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${token}`
+          }
+        }
+      );
 
       setLoading(false);
       setSuccess('Payment processed successfully');
       setError('');
-      toast({
-        title: 'Payment processed successfully.',
-        description: 'Your payment has been successfully processed.',
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-      });
       setFormData({
         phone_number: '',
         amount: '',
+        account_reference: '',
+        transaction_desc: ''
+      });
+      toast({
+        title: "Success",
+        description: "Payment processed successfully",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
       });
     } catch (error) {
       setLoading(false);
       setError('Payment processing failed');
       setSuccess('');
-      console.error('Error during payment processing:', error);
       toast({
-        title: 'Payment processing failed.',
-        description: 'There was an error processing your payment.',
-        status: 'error',
+        title: "Error",
+        description: "Payment processing failed",
+        status: "error",
         duration: 5000,
         isClosable: true,
       });
+      console.error('Error during payment processing:', error);
     }
   };
 
   return (
-    <Box w="400px" mx="auto" mt={10} p={5} borderWidth={1} borderRadius="lg">
-      <form onSubmit={handleSubmit}>
-        <FormControl id="phone_number" mb={4} isRequired>
-          <FormLabel>Phone Number</FormLabel>
-          <Input
-            type="tel"
-            name="phone_number"
-            placeholder="Enter your phone number"
-            value={formData.phone_number}
-            onChange={handleChange}
-          />
-        </FormControl>
-
-        <FormControl id="amount" mb={4} isRequired>
-          <FormLabel>Amount</FormLabel>
-          <Input
-            type="number"
-            name="amount"
-            placeholder="Enter amount to pay"
-            value={formData.amount}
-            onChange={handleChange}
-          />
-        </FormControl>
-
-        <Button type="submit" colorScheme="teal" width="full" mt={4} isLoading={loading}>
-          Pay with Mpesa
-        </Button>
-      </form>
-
-      {error && <Box color="red.500" mt={4}>{error}</Box>}
-      {success && <Box color="green.500" mt={4}>{success}</Box>}
-    </Box>
+    <Center minH="100vh" bg="gray.100">
+      <Box
+        p={8}
+        maxWidth="500px"
+        borderWidth={1}
+        borderRadius={8}
+        boxShadow="lg"
+        bg="white"
+      >
+        <form onSubmit={handleSubmit}>
+          <VStack spacing={4}>
+            <FormControl id="phone_number" isRequired>
+              <FormLabel>Phone Number</FormLabel>
+              <Input
+                type="text"
+                name="phone_number"
+                value={formData.phone_number}
+                onChange={handleChange}
+                placeholder="Phone Number"
+              />
+            </FormControl>
+            <FormControl id="amount" isRequired>
+              <FormLabel>Amount</FormLabel>
+              <Input
+                type="text"
+                name="amount"
+                value={formData.amount}
+                onChange={handleChange}
+                placeholder="Amount"
+              />
+            </FormControl>
+            <FormControl id="account_reference" isRequired>
+              <FormLabel>Account Reference</FormLabel>
+              <Input
+                type="text"
+                name="account_reference"
+                value={formData.account_reference}
+                onChange={handleChange}
+                placeholder="Account Reference"
+              />
+            </FormControl>
+            <FormControl id="transaction_desc" isRequired>
+              <FormLabel>Transaction Description</FormLabel>
+              <Input
+                type="text"
+                name="transaction_desc"
+                value={formData.transaction_desc}
+                onChange={handleChange}
+                placeholder="Transaction Description"
+              />
+            </FormControl>
+            <Button
+              type="submit"
+              isLoading={loading}
+              colorScheme="teal"
+              width="full"
+            >
+              {loading ? 'Processing...' : 'Submit'}
+            </Button>
+            {error && <Text color="red.500">{error}</Text>}
+            {success && <Text color="green.500">{success}</Text>}
+          </VStack>
+        </form>
+      </Box>
+    </Center>
   );
 };
 
-export default Payment;
+export default MpesaPayment;
