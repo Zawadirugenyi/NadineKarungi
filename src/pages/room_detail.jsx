@@ -79,7 +79,7 @@ const RoomDescription = () => {
             <Text>
               Price: Ksh {roomDescription.price}
             </Text>
-              <Button colorScheme="teal" mt={4} width="400px" >
+              <Button  mt={4} width="400px" bg="#0097b2" color="white"   _hover={{ bg: "#073d47" }}>
               Book Now
             </Button>
           </Box>
