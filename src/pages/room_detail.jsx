@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Heading, Text, Image, Stack, Center, Spinner, Grid, Button } from '@chakra-ui/react';
+import { Box, Heading, Text, Image, Stack, Center, Spinner, Grid, Button, } from '@chakra-ui/react';
 import axios from 'axios';
 
 const RoomDescription = () => {
@@ -79,7 +79,7 @@ const RoomDescription = () => {
             <Text>
               Price: Ksh {roomDescription.price}
             </Text>
-              <Button  mt={4} width="400px" bg="#0097b2" color="white"   _hover={{ bg: "#073d47" }}>
+              <Button mt={4} width="400px" bg="#0097b2" color="white"   _hover={{ bg: "#073d47" }}>
               Book Now
             </Button>
           </Box>

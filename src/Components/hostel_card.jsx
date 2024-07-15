@@ -8,7 +8,7 @@ function HostelCard({ id, name, address, image }) {
       <Image src={image} alt={`${name}_image`} borderRadius="md" mb={4} />
       <Text fontSize="xl" fontWeight="bold">{name}</Text>
       <Text>{address}</Text>
-      <Button as={Link} to={`/room/${encodeURIComponent(name)}`} bg="#0097b2"  _hover={{ bg: "#073d47" }} mt={4}>
+      <Button as={Link} to={`/room/${encodeURIComponent(name)}`} bg="#0097b2" color="white"  _hover={{ bg: "#073d47" }} mt={4}>
         View Rooms
       </Button>
     </Box>
