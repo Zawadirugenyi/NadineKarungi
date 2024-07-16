@@ -41,7 +41,7 @@ function Login() {
       setPassword('');
 
       // Redirect to home page after successful login
-      navigate('/room');
+      navigate('/tenant');
 
       // Hide message after 5 seconds
       setTimeout(() => {
@@ -55,7 +55,7 @@ function Login() {
   };
 
   return (
-    <Box display="flex" justifyContent="center">
+    <Box display="flex" justifyContent="center" marginTop="60px"> 
       <Box
         w="800px"
         p={6}

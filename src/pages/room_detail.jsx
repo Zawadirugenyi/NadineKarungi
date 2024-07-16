@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Heading, Text, Image, Stack, Center, Spinner, Grid, Button, } from '@chakra-ui/react';
+import { Box, Heading, Text, Image, Stack, Center, Spinner, Grid, Button } from '@chakra-ui/react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 const RoomDescription = () => {
@@ -49,7 +50,6 @@ const RoomDescription = () => {
 
   return (
     <Box p={9}>
-      
       <Grid 
         templateColumns={{ base: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }} 
         gap={4} alignItems="center" marginLeft="100px"
@@ -60,26 +60,30 @@ const RoomDescription = () => {
               Room {roomDescription.room.number} Description
             </Heading>
 
-            <Stack direction="row" spacing={4} mb={4} >
-             
-                <Image src={`http://127.0.0.1:8000${roomDescription.sitting_room_image}`} alt="Sitting Room" boxSize="630px" w="900px" />
-
-            <Stack direction="column" spacing={3} mb={4}>
+            <Stack direction="row" spacing={4} mb={4}>
+              <Image src={`http://127.0.0.1:8000${roomDescription.sitting_room_image}`} alt="Sitting Room" boxSize="630px" w="900px" />
+              <Stack direction="column" spacing={3} mb={4}>
                 <Image src={`http://127.0.0.1:8000${roomDescription.bedroom_image}`} alt="Bedroom" boxSize="200px" />
                 <Image src={`http://127.0.0.1:8000${roomDescription.kitchen_image}`} alt="Kitchen" boxSize="200px" />
                 <Image src={`http://127.0.0.1:8000${roomDescription.bathroom_image}`} alt="Bathroom" boxSize="200px" />
+              </Stack>
+            </Stack>
 
-            </Stack>
-            
-           
-            </Stack>
             <Text mb={4}>
               Description: {roomDescription.description}
             </Text>
             <Text>
               Price: Ksh {roomDescription.price}
             </Text>
-              <Button mt={4} width="400px" bg="#0097b2" color="white"   _hover={{ bg: "#073d47" }}>
+            <Button
+              as={Link}
+              to="/login"
+              mt={4}
+              width="400px"
+              bg="#0097b2"
+              color="white"
+              _hover={{ bg: "#073d47" }}
+            >
               Book Now
             </Button>
           </Box>
