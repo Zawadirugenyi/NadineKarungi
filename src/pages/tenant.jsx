@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Button, FormControl, FormLabel, Input, Grid, GridItem, Heading, Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton, useToast } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const Tenant = () => {
@@ -18,6 +19,7 @@ const Tenant = () => {
     });
     const [message, setMessage] = useState({ type: '', text: '' });
     const toast = useToast();
+    const navigate = useNavigate(); // Initialize navigate
 
     const handleChange = (e) => {
         const { name, value, files } = e.target;
@@ -76,6 +78,9 @@ const Tenant = () => {
                 passport_photo: null,
                 position: ''
             });
+
+            // Redirect to booking page
+            navigate('/booking');
         } catch (error) {
             const errorMsg = error.response?.data || 'Registration failed';
             const errorText = typeof errorMsg === 'string' ? errorMsg : JSON.stringify(errorMsg);
@@ -180,6 +185,14 @@ const Tenant = () => {
                             <Input type="text" name="position" value={formData.position} onChange={handleChange} />
                         </FormControl>
                     </GridItem>
+
+                       <GridItem colSpan={1}>
+                        <FormControl id="phone_number" isRequired>
+                            <FormLabel>Sponsor Contact</FormLabel>
+                            <Input type="text" name="phone_number" value={formData.phone_number} onChange={handleChange} />
+                        </FormControl>
+                    </GridItem>
+
                 </Grid>
 
                 <Box textAlign="center" mt={6}>
