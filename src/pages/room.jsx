@@ -51,7 +51,7 @@ function RoomPage() {
 
   return (
     <Box p={4}>
-      <Heading mb={6}>Rooms for Hostel: {hostelName}</Heading>
+      <Heading mb={6}> {hostelName} Available Rooms </Heading>
       <Grid 
         templateColumns={{ base: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }} 
         gap={4}
