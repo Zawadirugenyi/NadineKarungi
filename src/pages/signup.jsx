@@ -76,7 +76,7 @@ function Signup() {
   };
 
   return (
-    <Box display="flex" justifyContent="center"  marginTop="60px">
+    <Box display="flex" justifyContent="center"  marginTop="40px">
       <Box
         w="800px"
         p={6}
@@ -148,6 +148,7 @@ function Signup() {
               />
             </FormControl>
             <Button 
+              marginTop="12px"
               type="submit" 
               bg="#0097b2"
               _hover={{ bg: "#073d47" }}

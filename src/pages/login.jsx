@@ -55,7 +55,7 @@ function Login() {
   };
 
   return (
-    <Box display="flex" justifyContent="center" marginTop="60px"> 
+    <Box display="flex" justifyContent="center" marginTop="50px"> 
       <Box
         w="800px"
         p={6}
@@ -102,6 +102,7 @@ function Login() {
               />
             </FormControl>
             <Button 
+              marginTop="12px"
               type="submit" 
               bg="#0097b2"
               color="white"
