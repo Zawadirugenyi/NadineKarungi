@@ -16,7 +16,7 @@ function RoomPage() {
           return; // Exit early if hostelName is not defined
         }
 
-        const token = 'b17ecd1e7ab8b13a1c98c81fefad7c8839252b63'; // Replace with your actual token management
+        const token = 'b17ecd1e7ab8b13a1c98c81fefad7c8839252b63'; // Replace with your actual token
         const url = `http://127.0.0.1:8000/api/rooms/?hostel__name=${encodeURIComponent(hostelName)}`;
         const response = await fetch(url, {
           headers: {
@@ -29,6 +29,8 @@ function RoomPage() {
         }
 
         const data = await response.json();
+        console.log('Rooms fetched:', data); // Log fetched data
+
         setRooms(data);
         setIsLoading(false);
       } catch (error) {
@@ -41,6 +43,10 @@ function RoomPage() {
     fetchRooms();
   }, [hostelName]);
 
+  console.log('Rooms:', rooms);
+  console.log('Error:', error);
+  console.log('Is Loading:', isLoading);
+
   if (isLoading) {
     return <Box p={4}>Loading...</Box>;
   }
@@ -51,14 +57,14 @@ function RoomPage() {
 
   return (
     <Box p={4}>
-      <Heading mb={6}> {hostelName} Available Rooms </Heading>
+      <Heading mb={6}>{hostelName} Available Rooms</Heading>
       <Grid 
         templateColumns={{ base: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }} 
         gap={4}
       >
         {rooms.map((room) => (
           <RoomCard
-            key={room.id} // Ensure each room has a unique key
+            key={room.id}
             number={room.number}
             roomType={room.room_type}
             image={`http://127.0.0.1:8000${room.image}`} // Adjust URL construction

@@ -1,26 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Heading, Text, Image, Stack, Center, Spinner, Grid, Button } from '@chakra-ui/react';
-import { Link } from 'react-router-dom';
+import { Box, Heading, Text, Image, Stack, Center, Spinner, Button } from '@chakra-ui/react';
+import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 
 const RoomDescription = () => {
+  const { roomNumber } = useParams();
   const [loading, setLoading] = useState(true);
-  const [roomDescriptions, setRoomDescriptions] = useState([]);
+  const [roomDescription, setRoomDescription] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchRoomDescriptions = async () => {
+    const fetchRoomDescription = async () => {
       try {
-        const token = 'b17ecd1e7ab8b13a1c98c81fefad7c8839252b63'; // Replace with your actual token
+        const token = 'b17ecd1e7ab8b13a1c98c81fefad7c8839252b63'; 
         const config = {
           headers: {
             Authorization: `Token ${token}`,
           },
         };
 
-        const response = await axios.get('http://127.0.0.1:8000/api/room-descriptions/', config);
-        console.log(response.data); // Log the response data to inspect the URLs
-        setRoomDescriptions(response.data);
+        const url = `http://127.0.0.1:8000/api/room-descriptions/?room__number=${encodeURIComponent(roomNumber)}`;
+        const response = await axios.get(url, config);
+        
+        console.log('API Response:', response.data); // Log API response
+
+        if (response.data.length === 0) {
+          throw new Error(`No room description found for Room ${roomNumber}`);
+        }
+
+        setRoomDescription(response.data[0]);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching room descriptions:', error);
@@ -29,8 +37,12 @@ const RoomDescription = () => {
       }
     };
 
-    fetchRoomDescriptions();
-  }, []);
+    fetchRoomDescription();
+  }, [roomNumber]);
+
+  console.log('Loading:', loading);
+  console.log('Error:', error);
+  console.log('Room Description:', roomDescription);
 
   if (loading) {
     return (
@@ -44,51 +56,44 @@ const RoomDescription = () => {
     return <Text>Error: {error}</Text>;
   }
 
-  if (roomDescriptions.length === 0) {
-    return <Text>No room descriptions found.</Text>;
+  if (!roomDescription) {
+    return <Text>No room description found for Room {roomNumber}.</Text>;
   }
 
   return (
     <Box p={9}>
-      <Grid 
-        templateColumns={{ base: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }} 
-        gap={4} alignItems="center" marginLeft="100px"
-      >
-        {roomDescriptions.map((roomDescription, index) => (
-          <Box key={index} p={9} shadow="md" borderWidth="1px" width="1180px">
-            <Heading as="h2" size="lg" mb={4}>
-              Room {roomDescription.room.number} Description
-            </Heading>
+      <Box p={9} shadow="md" borderWidth="1px">
+        <Heading as="h2" size="lg" mb={4}>
+          Room {roomDescription.room.number} Description
+        </Heading>
 
-            <Stack direction="row" spacing={4} mb={4}>
-              <Image src={`http://127.0.0.1:8000${roomDescription.sitting_room_image}`} alt="Sitting Room" boxSize="630px" w="900px" />
-              <Stack direction="column" spacing={3} mb={4}>
-                <Image src={`http://127.0.0.1:8000${roomDescription.bedroom_image}`} alt="Bedroom" boxSize="200px" />
-                <Image src={`http://127.0.0.1:8000${roomDescription.kitchen_image}`} alt="Kitchen" boxSize="200px" />
-                <Image src={`http://127.0.0.1:8000${roomDescription.bathroom_image}`} alt="Bathroom" boxSize="200px" />
-              </Stack>
-            </Stack>
+        <Stack direction="row" spacing={4} mb={4}>
+          <Image src={`http://127.0.0.1:8000${roomDescription.sitting_room_image}`} alt="Sitting Room" boxSize="630px" w="900px" />
+          <Stack direction="column" spacing={3} mb={4}>
+            <Image src={`http://127.0.0.1:8000${roomDescription.bedroom_image}`} alt="Bedroom" boxSize="200px" />
+            <Image src={`http://127.0.0.1:8000${roomDescription.kitchen_image}`} alt="Kitchen" boxSize="200px" />
+            <Image src={`http://127.0.0.1:8000${roomDescription.bathroom_image}`} alt="Bathroom" boxSize="200px" />
+          </Stack>
+        </Stack>
 
-            <Text mb={4}>
-              Description: {roomDescription.description}
-            </Text>
-            <Text>
-              Price: Ksh {roomDescription.price}
-            </Text>
-            <Button
-              as={Link}
-              to="/login"
-              mt={4}
-              width="400px"
-              bg="#0097b2"
-              color="white"
-              _hover={{ bg: "#073d47" }}
-            >
-              Book Now
-            </Button>
-          </Box>
-        ))}
-      </Grid>
+        <Text mb={4}>
+          Description: {roomDescription.description}
+        </Text>
+        <Text>
+          Price: Ksh {roomDescription.price}
+        </Text>
+        <Button
+          as={Link}
+          to="/login"
+          mt={4}
+          width="400px"
+          bg="#0097b2"
+          color="white"
+          _hover={{ bg: "#073d47" }}
+        >
+          Book Now
+        </Button>
+      </Box>
     </Box>
   );
 };

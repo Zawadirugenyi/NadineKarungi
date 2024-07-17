@@ -20,7 +20,7 @@ function App() {
         <Route path="/room/:hostelName" element={<RoomPage />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/room_detail" element={<RoomDescription />} />
+        <Route path="/room_detail/:roomNumber" element={<RoomDescription />} />
         <Route path="/tenant" element={<Tenant />} />
         <Route path="/booking" element={<Booking />} />
         <Route path="/payment" element={<Payment />} />
