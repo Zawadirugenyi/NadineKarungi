@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Heading, Text, Image, Stack, Center, Spinner } from '@chakra-ui/react';
+import { Box, Heading, Text, Image, Stack, Center, Spinner,Button, Link } from '@chakra-ui/react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
@@ -22,10 +22,13 @@ const RoomDescription = () => {
 
                 console.log('Response:', response.data); // Log the response data
 
-                if (!response.data || response.data.error) {
+                // Find the specific room description by room number
+                const roomDesc = response.data.find(desc => desc.room_number === roomNumber);
+
+                if (!roomDesc) {
                     setError('Room description not found');
                 } else {
-                    setRoomDescription(response.data);
+                    setRoomDescription(roomDesc);
                 }
             } catch (error) {
                 console.error('Error fetching room description:', error);
@@ -51,7 +54,7 @@ const RoomDescription = () => {
     }
 
     // Ensure roomDescription exists and has required properties
-    if (!roomDescription || !roomDescription.number) {
+    if (!roomDescription || !roomDescription.room_number) {
         return <Text>No room description found for Room {roomNumber}.</Text>;
     }
 
@@ -59,7 +62,7 @@ const RoomDescription = () => {
         <Box p={9}>
             <Box p={9} shadow="md" borderWidth="1px">
                 <Heading as="h2" size="lg" mb={4}>
-                    Room {roomDescription.number} Description
+                    Room {roomDescription.room_number} Description
                 </Heading>
 
                 <Stack direction="row" spacing={4} mb={4}>
@@ -77,6 +80,17 @@ const RoomDescription = () => {
                 <Text>
                     Price: Ksh {roomDescription.price}
                 </Text>
+              <Button
+              as={Link}
+              to="/login"
+              mt={4}
+              width="400px"
+              bg="#0097b2"
+              color="white"
+              _hover={{ bg: "#073d47" }}
+            >
+              Book Now
+            </Button>
             </Box>
         </Box>
     );
