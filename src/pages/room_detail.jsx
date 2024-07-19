@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Heading, Text, Image, Stack, Center, Spinner, Button, Link, Modal, ModalOverlay, ModalContent, ModalCloseButton, ModalBody } from '@chakra-ui/react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import "react-responsive-carousel/lib/styles/carousel.min.css"; // Requires a loader
+import "react-responsive-carousel/lib/styles/carousel.min.css"; 
 import { Carousel } from 'react-responsive-carousel';
 
 const RoomDescription = () => {
@@ -15,7 +15,7 @@ const RoomDescription = () => {
     useEffect(() => {
         const fetchRoomDescription = async () => {
             try {
-                const token = 'b17ecd1e7ab8b13a1c98c81fefad7c8839252b63'; // Actual token
+                const token = 'b17ecd1e7ab8b13a1c98c81fefad7c8839252b63'; 
                 const encodedRoomNumber = encodeURIComponent(roomNumber);
                 const response = await axios.get(`http://127.0.0.1:8000/api/room-descriptions/?room__number=${encodedRoomNumber}`, {
                     headers: {
@@ -108,34 +108,34 @@ const RoomDescription = () => {
                         </Stack>
                     </Stack>
                 </Box>
-                <Box width="40%">
-                    <Box shadow="md" borderWidth="1px" p={9}>
-                        <Heading as="h2" size="lg" mb={4}>
-                            Room {roomDescription.room_number} Description
-                        </Heading>
-                        <Text mb={4}>
-                            Description: {roomDescription.description}
-                        </Text>
-                     <Text mb={4} fontWeight="bold" fontSize="27px">
-                       Price: Ksh {roomDescription.price}
-                      </Text>
+                      <Box width="40%">
+            <Box shadow="md" borderWidth="1px" p={9} h="500px">
+                <Heading as="h2" size="lg" mb={4}>
+                    Room {roomDescription.room_number} Description
+                </Heading>
+                <Text mb={4}>
+                    Description: {roomDescription.description}
+                </Text>
+                <Text mb={4} fontWeight="bold" fontSize="17px">
+                    Price: Ksh {roomDescription.price}
+                </Text>
 
-                      
-                        <Button
-                        as={Link}
-                        to="/login/"
-                        mt={4}
-                        width="100%"
-                        bg="#0097b2"
-                        color="white"
-                        _hover={{ bg: "#073d47" }}
-                        
-                    >
-                        Book Now
-                    </Button>
+                <Button
+                    as={Link}
+                    to="/login/"
+                  
+                    bg="white"
+                    color="#0097b2"
+                    border="1px solid #0097b2"
+                    boxShadow="md"
+                    _hover={{ bg: "#0097b2", color: "white" }}
+                    textDecoration="none"
+                >
+                    Book Now
+                </Button>
+            </Box>
+        </Box>
 
-                    </Box>
-                </Box>
             </Stack>
 
             {zoomedImage && (

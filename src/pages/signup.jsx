@@ -76,7 +76,7 @@ function Signup() {
   };
 
   return (
-    <Box display="flex" justifyContent="center"  marginTop="40px">
+    <Box display="flex" justifyContent="center" marginTop="40px">
       <Box
         w="800px"
         p={6}
@@ -89,12 +89,13 @@ function Signup() {
         style={{ backgroundImage: `url(${backgroundImage})` }}
       />
       <Box
-        w="500px"
+        w="550px"
         p={3}
         bgPosition="center"
         bg="white"
         boxShadow="lg"
         rounded="md"
+
       >
         <Heading mb={1} >Sign Up</Heading>
         {message.text && (

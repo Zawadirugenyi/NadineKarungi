@@ -24,10 +24,10 @@ function Navbar() {
         <Button as={Link} to="/" variant="link" color="white" mr={4} _hover={{ color: 'black' }}>
           Home
         </Button>
-        <Button as={Link} to="/maintenance" variant="link" color="white" mr={4} _hover={{ color: 'black' }}>
+        <Button as={Link} to="/about_us" variant="link" color="white" mr={4} _hover={{ color: 'black' }}>
           About Us
         </Button>
-        <Button as={Link} to="/booking" variant="link" color="white" mr={4} _hover={{ color: 'black' }}>
+        <Button as={Link} to="/contact_us" variant="link" color="white" mr={4} _hover={{ color: 'black' }}>
           Contact Us
         </Button>
       </Box>
@@ -44,15 +44,13 @@ function Navbar() {
             <MenuItem as={Link} to="/"  color="#0097b2">
               Home
             </MenuItem >
-            <MenuItem as={Link} to="/maintenance"  color="#0097b2">
+            <MenuItem as={Link} to="/about_us"  color="#0097b2">
               About Us
             </MenuItem>
-            <MenuItem as={Link} to="/booking"  color="#0097b2">
+            <MenuItem as={Link} to="/contact_us"  color="#0097b2">
               Contact Us
             </MenuItem>
-             <MenuItem as={Link} to="/Filter"  color="#0097b2">
-              Filter
-            </MenuItem>
+            
           </MenuList>
         </Menu>
       </Box>
