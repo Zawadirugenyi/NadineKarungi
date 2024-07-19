@@ -20,8 +20,8 @@ const Booking = () => {
     // Fetch rooms and tenants from the API
     const fetchRoomsAndTenants = async () => {
       try {
-        const roomsResponse = await axios.get('http://127.0.0.1:8000/api/rooms/');
-        const tenantsResponse = await axios.get('http://127.0.0.1:8000/api/tenants/');
+        const roomsResponse = await axios.get('http://127.0.0.1:8000/api/rooms/?room__number=${encodedRoomNumber}');
+        const tenantsResponse = await axios.get('http://127.0.0.1:8000/api/tenants/?tenant_name=${encodedTenantN}');
         setRooms(roomsResponse.data);
         setTenants(tenantsResponse.data);
       } catch (error) {
@@ -92,26 +92,12 @@ const Booking = () => {
           <form onSubmit={handleSubmit}>
             <FormControl id="room" mb={4}>
               <FormLabel>Room</FormLabel>
-              <Select name="room" value={formData.room} onChange={handleChange}>
-                <option value="">Select Room</option>
-                {rooms.map((room) => (
-                  <option key={room.id} value={room.id}>
-                    {room.number}
-                  </option>
-                ))}
-              </Select>
+            <Input type="name" name="name" value={formData.check_in_date} onChange={handleChange} />
             </FormControl>
 
             <FormControl id="tenant" mb={4}>
               <FormLabel>Tenant</FormLabel>
-              <Select name="tenant" value={formData.tenant} onChange={handleChange}>
-                <option value="">Select Tenant</option>
-                {tenants.map((tenant) => (
-                  <option key={tenant.id} value={tenant.id}>
-                    {tenant.name}
-                  </option>
-                ))}
-              </Select>
+            <Input type="name" name="name" value={formData.check_in_date} onChange={handleChange} />
             </FormControl>
 
             <FormControl id="check_in_date" mb={4}>
