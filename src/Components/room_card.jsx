@@ -14,7 +14,7 @@ function RoomCard({ number, roomType, image, hostelName }) {
       <Flex justify="flex-end" mt={4} marginTop="-50px">
         <Button
           as={Link}
-          to={`/room_detail/${encodeURIComponent(number)}`}
+          to={`/room_detail/${encodeURIComponent(number)}/${encodeURIComponent(hostelName)}`}
           bg="white"
           color="#0097b2"
           border="1px solid #0097b2"
