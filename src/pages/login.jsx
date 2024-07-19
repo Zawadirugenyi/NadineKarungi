@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Box, FormControl, FormLabel, Input, Button, Heading, Text, VStack, Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton } from '@chakra-ui/react';
 import { Link, useNavigate } from 'react-router-dom';
-
 import backgroundImage from '../Components/Assets/Room2.webp'; 
 
 function Login() {
@@ -40,8 +39,29 @@ function Login() {
       setEmail('');
       setPassword('');
 
-      // Redirect to home page after successful login
-      navigate('/tenant');
+      // Check if tenant exists and redirect accordingly
+      const tenantResponse = await fetch('http://127.0.0.1:8000/api/tenants/', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Token ${data.token}`,
+        },
+      });
+
+      if (!tenantResponse.ok) {
+        throw new Error('Error fetching tenant status');
+      }
+
+      const tenantData = await tenantResponse.json();
+      const tenantExists = tenantData.some(tenant => tenant.email === email);
+
+      if (tenantExists) {
+        // Redirect to booking page if tenant exists
+        navigate('/booking');
+      } else {
+        // Redirect to tenant creation page if tenant does not exist
+        navigate('/tenant');
+      }
 
       // Hide message after 5 seconds
       setTimeout(() => {
@@ -113,8 +133,8 @@ function Login() {
             </Button>
           </VStack>
         </form>
-        <Text mt={4} textAlign="center" >
-          Don't have an account? <Link to="/signup" color="teal.500" >Sign Up</Link>
+        <Text mt={4} textAlign="center">
+          Don't have an account? <Link to="/signup" color="teal.500">Sign Up</Link>
         </Text>
       </Box>
     </Box>

@@ -1,22 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Heading, Text, Image, Stack, Center, Spinner, Button, Link, Modal, ModalOverlay, ModalContent, ModalCloseButton, ModalBody } from '@chakra-ui/react';
-import { useParams } from 'react-router-dom';
+import { Box, Heading, Text, Image, Stack, Center, Spinner, Button, Modal, ModalOverlay, ModalContent, ModalCloseButton, ModalBody } from '@chakra-ui/react';
+import { useParams, useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
 import axios from 'axios';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; 
 import { Carousel } from 'react-responsive-carousel';
 
 const RoomDescription = () => {
-    const { roomNumber, hostelName } = useParams();
+    const { roomNumber } = useParams();
     const [loading, setLoading] = useState(true);
     const [roomDescription, setRoomDescription] = useState(null);
     const [error, setError] = useState(null);
     const [zoomedImage, setZoomedImage] = useState(null);
+    const navigate = useNavigate(); // Initialize useNavigate hook for navigation
 
     useEffect(() => {
         const fetchRoomDescription = async () => {
             try {
-                const token = 'b17ecd1e7ab8b13a1c98c81fefad7c8839252b63';
-                const response = await axios.get(`http://127.0.0.1:8000/api/room-descriptions/?room__number=${encodeURIComponent(roomNumber)}&hostel__name=${encodeURIComponent(hostelName)}`, {
+                const token = 'b17ecd1e7ab8b13a1c98c81fefad7c8839252b63'; 
+                const encodedRoomNumber = encodeURIComponent(roomNumber);
+                const response = await axios.get(`http://127.0.0.1:8000/api/room-descriptions/?room__number=${encodedRoomNumber}`, {
                     headers: {
                         Authorization: `Token ${token}`,
                     },
@@ -24,8 +26,8 @@ const RoomDescription = () => {
 
                 console.log('Response:', response.data); // Log the response data
 
-                // Find the specific room description by room number and hostel name
-                const roomDesc = response.data.find(desc => desc.room_number === roomNumber && desc.hostel_name === hostelName);
+                // Find the specific room description by room number
+                const roomDesc = response.data.find(desc => desc.room_number === roomNumber);
 
                 if (!roomDesc) {
                     setError('Room description not found');
@@ -41,7 +43,7 @@ const RoomDescription = () => {
         };
 
         fetchRoomDescription();
-    }, [roomNumber, hostelName]);
+    }, [roomNumber]);
 
     const handleImageClick = (imageSrc) => {
         setZoomedImage(imageSrc);
@@ -49,6 +51,10 @@ const RoomDescription = () => {
 
     const closeZoom = () => {
         setZoomedImage(null);
+    };
+
+    const handleBookNowClick = () => {
+        navigate('/login/'); // Updated to use navigate for redirection
     };
 
     if (loading) {
@@ -65,7 +71,7 @@ const RoomDescription = () => {
 
     // Ensure roomDescription exists and has required properties
     if (!roomDescription || !roomDescription.room_number) {
-        return <Text>No room description found for Room {roomNumber} in {hostelName}.</Text>;
+        return <Text>No room description found for Room {roomNumber}.</Text>;
     }
 
     return (
@@ -117,16 +123,13 @@ const RoomDescription = () => {
                         <Text mb={4} fontWeight="bold" fontSize="17px">
                             Price: Ksh {roomDescription.price}
                         </Text>
-
                         <Button
-                            as={Link}
-                            to="/login/"
                             bg="white"
                             color="#0097b2"
                             border="1px solid #0097b2"
                             boxShadow="md"
                             _hover={{ bg: "#0097b2", color: "white" }}
-                            textDecoration="none"
+                            onClick={handleBookNowClick} // Updated to use handleBookNowClick for redirection
                         >
                             Book Now
                         </Button>
