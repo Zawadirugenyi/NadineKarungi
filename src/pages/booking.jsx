@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, FormControl, FormLabel, Input, Button, Select, useToast, Grid, GridItem, Image } from '@chakra-ui/react';
+import { Box, FormControl, FormLabel, Input, Button, Select, useToast, Grid, GridItem, Image} from '@chakra-ui/react';
 import axios from 'axios';
 import backgroundImage from '../Components/Assets/Room2.webp'; 
 
@@ -65,6 +65,9 @@ const Booking = () => {
         duration: 5000,
         isClosable: true,
       });
+
+     
+
       setFormData({
         room: '',
         tenant: '',
