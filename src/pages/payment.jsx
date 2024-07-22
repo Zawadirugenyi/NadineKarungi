@@ -73,6 +73,7 @@ const MpesaPayment = () => {
   return (
     <Center minH="100vh" bg="gray.100">
       <Box
+        marginTop="-100px"
         p={8}
         maxWidth="500px"
         borderWidth={1}

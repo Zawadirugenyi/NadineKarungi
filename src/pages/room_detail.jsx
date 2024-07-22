@@ -16,7 +16,7 @@ const RoomDescription = () => {
     useEffect(() => {
         const fetchRoomDescription = async () => {
             try {
-                const token = 'b17ecd1e7ab8b13a1c98c81fefad7c8839252b63'; 
+                const token = '520dc5d1657a7b42d3b9ffb3592f9ba88692c1fc'; 
                 const encodedRoomNumber = encodeURIComponent(roomNumber);
                 const response = await axios.get(`http://127.0.0.1:8000/api/room-descriptions/?room__number=${encodedRoomNumber}`, {
                     headers: {
@@ -56,6 +56,8 @@ const RoomDescription = () => {
     const handleBookNowClick = () => {
         navigate('/login/'); // Updated to use navigate for redirection
     };
+
+    
 
     if (loading) {
         return (
