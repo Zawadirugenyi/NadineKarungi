@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Box, FormControl, FormLabel, Input, Button, Select, useToast, Grid, GridItem } from '@chakra-ui/react';
+import { Box, FormControl, FormLabel, Input, Button, useToast, Grid, GridItem } from '@chakra-ui/react';
 import axios from 'axios';
-import backgroundImage from '../Components/Assets/Room2.webp'; 
+import backgroundImage from '../Components/Assets/Room2.webp';
 
 const Booking = () => {
   const [formData, setFormData] = useState({
@@ -10,26 +10,49 @@ const Booking = () => {
     check_in_date: '',
     check_out_date: ''
   });
-  const [rooms, setRooms] = useState([]);
-  const [tenants, setTenants] = useState([]);
+  const [roomNumber, setRoomNumber] = useState('');
+  const [tenantName, setTenantName] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const toast = useToast();
 
   useEffect(() => {
-    // Fetch rooms and tenants from the API
-    const fetchRoomsAndTenants = async () => {
+    // Fetch the tenant and room data from the backend API
+    const fetchData = async () => {
       try {
-        const roomsResponse = await axios.get('http://127.0.0.1:8000/api/rooms/');
-        const tenantsResponse = await axios.get('http://127.0.0.1:8000/api/tenants/');
-        setRooms(roomsResponse.data);
-        setTenants(tenantsResponse.data);
+        const token = localStorage.getItem('token');
+        if (!token) {
+          throw new Error('Token not found.');
+        }
+
+        const tenantResponse = await axios.get('http://127.0.0.1:8000/api/tenants/', {
+          headers: {
+            'Authorization': `Token ${token}`
+          }
+        });
+        const roomResponse = await axios.get('http://127.0.0.1:8000/api/rooms/', {
+          headers: {
+            'Authorization': `Token ${token}`
+          }
+        });
+
+        // Assuming that you want to use the first tenant and first room from the fetched data
+        const tenant = tenantResponse.data[0];
+        const room = roomResponse.data[0];
+
+        setTenantName(tenant.name);
+        setRoomNumber(room.number);
+        setFormData({
+          ...formData,
+          tenant: tenant.id,
+          room: room.id
+        });
       } catch (error) {
-        console.error('Error fetching rooms and tenants:', error);
+        console.error('Error fetching data:', error);
       }
     };
 
-    fetchRoomsAndTenants();
+    fetchData();
   }, []);
 
   const handleChange = (e) => {
@@ -87,28 +110,18 @@ const Booking = () => {
   };
 
   return (
-    <Grid templateColumns="repeat(2, 1fr)" gap={6} w="800px" mx="auto" mt={10} p={5}>
+    <Grid templateColumns="repeat(2, 1fr)" gap={6} w="800px" mx="auto" mt={10} p={5} marginLeft="80px">
       <GridItem>
-        <Box borderWidth={1} borderRadius="lg" p={5} w="450px" marginLeft="-240px">
+        <Box borderWidth={1} borderRadius="lg" p={5} w="450px">
           <form onSubmit={handleSubmit}>
             <FormControl id="room" mb={4}>
               <FormLabel>Room</FormLabel>
-              <Select name="room" value={formData.room} onChange={handleChange}>
-                <option value="">Select Room</option>
-                {rooms.map(room => (
-                  <option key={room.id} value={room.id}>{room.number}</option>
-                ))}
-              </Select>
+              <Input type="text" name="room" value={roomNumber} readOnly />
             </FormControl>
 
             <FormControl id="tenant" mb={4}>
               <FormLabel>Tenant</FormLabel>
-              <Select name="tenant" value={formData.tenant} onChange={handleChange}>
-                <option value="">Select Tenant</option>
-                {tenants.map(tenant => (
-                  <option key={tenant.id} value={tenant.id}>{tenant.name}</option>
-                ))}
-              </Select>
+              <Input type="text" name="tenant" value={tenantName} readOnly />
             </FormControl>
 
             <FormControl id="check_in_date" mb={4}>
