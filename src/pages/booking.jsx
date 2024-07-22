@@ -6,8 +6,8 @@ import backgroundImage from '../Components/Assets/Room2.webp';
 
 const Booking = () => {
   const [formData, setFormData] = useState({
-    room: '', // This will hold the room ID
-    tenant: '', // This will hold the tenant ID
+    room: '',
+    tenant: '',
     check_in_date: '',
     check_out_date: ''
   });
@@ -19,6 +19,7 @@ const Booking = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Fetch the tenant and room data from the backend API
     const fetchData = async () => {
       try {
         const token = localStorage.getItem('token');
@@ -26,58 +27,30 @@ const Booking = () => {
           throw new Error('Token not found.');
         }
 
-        // Function to fetch tenant data
-        const fetchTenantData = async () => {
-          const response = await axios.get('http://127.0.0.1:8000/api/tenants/${encodeURIComponent(name)}', {
-            headers: { 'Authorization': `Token ${token}` }
-          });
-          return response.data;
-        };
-
-        // Function to fetch room data with retry mechanism
-        const fetchRoomDataWithRetry = async (attempt = 1) => {
-          try {
-            const response = await axios.get('http://127.0.0.1:8000/api/rooms/${encodeURIComponent(number)}', {
-              headers: { 'Authorization': `Token ${token}` }
-            });
-            return response.data;
-          } catch (error) {
-            if (attempt <= 3) { // Retry up to 3 times
-              console.warn(`Attempt ${attempt} failed. Retrying...`);
-              return fetchRoomDataWithRetry(attempt + 1);
-            } else {
-              throw error; // If all retries fail, throw the error
-            }
+        const tenantResponse = await axios.get('http://127.0.0.1:8000/api/tenants/', {
+          headers: {
+            'Authorization': `Token ${token}`
           }
-        };
+        });
+        const roomResponse = await axios.get('http://127.0.0.1:8000/api/rooms/', {
+          headers: {
+            'Authorization': `Token ${token}`
+          }
+        });
 
-        const tenantResponse = await fetchTenantData();
-        const roomResponse = await fetchRoomDataWithRetry();
-
-        if (tenantResponse.length === 0 || roomResponse.length === 0) {
-          throw new Error('No tenant or room data available.');
-        }
-
-        const tenant = tenantResponse[0]; // Assuming you want the first tenant
-        const room = roomResponse[0]; // Assuming you want the first room
+        // Extract the specific fields needed
+        const tenant = tenantResponse.data[0];  // Assuming you want the first tenant
+        const room = roomResponse.data[0];  // Assuming you want the first room
 
         setTenantName(tenant.name);
         setRoomNumber(room.number);
         setFormData({
           ...formData,
-          tenant: tenant.id, // Set tenant ID
-          room: room.id // Set room ID
+          tenant: tenant.id,
+          room: room.id
         });
       } catch (error) {
         console.error('Error fetching data:', error);
-        setError('Failed to fetch data.');
-        toast({
-          title: 'Data Fetch Error',
-          description: 'There was an error fetching tenant or room data.',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
       }
     };
 
@@ -118,7 +91,6 @@ const Booking = () => {
         isClosable: true,
       });
 
-      // Reset form fields after successful submission
       setFormData({
         room: '',
         tenant: '',
@@ -126,6 +98,7 @@ const Booking = () => {
         check_out_date: ''
       });
 
+      // Navigate to the payment page
       navigate('/payment');
     } catch (error) {
       setError('Booking creation failed');
@@ -146,18 +119,16 @@ const Booking = () => {
       <GridItem>
         <Box borderWidth={1} borderRadius="lg" p={5} w="450px">
           <form onSubmit={handleSubmit}>
-            {/* Display room and tenant as read-only */}
             <FormControl id="room" mb={4}>
               <FormLabel>Room</FormLabel>
-              <Input type="text" name="room" value={formData.room} readOnly />
+              <Input type="text" name="room" value={roomNumber} readOnly />
             </FormControl>
 
             <FormControl id="tenant" mb={4}>
               <FormLabel>Tenant</FormLabel>
-              <Input type="text" name="tenant" value={formData.tenant} readOnly />
+              <Input type="text" name="tenant" value={tenantName} readOnly />
             </FormControl>
 
-            {/* Allow editing check-in and check-out dates */}
             <FormControl id="check_in_date" mb={4}>
               <FormLabel>Check-in Date</FormLabel>
               <Input type="date" name="check_in_date" value={formData.check_in_date} onChange={handleChange} />
@@ -178,7 +149,6 @@ const Booking = () => {
         </Box>
       </GridItem>
       
-      {/* Display image and promotional text */}
       <GridItem>
         <Box borderWidth={1} borderRadius="lg" p={5} textAlign="center">
           <Box 
