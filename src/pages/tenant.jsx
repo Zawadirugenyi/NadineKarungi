@@ -1,75 +1,13 @@
-    import React, { useState } from 'react';
-    import {
+import React, { useState } from 'react';
+import {
     Box, Button, FormControl, FormLabel, Input, Grid, GridItem, Heading, Alert,
     AlertIcon, AlertTitle, AlertDescription, CloseButton, useToast
-    } from '@chakra-ui/react';
-    import { useNavigate } from 'react-router-dom';
-    import axios from 'axios';
+} from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Tenant = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    major: '',
-    admin_number: '',
-    gender: '',
-    nationality: '',
-    passport: '',
-    phone_number: '',
-    email: '',
-    parent: '',
-    sponsor_contact: '', // Added sponsor contact field
-    passport_photo: null,
-    position: ''
-  });
-  const [message, setMessage] = useState({ type: '', text: '' });
-  const toast = useToast();
-  const navigate = useNavigate(); // Initialize navigate
-
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    if (name === 'passport_photo') {
-      setFormData({
-        ...formData,
-        passport_photo: files[0]
-      });
-    } else {
-      setFormData({
-        ...formData,
-        [name]: value
-      });
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('Token not found.');
-      }
-
-      const formDataToSend = new FormData();
-      for (const key in formData) {
-        formDataToSend.append(key, formData[key]);
-      }
-
-      const response = await axios.post('http://127.0.0.1:8000/api/tenants/', formDataToSend, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Token ${token}`
-        }
-      });
-
-      setMessage({ type: 'success', text: 'Registration successful' });
-      toast({
-        title: 'Registration successful.',
-        description: 'You have successfully registered.',
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-      });
-      setFormData({
+    const [formData, setFormData] = useState({
         name: '',
         major: '',
         admin_number: '',
@@ -79,28 +17,91 @@ const Tenant = () => {
         phone_number: '',
         email: '',
         parent: '',
-        sponsor_contact: '', // Clear sponsor contact field
+        sponsor_contact: '', // Added sponsor contact field
         passport_photo: null,
         position: ''
-      });
+    });
+    const [message, setMessage] = useState({ type: '', text: '' });
+    const [tenantName, setTenantName] = useState(''); // Added tenantName state
+    const toast = useToast();
+    const navigate = useNavigate(); // Initialize navigate
 
-      // Redirect to booking page
-      navigate('/booking');
-    } catch (error) {
-      const errorMsg = error.response?.data || 'Registration failed';
-      const errorText = typeof errorMsg === 'string' ? errorMsg : JSON.stringify(errorMsg);
-      setMessage({ type: 'error', text: errorText });
-      console.error('Error during registration:', error);
-      toast({
-        title: 'Registration failed.',
-        description: errorText,
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
-    }
-  };
+    const handleChange = (e) => {
+        const { name, value, files } = e.target;
+        if (name === 'passport_photo') {
+            setFormData({
+                ...formData,
+                passport_photo: files[0]
+            });
+        } else {
+            setFormData({
+                ...formData,
+                [name]: value
+            });
+        }
+    };
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('Token not found.');
+            }
+
+            const formDataToSend = new FormData();
+            for (const key in formData) {
+                formDataToSend.append(key, formData[key]);
+            }
+
+            const response = await axios.post('http://127.0.0.1:8000/api/tenants/', formDataToSend, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Token ${token}`
+                }
+            });
+
+            setTenantName(formData.name); // Set tenant name
+            setMessage({ type: 'success', text: 'Registration successful' });
+            toast({
+                title: 'Registration successful.',
+                description: 'You have successfully registered.',
+                status: 'success',
+                duration: 5000,
+                isClosable: true,
+            });
+            setFormData({
+                name: '',
+                major: '',
+                admin_number: '',
+                gender: '',
+                nationality: '',
+                passport: '',
+                phone_number: '',
+                email: '',
+                parent: '',
+                sponsor_contact: '', // Clear sponsor contact field
+                passport_photo: null,
+                position: ''
+            });
+
+            // Redirect to booking page with tenantName
+            navigate('/booking', { state: { tenantName } });
+        } catch (error) {
+            const errorMsg = error.response?.data || 'Registration failed';
+            const errorText = typeof errorMsg === 'string' ? errorMsg : JSON.stringify(errorMsg);
+            setMessage({ type: 'error', text: errorText });
+            console.error('Error during registration:', error);
+            toast({
+                title: 'Registration failed.',
+                description: errorText,
+                status: 'error',
+                duration: 5000,
+                isClosable: true,
+            });
+        }
+    };
 
     return (
         <Box w="1200px" mx="auto" mt={10} p={5} borderWidth={1} borderRadius="lg">
@@ -192,10 +193,10 @@ const Tenant = () => {
                         </FormControl>
                     </GridItem>
 
-                       <GridItem colSpan={1}>
-                        <FormControl id="phone_number" isRequired>
+                    <GridItem colSpan={1}>
+                        <FormControl id="sponsor_contact" isRequired>
                             <FormLabel>Sponsor Contact</FormLabel>
-                            <Input type="text" name="phone_number" value={formData.phone_number} onChange={handleChange} />
+                            <Input type="text" name="sponsor_contact" value={formData.sponsor_contact} onChange={handleChange} />
                         </FormControl>
                     </GridItem>
 

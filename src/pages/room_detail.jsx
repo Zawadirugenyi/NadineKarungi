@@ -54,10 +54,10 @@ const RoomDescription = () => {
     };
 
     const handleBookNowClick = () => {
-        navigate('/login/'); // Updated to use navigate for redirection
-    };
+        // Navigate to login with roomNumber as a query parameter
+           navigate('/login', { state: { roomNumber } });
 
-    
+    };
 
     if (loading) {
         return (

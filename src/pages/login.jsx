@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Box, FormControl, FormLabel, Input, Button, Heading, Text, VStack, Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton } from '@chakra-ui/react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import backgroundImage from '../Components/Assets/Room2.webp'; 
+import backgroundImage from '../Components/Assets/Room2.webp';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState({ type: '', text: '' });
   const [roomNumber, setRoomNumber] = useState('');
+  const [tenantName, setTenantName] = useState(''); // State for tenant name
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -48,7 +49,7 @@ function Login() {
       setEmail('');
       setPassword('');
 
-      // Check if tenant exists and redirect accordingly
+      // Fetch tenant data
       const tenantResponse = await fetch('http://127.0.0.1:8000/api/tenants/', {
         method: 'GET',
         headers: {
@@ -62,13 +63,21 @@ function Login() {
       }
 
       const tenantData = await tenantResponse.json();
-      const tenantExists = tenantData.some(tenant => tenant.email === email);
+      const tenants = tenantData.filter(tenant => tenant.email === email);
 
-      if (tenantExists) {
-        // Redirect to booking page if tenant exists
-        navigate('/booking', { state: { roomNumber } });
+      if (tenants.length === 1) {
+        // Extract tenant name
+        const tenant = tenants[0];
+        const tenantName = tenant.name; // Adjust according to your API response
+
+        // Store tenant ID and name in localStorage
+        localStorage.setItem('tenantId', tenant.id);
+        setTenantName(tenantName); // Set tenant name
+
+        // Redirect to booking page with room number and tenant name
+          navigate('/booking', { state: { roomNumber, tenantName } });
       } else {
-        // Redirect to tenant creation page if tenant does not exist
+        // Redirect to tenant creation page if no tenants or multiple tenants exist
         navigate('/tenant', { state: { roomNumber } });
       }
 
@@ -84,7 +93,7 @@ function Login() {
   };
 
   return (
-    <Box display="flex" justifyContent="center" marginTop="50px"> 
+    <Box display="flex" justifyContent="center" marginTop="50px">
       <Box
         w="800px"
         p={6}
