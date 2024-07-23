@@ -19,28 +19,32 @@ const Booking = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch the tenant and room data from the backend API
     const fetchData = async () => {
       try {
         const token = localStorage.getItem('token');
-        if (!token) {
-          throw new Error('Token not found.');
+        const tenantId = localStorage.getItem('tenantId');
+        const roomNumberFromURL = new URLSearchParams(window.location.search).get('roomNumber'); // Get room number from query params
+
+        console.log('Token:', token); // Debug
+        console.log('Tenant ID:', tenantId); // Debug
+        console.log('Room Number from URL:', roomNumberFromURL); // Debug
+
+        if (!token || !tenantId || !roomNumberFromURL) {
+          console.log('Redirecting to login due to missing token, tenant ID, or room number.'); // Debug
+    
+          return;
         }
 
-        const tenantResponse = await axios.get('http://127.0.0.1:8000/api/tenants/', {
-          headers: {
-            'Authorization': `Token ${token}`
-          }
+        const tenantResponse = await axios.get(`http://127.0.0.1:8000/api/tenants/${tenantId}/`, {
+          headers: { 'Authorization': `Token ${token}` }
         });
-        const roomResponse = await axios.get('http://127.0.0.1:8000/api/rooms/', {
-          headers: {
-            'Authorization': `Token ${token}`
-          }
+        
+        const roomResponse = await axios.get(`http://127.0.0.1:8000/api/rooms/${roomNumberFromURL}/`, {
+          headers: { 'Authorization': `Token ${token}` }
         });
 
-        // Extract the specific fields needed
-        const tenant = tenantResponse.data[0];  // Assuming you want the first tenant
-        const room = roomResponse.data[0];  // Assuming you want the first room
+        const tenant = tenantResponse.data;
+        const room = roomResponse.data;
 
         setTenantName(tenant.name);
         setRoomNumber(room.number);
@@ -51,6 +55,14 @@ const Booking = () => {
         });
       } catch (error) {
         console.error('Error fetching data:', error);
+        setError('Error fetching data');
+        toast({
+          title: 'Error fetching data.',
+          description: 'There was an issue fetching data for booking.',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
       }
     };
 
@@ -74,7 +86,7 @@ const Booking = () => {
         throw new Error('Token not found.');
       }
 
-      const response = await axios.post('http://127.0.0.1:8000/api/bookings/', formData, {
+      await axios.post('http://127.0.0.1:8000/api/bookings/', formData, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Token ${token}`
@@ -98,8 +110,7 @@ const Booking = () => {
         check_out_date: ''
       });
 
-      // Navigate to the payment page
-      navigate('/payment');
+      navigate('/payment'); // Navigate to the payment page
     } catch (error) {
       setError('Booking creation failed');
       setSuccess('');

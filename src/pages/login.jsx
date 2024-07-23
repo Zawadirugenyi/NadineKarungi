@@ -1,13 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, FormControl, FormLabel, Input, Button, Heading, Text, VStack, Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton } from '@chakra-ui/react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import backgroundImage from '../Components/Assets/Room2.webp'; 
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [roomNumber, setRoomNumber] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Set room number from state if available
+  useEffect(() => {
+    if (location.state && location.state.roomNumber) {
+      setRoomNumber(location.state.roomNumber);
+    }
+  }, [location.state]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -57,10 +66,10 @@ function Login() {
 
       if (tenantExists) {
         // Redirect to booking page if tenant exists
-        navigate('/booking');
+        navigate('/booking', { state: { roomNumber } });
       } else {
         // Redirect to tenant creation page if tenant does not exist
-        navigate('/tenant');
+        navigate('/tenant', { state: { roomNumber } });
       }
 
       // Hide message after 5 seconds
