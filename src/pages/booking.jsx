@@ -5,6 +5,7 @@ import {
 } from '@chakra-ui/react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
+import backgroundImage from '../Components/Assets/Room2.webp'; 
 
 const Booking = () => {
   const [checkInDate, setCheckInDate] = useState('');
@@ -156,39 +157,76 @@ const Booking = () => {
   };
 
   return (
-    <Box p={8} maxW="md" mx="auto">
-      <Heading as="h1" size="xl" textAlign="center" mb={6}>
-        Booking
-      </Heading>
-      {message.text && (
-        <Alert status={message.type} mb={4}>
-          <AlertIcon />
-          <AlertTitle mr={2}>{message.type === 'success' ? 'Success' : 'Error'}</AlertTitle>
-          <AlertDescription>{message.text}</AlertDescription>
-          <CloseButton position="absolute" right="8px" top="8px" onClick={() => setMessage({ type: '', text: '' })} />
-        </Alert>
-      )}
-      <form onSubmit={handleSubmit}>
-        <VStack spacing={4}>
-          <FormControl id="roomNumber">
-            <FormLabel>Room Number</FormLabel>
-            <Input value={roomNumber} isReadOnly />
-          </FormControl>
-          <FormControl id="tenantName">
-            <FormLabel>Tenant Name</FormLabel>
-            <Input value={tenantName} isReadOnly />
-          </FormControl>
-          <FormControl id="checkInDate">
-            <FormLabel>Check-In Date</FormLabel>
-            <Input type="date" value={checkInDate} onChange={(e) => setCheckInDate(e.target.value)} />
-          </FormControl>
-          <FormControl id="checkOutDate">
-            <FormLabel>Check-Out Date</FormLabel>
-            <Input type="date" value={checkOutDate} onChange={(e) => setCheckOutDate(e.target.value)} />
-          </FormControl>
-          <Button colorScheme="teal" type="submit">Book Now</Button>
-        </VStack>
-      </form>
+    <Box display="flex" justifyContent="center" mt={10}>
+      <Box w="600px" p={6} bg="white" boxShadow="lg" rounded="md"  borderWidth="1px" borderRadius="lg" overflow="hidden" >
+        <Heading mb={6}>Book a Room</Heading>
+        {message.text && (
+          <Alert status={message.type} mb={4}>
+            <AlertIcon />
+            <AlertTitle mr={2}>{message.type === 'success' ? 'Success' : 'Error'}!</AlertTitle>
+            <AlertDescription>{message.text}</AlertDescription>
+            <CloseButton position="absolute" right="8px" top="8px" onClick={() => setMessage({ type: '', text: '' })} />
+          </Alert>
+        )}
+        <form onSubmit={handleSubmit}>
+          <VStack spacing={4}>
+            <FormControl id="room" isRequired>
+              <FormLabel>Room Number</FormLabel>
+              <Input type="text" value={roomNumber} readOnly />
+            </FormControl>
+            <FormControl id="tenant" isRequired>
+              <FormLabel>Tenant Name</FormLabel>
+              <Input type="text" value={tenantName} readOnly />
+            </FormControl>
+            <FormControl id="check_in_date" isRequired>
+              <FormLabel>Check-in Date</FormLabel>
+              <Input
+                type="date"
+                value={checkInDate}
+                onChange={(e) => setCheckInDate(e.target.value)}
+              />
+            </FormControl>
+            <FormControl id="check_out_date" isRequired>
+              <FormLabel>Check-out Date</FormLabel>
+              <Input
+                type="date"
+                value={checkOutDate}
+                onChange={(e) => setCheckOutDate(e.target.value)}
+              />
+            </FormControl>
+            <Button
+              type="submit"
+              bg="#0097b2"
+              color="white"
+              _hover={{ bg: "#073d47" }}
+              width="full"
+            >
+              Create Booking
+            </Button>
+          </VStack>
+        </form>
+      </Box>
+      <Box>
+        
+      </Box>
+      <Box borderWidth="1px" borderRadius="lg" overflow="hidden"
+        w="700px"
+        p={6}
+        height="500px"
+        bg="gray.100"
+        boxShadow="lg"
+        bgSize="cover"
+        bgPosition="center"
+        style={{ backgroundImage: `url(${backgroundImage})` }}
+        ml={6}
+      >
+        <Box textAlign="center" color="white" fontWeight="bold" mt={405}>
+          Book Your Stay
+        </Box>
+        <Box textAlign="center" color="white">
+          Find the perfect room and enjoy your stay at our SmartHostelPro.
+        </Box>
+      </Box>
     </Box>
   );
 };
