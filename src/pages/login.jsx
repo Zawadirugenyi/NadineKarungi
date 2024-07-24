@@ -75,7 +75,7 @@ function Login() {
         setTenantName(tenantName); // Set tenant name
 
         // Redirect to booking page with room number and tenant name
-          navigate('/booking', { state: { roomNumber, tenantName } });
+      navigate('/booking', { state: { roomNumber, tenantName } });
       } else {
         // Redirect to tenant creation page if no tenants or multiple tenants exist
         navigate('/tenant', { state: { roomNumber } });

@@ -1,171 +1,195 @@
 import React, { useState, useEffect } from 'react';
-import { Box, FormControl, FormLabel, Input, Button, Heading, VStack, Alert, Text, AlertIcon, AlertTitle, AlertDescription, CloseButton, Flex, Image, useToast } from '@chakra-ui/react';
+import {
+  Box, FormControl, FormLabel, Input, Button, Heading, Alert, AlertIcon,
+  AlertTitle, AlertDescription, CloseButton, VStack
+} from '@chakra-ui/react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios'; // Import axios for HTTP requests
-import backgroundImage from '../Components/Assets/Room2.webp'; // Replace with your image path
+import axios from 'axios';
 
 const Booking = () => {
-    const [roomNumber, setRoomNumber] = useState('');
-    const [tenantName, setTenantName] = useState('');
-    const [checkInDate, setCheckInDate] = useState('');
-    const [checkOutDate, setCheckOutDate] = useState('');
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
-    const navigate = useNavigate();
-    const location = useLocation();
-    const toast = useToast(); // Import useToast to display toast notifications
+  const [checkInDate, setCheckInDate] = useState('');
+  const [checkOutDate, setCheckOutDate] = useState('');
+  const [message, setMessage] = useState({ type: '', text: '' });
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [tenantName, setTenantName] = useState('');
+  const [roomNumber, setRoomNumber] = useState('');
+  const [tenantId, setTenantId] = useState(null);
+  const [roomId, setRoomId] = useState(null);
 
-    useEffect(() => {
-        const query = new URLSearchParams(location.search);
-        const roomNumberFromQuery = query.get('roomNumber');
-        const tenantNameFromState = location.state?.tenantName;
+  useEffect(() => {
+    if (location.state) {
+      const { roomNumber, tenantName } = location.state;
+      if (roomNumber) setRoomNumber(roomNumber);
+      if (tenantName) setTenantName(tenantName);
+    }
+  }, [location.state]);
 
-        if (roomNumberFromQuery) {
-            setRoomNumber(roomNumberFromQuery);
-        }
-        if (tenantNameFromState) {
-            setTenantName(tenantNameFromState);
-        }
-    }, [location.search, location.state]);
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        const formData = {
-            room: roomNumber,
-            tenant: tenantName,
-            check_in_date: checkInDate,
-            check_out_date: checkOutDate,
-        };
-
+  useEffect(() => {
+    const fetchTenantId = async () => {
+      if (tenantName) {
         try {
-            const token = localStorage.getItem('token');
-            if (!token) throw new Error('Token not found.');
+          const token = localStorage.getItem('authToken');
+          if (!token) {
+            setMessage({ type: 'error', text: 'No authentication token found. Please log in.' });
+            return;
+          }
 
-            await axios.post('http://127.0.0.1:8000/api/bookings/', formData, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Token ${token}`,
-                },
-            });
+          const response = await axios.get(`http://127.0.0.1:8000/api/tenants/?name=${tenantName}`, {
+            headers: {
+              Authorization: `Token ${token}`,
+            },
+          });
 
-            setSuccess('Booking created successfully');
-            toast({
-                title: 'Booking Created',
-                description: 'Your booking was successful.',
-                status: 'success',
-                duration: 5000,
-                isClosable: true,
-            });
+          console.log('Tenant Fetch Response:', response.data);
 
-            navigate('/payment'); // Redirect to payment page after successful booking
+          if (response.data && response.data.length > 0) {
+            const tenant = response.data.find(t => t.name === tenantName);
+            if (tenant) {
+              setTenantId(tenant.id);
+            } else {
+              setMessage({ type: 'error', text: 'Tenant not found.' });
+            }
+          } else {
+            setMessage({ type: 'error', text: 'Tenant not found.' });
+          }
         } catch (error) {
-            setError('Failed to create booking.');
-            toast({
-                title: 'Error',
-                description: error.message,
-                status: 'error',
-                duration: 5000,
-                isClosable: true,
-            });
+          console.error('Error fetching tenant ID:', error);
+          setMessage({ type: 'error', text: 'Error fetching tenant ID.' });
         }
+      }
     };
 
-    return (
-        <Flex direction={{ base: 'column', md: 'row' }} p={4} maxWidth="1200px" mx="auto" gap={6}>
-            <Box
-                w={{ base: 'full', md: '50%' }}
-                p={6}
-                bg="white"
-                boxShadow="xl"
-                rounded="lg"
-                borderWidth={1}
-                borderColor="gray.200"
-            >
-                <Heading mb={6} textAlign="center" fontSize="2xl" color="teal.600">Booking</Heading>
-                {error && (
-                    <Alert status="error" mb={4} borderRadius="md" variant="subtle">
-                        <AlertIcon />
-                        <AlertTitle mr={2}>Error!</AlertTitle>
-                        <AlertDescription>{error}</AlertDescription>
-                        <CloseButton position="absolute" right="8px" top="8px" onClick={() => setError('')} />
-                    </Alert>
-                )}
-                {success && (
-                    <Alert status="success" mb={4} borderRadius="md" variant="subtle">
-                        <AlertIcon />
-                        <AlertTitle mr={2}>Success!</AlertTitle>
-                        <AlertDescription>{success}</AlertDescription>
-                        <CloseButton position="absolute" right="8px" top="8px" onClick={() => setSuccess('')} />
-                    </Alert>
-                )}
-                <form onSubmit={handleSubmit}>
-                    <VStack spacing={4}>
-                        <FormControl id="roomNumber" isRequired>
-                            <FormLabel>Room Number</FormLabel>
-                            <Input type="text" value={roomNumber} isReadOnly bg="gray.50" />
-                        </FormControl>
-                        <FormControl id="tenantName" isRequired>
-                            <FormLabel>Tenant Name</FormLabel>
-                            <Input
-                                type="text"
-                                value={tenantName}
-                                onChange={(e) => setTenantName(e.target.value)}
-                                bg="gray.50"
-                            />
-                        </FormControl>
-                        <FormControl id="checkInDate" isRequired>
-                            <FormLabel>Check-In Date</FormLabel>
-                            <Input
-                                type="date"
-                                value={checkInDate}
-                                onChange={(e) => setCheckInDate(e.target.value)}
-                                bg="gray.50"
-                            />
-                        </FormControl>
-                        <FormControl id="checkOutDate" isRequired>
-                            <FormLabel>Check-Out Date</FormLabel>
-                            <Input
-                                type="date"
-                                value={checkOutDate}
-                                onChange={(e) => setCheckOutDate(e.target.value)}
-                                bg="gray.50"
-                            />
-                        </FormControl>
-                        <Button
-                            marginTop="12px"
-                            type="submit"
-                            bg="teal.500"
-                            color="white"
-                            _hover={{ bg: "teal.600" }}
-                            width="full"
-                        >
-                            Book Now
-                        </Button>
-                    </VStack>
-                </form>
-            </Box>
-            <Box
-                w={{ base: 'full', md: '50%' }}
-                p={6}
-                bg="gray.100"
-                boxShadow="lg"
-                rounded="md"
-            >
-                <Image
-                    src={backgroundImage}
-                    alt="Booking"
-                    borderRadius="md"
-                    boxSize="100%"
-                    objectFit="cover"
-                    h="450px"
-                />
-                <Text mt={2} color="gray.600">
-                    Find the perfect room and enjoy your stay at our SmartHostelPro.
-                </Text>
-            </Box>
-        </Flex>
-    );
+    const fetchRoomId = async () => {
+      if (roomNumber) {
+        try {
+          const token = localStorage.getItem('authToken');
+          if (!token) {
+            setMessage({ type: 'error', text: 'No authentication token found. Please log in.' });
+            return;
+          }
+
+          const response = await axios.get(`http://127.0.0.1:8000/api/rooms/?number=${roomNumber}`, {
+            headers: {
+              Authorization: `Token ${token}`,
+            },
+          });
+
+          console.log('Room Fetch Response:', response.data);
+
+          if (response.data && response.data.length > 0) {
+            const room = response.data.find(r => r.number === roomNumber);
+            if (room) {
+              setRoomId(room.id);
+            } else {
+              setMessage({ type: 'error', text: 'Room not found.' });
+            }
+          } else {
+            setMessage({ type: 'error', text: 'Room not found.' });
+          }
+        } catch (error) {
+          console.error('Error fetching room ID:', error);
+          setMessage({ type: 'error', text: 'Error fetching room ID.' });
+        }
+      }
+    };
+
+    fetchTenantId();
+    fetchRoomId();
+  }, [tenantName, roomNumber]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!roomId || !tenantId) {
+      setMessage({ type: 'error', text: 'Room or tenant not selected correctly.' });
+      return;
+    }
+
+    if (!checkInDate || !checkOutDate) {
+      setMessage({ type: 'error', text: 'Both check-in and check-out dates are required.' });
+      return;
+    }
+
+    if (new Date(checkInDate) >= new Date(checkOutDate)) {
+      setMessage({ type: 'error', text: 'Check-out date must be after check-in date.' });
+      return;
+    }
+
+    console.log('Submitting Booking:', { roomId, tenantId, checkInDate, checkOutDate });
+
+    try {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        setMessage({ type: 'error', text: 'No authentication token found. Please log in.' });
+        return;
+      }
+
+      const bookingResponse = await axios.post(
+        'http://127.0.0.1:8000/api/bookings/',
+        {
+          room: roomId,
+          tenant: tenantId,
+          check_in_date: checkInDate,
+          check_out_date: checkOutDate,
+        },
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        }
+      );
+
+      console.log('Booking Response:', bookingResponse.data);
+
+      if (bookingResponse.status === 201) {
+        setMessage({ type: 'success', text: 'Booking successful!' });
+        navigate('/payment');
+      } else {
+        setMessage({ type: 'error', text: 'Booking failed. Please try again.' });
+      }
+    } catch (error) {
+      console.error('Error booking the room:', error.response ? error.response.data : error.message);
+      setMessage({ type: 'error', text: `Booking failed. ${error.response?.data?.detail || error.message}` });
+    }
+  };
+
+  return (
+    <Box p={8} maxW="md" mx="auto">
+      <Heading as="h1" size="xl" textAlign="center" mb={6}>
+        Booking
+      </Heading>
+      {message.text && (
+        <Alert status={message.type} mb={4}>
+          <AlertIcon />
+          <AlertTitle mr={2}>{message.type === 'success' ? 'Success' : 'Error'}</AlertTitle>
+          <AlertDescription>{message.text}</AlertDescription>
+          <CloseButton position="absolute" right="8px" top="8px" onClick={() => setMessage({ type: '', text: '' })} />
+        </Alert>
+      )}
+      <form onSubmit={handleSubmit}>
+        <VStack spacing={4}>
+          <FormControl id="roomNumber">
+            <FormLabel>Room Number</FormLabel>
+            <Input value={roomNumber} isReadOnly />
+          </FormControl>
+          <FormControl id="tenantName">
+            <FormLabel>Tenant Name</FormLabel>
+            <Input value={tenantName} isReadOnly />
+          </FormControl>
+          <FormControl id="checkInDate">
+            <FormLabel>Check-In Date</FormLabel>
+            <Input type="date" value={checkInDate} onChange={(e) => setCheckInDate(e.target.value)} />
+          </FormControl>
+          <FormControl id="checkOutDate">
+            <FormLabel>Check-Out Date</FormLabel>
+            <Input type="date" value={checkOutDate} onChange={(e) => setCheckOutDate(e.target.value)} />
+          </FormControl>
+          <Button colorScheme="teal" type="submit">Book Now</Button>
+        </VStack>
+      </form>
+    </Box>
+  );
 };
 
 export default Booking;
