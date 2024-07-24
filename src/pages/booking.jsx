@@ -17,6 +17,7 @@ const Booking = () => {
   const [tenantId, setTenantId] = useState(null);
   const [roomId, setRoomId] = useState(null);
 
+  // Fetch tenant ID and room ID based on provided tenant name and room number
   useEffect(() => {
     if (location.state) {
       const { roomNumber, tenantName } = location.state;
