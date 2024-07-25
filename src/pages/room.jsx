@@ -29,7 +29,17 @@ function RoomPage() {
         }
 
         const data = await response.json();
-        setRooms(data);
+        console.log('API Response:', data); // Log API response for debugging
+
+        // Check if data is an array and filter out booked rooms
+        if (Array.isArray(data)) {
+          const availableRooms = data.filter(room => !room.is_booked);
+          setRooms(availableRooms);
+        } else {
+          console.error('Unexpected data structure:', data);
+          setError('Unexpected data structure');
+        }
+
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching rooms:', error);
