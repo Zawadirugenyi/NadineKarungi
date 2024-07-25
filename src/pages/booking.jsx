@@ -220,12 +220,7 @@ const Booking = () => {
         style={{ backgroundImage: `url(${backgroundImage})` }}
         ml={6}
       >
-        <Box textAlign="center" color="white" fontWeight="bold" mt={405}>
-          Book Your Stay
-        </Box>
-        <Box textAlign="center" color="white">
-          Find the perfect room and enjoy your stay at our SmartHostelPro.
-        </Box>
+     
       </Box>
     </Box>
   );

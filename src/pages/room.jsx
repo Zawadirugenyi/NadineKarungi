@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Heading, Grid } from '@chakra-ui/react';
 import { useParams } from 'react-router-dom';
-import RoomCard from '../Components/room_card'; // Adjust import as per your actual file structure
+import RoomCard from '../Components/room_card'; // Adjust the path as necessary
 
 function RoomPage() {
   const { hostelName } = useParams();
@@ -29,8 +29,6 @@ function RoomPage() {
         }
 
         const data = await response.json();
-        console.log('Rooms fetched:', data); // Log fetched data
-
         setRooms(data);
         setIsLoading(false);
       } catch (error) {
@@ -42,10 +40,6 @@ function RoomPage() {
 
     fetchRooms();
   }, [hostelName]);
-
-  console.log('Rooms:', rooms);
-  console.log('Error:', error);
-  console.log('Is Loading:', isLoading);
 
   if (isLoading) {
     return <Box p={4}>Loading...</Box>;
