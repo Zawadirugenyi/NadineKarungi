@@ -12,23 +12,29 @@ import {
   CardHeader,
   CardBody,
   CardFooter,
-  Image, // Import Image component
+  Image,
+  useColorModeValue,
+  useColorMode,
 } from '@chakra-ui/react';
-import { FaBell, FaUserCircle, FaComments } from 'react-icons/fa';
+import { FaBell, FaUserCircle, FaMoon, FaSun } from 'react-icons/fa';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import logo from '../Components/Assets/logo.png'; // Adjust the path to your logo
+import logo from '../Components/Assets/logo.png';
+import Chatbot from './chatbot';
+import Notifications from './notification'; // Import Notifications component
 
 const Dashboard = () => {
   const [tenant, setTenant] = useState(null);
   const [room, setRoom] = useState(null);
   const [showCards, setShowCards] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
   const toast = useToast();
+  const { colorMode, toggleColorMode } = useColorMode();
 
   useEffect(() => {
     const fetchTenantAndRoomData = async () => {
       try {
-        const token = localStorage.getItem('authToken'); // Adjust based on where you store the token
+        const token = localStorage.getItem('authToken');
         const headers = {
           'Authorization': `Token ${token}`,
         };
@@ -56,69 +62,87 @@ const Dashboard = () => {
     fetchTenantAndRoomData();
   }, [toast]);
 
+  const sidebarBgColor = useColorModeValue('#0097b2', '#005b7f');
+  const buttonBgColor = useColorModeValue('white', '#004d6e');
+  const buttonHoverColor = useColorModeValue('black', '#003b57');
+  const iconColor = '#0097b2';
+
   if (!tenant || !room) {
     return <Text>Loading...</Text>;
   }
 
   return (
     <Flex h="100vh">
-      {/* Sidebar */}
       <VStack
         w="20%"
         h="100vh"
-        bg="gray.800"
+        bg={sidebarBgColor}
         color="white"
         spacing={4}
         align="stretch"
         p={4}
       >
-        <Link to="/">
-          <Button colorScheme="teal" variant="solid" w="full">
-            Home
-          </Button>
-        </Link>
-        <Link to="/requisition">
-          <Button colorScheme="teal" variant="solid" w="full">
-            Requisition
-          </Button>
-        </Link>
+        <Image src={logo} alt="Logo" boxSize="100px" mb={4} />
         <Button
-          colorScheme="teal"
-          variant="solid"
+          colorScheme="white" variant="outline"
+          _hover={{ bg: buttonHoverColor, color: "white" }}
           w="full"
           onClick={() => setShowCards(!showCards)}
         >
           {showCards ? 'Hide Dashboard' : 'Show Dashboard'}
         </Button>
+       
+        <Link to="/">
+          <Button
+            colorScheme="white" variant="outline"
+            _hover={{ bg: buttonHoverColor, color: "white" }}
+            w="full"
+          >
+            Home
+          </Button>
+        </Link>
+        <Link to="/requisition">
+          <Button
+            colorScheme="white" variant="outline"
+            _hover={{ bg: buttonHoverColor, color: "white" }}
+            w="full"
+          >
+            Requisition
+          </Button>
+        </Link>
       </VStack>
 
-      {/* Main Content */}
       <Flex flex={1} direction="column" p={4} position="relative">
-        {/* Logo */}
         <HStack mb={4} align="center" justify="space-between">
-          <Image src={logo} alt="Logo" boxSize="50px" />
-          <Text fontSize="2xl" fontWeight="bold">Dashboard</Text>
-          <Box></Box> {/* Empty box to center text */}
+          <Box></Box>
+          <HStack spacing={4}>
+            <IconButton
+              icon={<FaBell />}
+              aria-label="Notifications"
+              variant="ghost"
+              color={iconColor}
+              onClick={() => setShowNotifications(!showNotifications)}
+            />
+            <IconButton
+              icon={<FaUserCircle />}
+              aria-label="Profile"
+              variant="ghost"
+              color={iconColor}
+            />
+            <IconButton
+              icon={colorMode === 'light' ? <FaMoon /> : <FaSun />}
+              aria-label="Toggle Dark Mode"
+              onClick={toggleColorMode}
+              variant="ghost"
+              color={iconColor}
+            />
+          </HStack>
         </HStack>
 
-        {/* Notification and Profile Icons */}
-        <HStack justifyContent="flex-end" mb={4}>
-          <IconButton
-            icon={<FaBell />}
-            variant="ghost"
-            aria-label="Notifications"
-          />
-          <IconButton
-            icon={<FaUserCircle />}
-            variant="ghost"
-            aria-label="Profile"
-          />
-        </HStack>
+        {showNotifications && <Notifications />}
 
-        {/* Conditionally Render Cards */}
         {showCards && (
           <HStack spacing={4}>
-            {/* Tenant Card */}
             <Card width="100%" maxW="sm" borderWidth="1px" borderRadius="md" boxShadow="md">
               <CardHeader>
                 <Text fontSize="lg" fontWeight="bold">Tenant Information</Text>
@@ -126,7 +150,6 @@ const Dashboard = () => {
               <CardBody>
                 <Text fontSize="md">Name: {tenant.name}</Text>
                 <Text fontSize="md">Email: {tenant.email}</Text>
-                {/* Add other tenant details here */}
               </CardBody>
               <CardFooter>
                 <Button colorScheme="teal" variant="outline">
@@ -135,7 +158,6 @@ const Dashboard = () => {
               </CardFooter>
             </Card>
 
-            {/* Room Card */}
             <Card width="100%" maxW="sm" borderWidth="1px" borderRadius="md" boxShadow="md">
               <CardHeader>
                 <Text fontSize="lg" fontWeight="bold">Room Information</Text>
@@ -143,7 +165,6 @@ const Dashboard = () => {
               <CardBody>
                 <Text fontSize="md">Room Number: {room.number}</Text>
                 <Text fontSize="md">Room Type: {room.type}</Text>
-                {/* Add other room details here */}
               </CardBody>
               <CardFooter>
                 <Button colorScheme="teal" variant="outline">
@@ -154,15 +175,9 @@ const Dashboard = () => {
           </HStack>
         )}
 
-        {/* Chatbot Icon at Bottom Right */}
-        <IconButton
-          icon={<FaComments />}
-          variant="solid"
-          aria-label="Chatbot"
-          position="absolute"
-          bottom="4"
-          right="4"
-        />
+        <Box position="absolute" bottom="4" right="4">
+          <Chatbot />
+        </Box>
       </Flex>
     </Flex>
   );
