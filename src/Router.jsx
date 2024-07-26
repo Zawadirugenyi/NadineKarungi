@@ -12,6 +12,7 @@ import Booking from './pages/booking';
 import Payment from './pages/payment';
 import AboutUs from './pages/about_us'
 import ContactUs from './pages/contact_us';
+import Dashboard from './pages/dashboard'
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path="/payment" element={<Payment />} /> 
         <Route path="/about_us" element={<AboutUs />} />
         <Route path="/contact_us" element={<ContactUs />} />
+        <Route path="/dasboard" element={<Dashboard  />} /> 
 
 
       </Routes>

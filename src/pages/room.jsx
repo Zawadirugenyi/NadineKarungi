@@ -16,13 +16,15 @@ function RoomPage() {
           return; // Exit early if hostelName is not defined
         }
 
-        const token = '520dc5d1657a7b42d3b9ffb3592f9ba88692c1fc'; // Replace with your actual token
+        const token = localStorage.getItem('authToken'); // Replace with your actual token retrieval
         const url = `http://127.0.0.1:8000/api/rooms/?hostel__name=${encodeURIComponent(hostelName)}`;
         const response = await fetch(url, {
           headers: {
             Authorization: `Token ${token}`,
           },
         });
+
+        
 
         if (!response.ok) {
           throw new Error('Failed to fetch data');
@@ -73,6 +75,7 @@ function RoomPage() {
             roomType={room.room_type}
             image={`http://127.0.0.1:8000${room.image}`} // Adjust URL construction
             hostelName={hostelName} // Adjust prop names as per your RoomCard component
+            isBooked={room.is_booked} // Pass the booking status to RoomCard
           />
         ))}
       </Grid>

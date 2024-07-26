@@ -6,7 +6,7 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from 'react-responsive-carousel';
 
 const RoomDescription = () => {
-    const { roomNumber } = useParams();
+    const { roomNumber, hostelId } = useParams(); // Extract roomNumber and hostelId from params
     const [loading, setLoading] = useState(true);
     const [roomDescription, setRoomDescription] = useState(null);
     const [error, setError] = useState(null);
@@ -17,8 +17,11 @@ const RoomDescription = () => {
         const fetchRoomDescription = async () => {
             try {
                 const token = '520dc5d1657a7b42d3b9ffb3592f9ba88692c1fc'; 
-                const encodedRoomNumber = encodeURIComponent(roomNumber);
-                const response = await axios.get(`http://127.0.0.1:8000/api/room-descriptions/?room__number=${encodedRoomNumber}`, {
+                const response = await axios.get(`http://127.0.0.1:8000/api/room-descriptions/`, {
+                    params: {
+                        room__number: roomNumber,
+                        hostel__id: hostelId
+                    },
                     headers: {
                         Authorization: `Token ${token}`,
                     },
@@ -26,8 +29,8 @@ const RoomDescription = () => {
 
                 console.log('Response:', response.data); // Log the response data
 
-                // Find the specific room description by room number
-                const roomDesc = response.data.find(desc => desc.room_number === roomNumber);
+                // Find the specific room description by room number and hostel ID
+                const roomDesc = response.data.find(desc => desc.room_number === roomNumber && desc.hostel_id === hostelId);
 
                 if (!roomDesc) {
                     setError('Room description not found');
@@ -43,7 +46,7 @@ const RoomDescription = () => {
         };
 
         fetchRoomDescription();
-    }, [roomNumber]);
+    }, [roomNumber, hostelId]); // Add roomNumber and hostelId to the dependency array
 
     const handleImageClick = (imageSrc) => {
         setZoomedImage(imageSrc);
@@ -54,8 +57,8 @@ const RoomDescription = () => {
     };
 
     const handleBookNowClick = () => {
-        // Navigate to login with roomNumber as a query parameter
-           navigate('/login', { state: { roomNumber } });
+        // Navigate to login with roomNumber and hostelId as state parameters
+        navigate('/login', { state: { roomNumber, hostelId } });
     };
 
     if (loading) {
