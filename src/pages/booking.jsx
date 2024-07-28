@@ -43,8 +43,6 @@ const Booking = () => {
             },
           });
 
-          console.log('Tenant Fetch Response:', response.data);
-
           if (response.data && response.data.length > 0) {
             const tenant = response.data.find(t => t.name === tenantName);
             if (tenant) {
@@ -56,7 +54,6 @@ const Booking = () => {
             setMessage({ type: 'error', text: 'Tenant not found.' });
           }
         } catch (error) {
-          console.error('Error fetching tenant ID:', error);
           setMessage({ type: 'error', text: 'Error fetching tenant ID.' });
         }
       }
@@ -77,8 +74,6 @@ const Booking = () => {
             },
           });
 
-          console.log('Room Fetch Response:', response.data);
-
           if (response.data && response.data.length > 0) {
             const room = response.data.find(r => r.number === roomNumber);
             if (room) {
@@ -90,7 +85,6 @@ const Booking = () => {
             setMessage({ type: 'error', text: 'Room not found.' });
           }
         } catch (error) {
-          console.error('Error fetching room ID:', error);
           setMessage({ type: 'error', text: 'Error fetching room ID.' });
         }
       }
@@ -118,8 +112,6 @@ const Booking = () => {
       return;
     }
 
-    console.log('Submitting Booking:', { roomId, tenantId, checkInDate, checkOutDate });
-
     try {
       const token = localStorage.getItem('authToken');
       if (!token) {
@@ -142,23 +134,20 @@ const Booking = () => {
         }
       );
 
-      console.log('Booking Response:', bookingResponse.data);
-
       if (bookingResponse.status === 201) {
         setMessage({ type: 'success', text: 'Booking successful!' });
-        navigate('/payment');
+        navigate('/dashboard', { state: { tenantName, roomNumber } });
       } else {
         setMessage({ type: 'error', text: 'Booking failed. Please try again.' });
       }
     } catch (error) {
-      console.error('Error booking the room:', error.response ? error.response.data : error.message);
       setMessage({ type: 'error', text: `Booking failed. ${error.response?.data?.detail || error.message}` });
     }
   };
 
   return (
     <Box display="flex" justifyContent="center" mt={10}>
-      <Box w="600px" p={6} bg="white" boxShadow="lg" rounded="md"  borderWidth="1px" borderRadius="lg" overflow="hidden" >
+      <Box w="600px" p={6} bg="white" boxShadow="lg" rounded="md" borderWidth="1px" borderRadius="lg" overflow="hidden">
         <Heading mb={6}>Book a Room</Heading>
         {message.text && (
           <Alert status={message.type} mb={4}>
@@ -206,9 +195,6 @@ const Booking = () => {
           </VStack>
         </form>
       </Box>
-      <Box>
-        
-      </Box>
       <Box borderWidth="1px" borderRadius="lg" overflow="hidden"
         w="700px"
         p={6}
@@ -219,9 +205,7 @@ const Booking = () => {
         bgPosition="center"
         style={{ backgroundImage: `url(${backgroundImage})` }}
         ml={6}
-      >
-     
-      </Box>
+      />
     </Box>
   );
 };
