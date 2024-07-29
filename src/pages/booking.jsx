@@ -18,7 +18,6 @@ const Booking = () => {
   const [tenantId, setTenantId] = useState(null);
   const [roomId, setRoomId] = useState(null);
 
-  // Fetch tenant ID and room ID based on provided tenant name and room number
   useEffect(() => {
     if (location.state) {
       const { roomNumber, tenantName } = location.state;
@@ -54,6 +53,7 @@ const Booking = () => {
             setMessage({ type: 'error', text: 'Tenant not found.' });
           }
         } catch (error) {
+          console.error('Error fetching tenant ID:', error.response ? error.response.data : error.message);
           setMessage({ type: 'error', text: 'Error fetching tenant ID.' });
         }
       }
@@ -85,6 +85,7 @@ const Booking = () => {
             setMessage({ type: 'error', text: 'Room not found.' });
           }
         } catch (error) {
+          console.error('Error fetching room ID:', error.response ? error.response.data : error.message);
           setMessage({ type: 'error', text: 'Error fetching room ID.' });
         }
       }
@@ -141,6 +142,7 @@ const Booking = () => {
         setMessage({ type: 'error', text: 'Booking failed. Please try again.' });
       }
     } catch (error) {
+      console.error('Error creating booking:', error.response ? error.response.data : error.message);
       setMessage({ type: 'error', text: `Booking failed. ${error.response?.data?.detail || error.message}` });
     }
   };
