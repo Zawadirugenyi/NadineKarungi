@@ -9,6 +9,7 @@ const RoomDescription = () => {
     const { roomNumber, hostelName } = useParams(); // Extract roomNumber and hostelName from params
     const [loading, setLoading] = useState(true);
     const [roomDescription, setRoomDescription] = useState(null);
+    const [roomStatus, setRoomStatus] = useState(false); // Track room status
     const [error, setError] = useState(null);
     const [zoomedImage, setZoomedImage] = useState(null);
     const navigate = useNavigate(); // Initialize useNavigate hook for navigation
@@ -27,7 +28,7 @@ const RoomDescription = () => {
                     },
                 });
 
-                console.log('Response:', response.data); // Log the response data
+                console.log('Room Description Response:', response.data); // Log the response data
 
                 // Find the specific room description by room number and hostel name
                 const roomDesc = response.data.find(desc => desc.room_number === roomNumber && desc.hostel_name === hostelName);
@@ -45,7 +46,37 @@ const RoomDescription = () => {
             }
         };
 
+        const fetchRoomStatus = async () => {
+            try {
+                const token = '520dc5d1657a7b42d3b9ffb3592f9ba88692c1fc'; 
+                const response = await axios.get(`http://127.0.0.1:8000/api/rooms/`, {
+                    params: {
+                        number: roomNumber,
+                        hostel__name: hostelName
+                    },
+                    headers: {
+                        Authorization: `Token ${token}`,
+                    },
+                });
+
+                console.log('Room Status Response:', response.data); // Log the response data
+
+                // Find the specific room status by room number
+                const room = response.data.find(room => room.number === roomNumber);
+
+                if (!room) {
+                    setError('Room status not found');
+                } else {
+                    setRoomStatus(room.status);
+                }
+            } catch (error) {
+                console.error('Error fetching room status:', error);
+                setError('Error fetching room status');
+            }
+        };
+
         fetchRoomDescription();
+        fetchRoomStatus();
     }, [roomNumber, hostelName]); // Add roomNumber and hostelName to the dependency array
 
     const handleImageClick = (imageSrc) => {
@@ -134,6 +165,7 @@ const RoomDescription = () => {
                             boxShadow="md"
                             _hover={{ bg: "#0097b2", color: "white" }}
                             onClick={handleBookNowClick} // Updated to use handleBookNowClick for redirection
+                            isDisabled={!roomStatus} // Disable button if roomStatus is false
                         >
                             Book Now
                         </Button>
