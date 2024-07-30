@@ -1,3 +1,4 @@
+// Dashboard.jsx
 import React, { useEffect, useState } from 'react';
 import {
   Box,
@@ -18,7 +19,7 @@ import {
 } from '@chakra-ui/react';
 import { FaBell, FaUserCircle, FaMoon, FaSun } from 'react-icons/fa';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import logo from '../Components/Assets/logo.png';
 import Chatbot from './chatbot';
 import Notifications from './notification'; // Import Notifications component
@@ -30,6 +31,8 @@ const Dashboard = () => {
   const [showNotifications, setShowNotifications] = useState(false);
   const toast = useToast();
   const { colorMode, toggleColorMode } = useColorMode();
+  const location = useLocation();
+  const { tenantName, roomNumber } = location.state || {};
 
   useEffect(() => {
     const fetchTenantAndRoomData = async () => {
@@ -39,14 +42,16 @@ const Dashboard = () => {
           'Authorization': `Token ${token}`,
         };
 
+        // Fetch tenant information for the logged-in user
         const tenantResponse = await axios.get('http://127.0.0.1:8000/api/tenants/', { headers });
+        const tenant = tenantResponse.data.find(t => t.name === tenantName);
+        setTenant(tenant);
+
+        // Fetch room information
         const roomResponse = await axios.get('http://127.0.0.1:8000/api/rooms/', { headers });
+        const room = roomResponse.data.find(r => r.number === roomNumber);
+        setRoom(room);
 
-        console.log('Tenant Data:', tenantResponse.data);
-        console.log('Room Data:', roomResponse.data);
-
-        setTenant(tenantResponse.data);
-        setRoom(roomResponse.data);
       } catch (error) {
         console.error('Error fetching data:', error);
         toast({
@@ -60,7 +65,7 @@ const Dashboard = () => {
     };
 
     fetchTenantAndRoomData();
-  }, [toast]);
+  }, [tenantName, roomNumber, toast]);
 
   const sidebarBgColor = useColorModeValue('#0097b2', '#005b7f');
   const buttonBgColor = useColorModeValue('white', '#004d6e');
@@ -91,7 +96,6 @@ const Dashboard = () => {
         >
           {showCards ? 'Hide Dashboard' : 'Show Dashboard'}
         </Button>
-       
         <Link to="/">
           <Button
             colorScheme="white" variant="outline"
@@ -114,27 +118,20 @@ const Dashboard = () => {
 
       <Flex flex={1} direction="column" p={4} position="relative">
         <HStack mb={4} align="center" justify="space-between">
-          <Box></Box>
+          <Button onClick={toggleColorMode} colorScheme="teal">
+            {colorMode === 'light' ? <FaMoon /> : <FaSun />}
+          </Button>
+          <Text fontSize="xl" fontWeight="bold">Welcome, {tenant.name}</Text>
           <HStack spacing={4}>
             <IconButton
               icon={<FaBell />}
               aria-label="Notifications"
-              variant="ghost"
-              color={iconColor}
               onClick={() => setShowNotifications(!showNotifications)}
             />
             <IconButton
               icon={<FaUserCircle />}
-              aria-label="Profile"
-              variant="ghost"
-              color={iconColor}
-            />
-            <IconButton
-              icon={colorMode === 'light' ? <FaMoon /> : <FaSun />}
-              aria-label="Toggle Dark Mode"
-              onClick={toggleColorMode}
-              variant="ghost"
-              color={iconColor}
+              aria-label="User Profile"
+              onClick={() => {}}
             />
           </HStack>
         </HStack>
@@ -142,39 +139,44 @@ const Dashboard = () => {
         {showNotifications && <Notifications />}
 
         {showCards && (
-          <HStack spacing={4}>
-            <Card width="100%" maxW="sm" borderWidth="1px" borderRadius="md" boxShadow="md">
-              <CardHeader>
-                <Text fontSize="lg" fontWeight="bold">Tenant Information</Text>
-              </CardHeader>
+          <VStack spacing={4}>
+            <Card>
+              <CardHeader>Tenant Details</CardHeader>
               <CardBody>
-                <Text fontSize="md">Name: {tenant.name}</Text>
-                <Text fontSize="md">Email: {tenant.email}</Text>
+                {tenant.passport_photo && (
+                  <Image
+                    src={`http://127.0.0.1:8000${tenant.passport_photo}`}
+                    alt="Passport Photo"
+                    boxSize="150px"
+                    borderRadius="full"
+                    mb={4}
+                  />
+                )}
+                <Text>Name: {tenant.name}</Text>
+                <Text>Email: {tenant.email}</Text>
+                <Text>Phone: {tenant.phone}</Text>
+                <Text>Address: {tenant.address}</Text>
+                <Text>Date of Birth: {tenant.date_of_birth}</Text>
+                {/* Add more fields if needed */}
               </CardBody>
               <CardFooter>
-                <Button colorScheme="teal" variant="outline">
-                  View More
-                </Button>
+                <Button colorScheme="teal" variant="outline">Edit</Button>
               </CardFooter>
             </Card>
-
-            <Card width="100%" maxW="sm" borderWidth="1px" borderRadius="md" boxShadow="md">
-              <CardHeader>
-                <Text fontSize="lg" fontWeight="bold">Room Information</Text>
-              </CardHeader>
+            <Card>
+              <CardHeader>Room Details</CardHeader>
               <CardBody>
-                <Text fontSize="md">Room Number: {room.number}</Text>
-                <Text fontSize="md">Room Type: {room.type}</Text>
+                <Text>Room Number: {room.number}</Text>
+                <Text>Type: {room.type}</Text>
+                <Text>Status: {room.status}</Text>
+                <Image src={`http://127.0.0.1:8000${room.image}`} alt="Room Image" boxSize="200px" />
               </CardBody>
               <CardFooter>
-                <Button colorScheme="teal" variant="outline">
-                  View More
-                </Button>
+                <Button colorScheme="teal" variant="outline">More Info</Button>
               </CardFooter>
             </Card>
-          </HStack>
+          </VStack>
         )}
-
         <Box position="absolute" bottom="4" right="4">
           <Chatbot />
         </Box>

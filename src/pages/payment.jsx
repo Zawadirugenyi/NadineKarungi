@@ -1,13 +1,16 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import { Box, Button, FormControl, FormLabel, Input, Center, VStack, Text, useToast } from '@chakra-ui/react';
+import { useLocation } from 'react-router-dom';
 
 const MpesaPayment = () => {
+  const location = useLocation();
+  const { phone_number, amount, account_reference, transaction_desc } = location.state || {};
   const [formData, setFormData] = useState({
-    phone_number: '',
-    amount: '',
-    account_reference: '',
-    transaction_desc: ''
+    phone_number: phone_number || '',
+    amount: amount || '',
+    account_reference: account_reference || '',
+    transaction_desc: transaction_desc || ''
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
