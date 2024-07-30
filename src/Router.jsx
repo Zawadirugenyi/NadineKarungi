@@ -12,6 +12,7 @@ import Payment from './pages/payment';
 import AboutUs from './pages/about_us';
 import ContactUs from './pages/contact_us';
 import Dashboard from './pages/dashboard';
+import EditTenant from './pages/edit_tenant';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path="/about_us" element={<MainLayout><AboutUs /></MainLayout>} />
         <Route path="/contact_us" element={<MainLayout><ContactUs /></MainLayout>} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/edit_tenant" element={<EditTenant />} />
       </Routes>
     </Router>
   );
