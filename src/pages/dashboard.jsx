@@ -28,7 +28,8 @@ import {
   FormLabel,
   Input,
   Textarea,
-  useDisclosure
+  useDisclosure,
+  Select
 } from '@chakra-ui/react';
 import { FaBell, FaMoon, FaSun } from 'react-icons/fa';
 import axios from 'axios';
@@ -65,6 +66,7 @@ const Dashboard = () => {
   const [requisition, setRequisition] = useState({
     type: '',
     description: '',
+    otherType: '', // Add state for 'Other' type specification
   });
 
   const toast = useToast();
@@ -224,16 +226,14 @@ const Dashboard = () => {
             Home
           </Button>
         </Link>
-        <Link to="/requisition">
-          <Button
-            colorScheme="white" variant="outline"
-            _hover={{ bg: buttonHoverColor, color: "white" }}
-            w="full"
-            onClick={onRequisitionOpen}
-          >
-            Requisition
-          </Button>
-        </Link>
+        <Button
+          colorScheme="white" variant="outline"
+          _hover={{ bg: buttonHoverColor, color: "white" }}
+          w="full"
+          onClick={onRequisitionOpen}
+        >
+          Requisition
+        </Button>
       </VStack>
 
       <Flex flex={1} direction="column" p={4} position="relative">
@@ -267,7 +267,7 @@ const Dashboard = () => {
               <Card>
                 <CardHeader fontWeight="bold" fontSize="24px"> Tenant Details </CardHeader>
                 <CardBody>
-                  <Text>Name: {tenant.name}</Text>
+                   <Text>Name: {tenant.name}</Text>
                   <Text>Major: {tenant.major}</Text>
                   <Text>Admin Number: {tenant.admin_number}</Text>
                   <Text>Gender: {tenant.gender}</Text>
@@ -277,40 +277,46 @@ const Dashboard = () => {
                   <Text>Email: {tenant.email}</Text>
                   <Text>Parent: {tenant.parent}</Text>
                   <Text>Position: {tenant.position}</Text>
+                  <Button mt={4} onClick={handleEditClick}>Edit</Button>
                 </CardBody>
-                <CardFooter>
-                  <Button onClick={handleEditClick}>Edit Details</Button>
-                </CardFooter>
               </Card>
             </GridItem>
-
             <GridItem>
               <Card>
                 <CardHeader fontWeight="bold" fontSize="24px"> Room Details </CardHeader>
                 <CardBody>
+                  <Text>Hostel: {hostel.name}</Text>
                   <Text>Room Number: {room.number}</Text>
                   <Text>Room Type: {ROOM_TYPE_LABELS[room.room_type]}</Text>
-                  <Text>Hostel Name: {hostel.name}</Text>
+             
+              
                 </CardBody>
               </Card>
             </GridItem>
-
             <GridItem>
               <Card>
                 <CardHeader fontWeight="bold" fontSize="24px"> Booking Details </CardHeader>
                 <CardBody>
+                  
                   <Text>Check-in Date: {booking.check_in_date}</Text>
                   <Text>Check-out Date: {booking.check_out_date}</Text>
-                  <Text>Room: {room.number}</Text>
-                  <Text>Tenant: {tenant.name}</Text>
                 </CardBody>
               </Card>
             </GridItem>
           </Grid>
         )}
+
+        {showNotifications && (
+          <Box position="absolute" top="0" right="0" p={4}>
+            <Notifications />
+          </Box>
+        )}
+        <Box position="absolute" bottom="20px" right="20px" zIndex={1}>
+          <Chatbot />
+        </Box>
       </Flex>
 
-      <Modal isOpen={isEditOpen} onClose={onEditClose}>
+       <Modal isOpen={isEditOpen} onClose={onEditClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Edit Tenant Details</ModalHeader>
@@ -410,36 +416,36 @@ const Dashboard = () => {
       <Modal isOpen={isRequisitionOpen} onClose={onRequisitionClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Requisition Form</ModalHeader>
+          <ModalHeader>New Requisition</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <FormControl>
               <FormLabel>Type</FormLabel>
-              <Input
-                name="type"
-                value={requisition.type}
-                onChange={handleRequisitionChange}
-              />
+              <Select name="type" value={requisition.type} onChange={handleRequisitionChange}>
+                <option value="">Select Type</option>
+                <option value="maintenance">Maintenance</option>
+                <option value="cleaning">Cleaning</option>
+                <option value="security">Security</option>
+                <option value="other">Other</option>
+              </Select>
             </FormControl>
+            {requisition.type === 'other' && (
+              <FormControl mt={4}>
+                <FormLabel>Specify Type</FormLabel>
+                <Input name="otherType" value={requisition.otherType} onChange={handleRequisitionChange} />
+              </FormControl>
+            )}
             <FormControl mt={4}>
               <FormLabel>Description</FormLabel>
-              <Textarea
-                name="description"
-                value={requisition.description}
-                onChange={handleRequisitionChange}
-              />
+              <Textarea name="description" value={requisition.description} onChange={handleRequisitionChange} />
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={handleRequisitionSubmit}>
-              Submit
-            </Button>
+            <Button colorScheme="teal" mr={3} onClick={handleRequisitionSubmit}>Submit</Button>
             <Button variant="ghost" onClick={onRequisitionClose}>Cancel</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
-
-      <Chatbot />
     </Flex>
   );
 };
