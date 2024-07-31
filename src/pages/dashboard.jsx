@@ -27,6 +27,7 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Textarea,
   useDisclosure
 } from '@chakra-ui/react';
 import { FaBell, FaMoon, FaSun } from 'react-icons/fa';
@@ -51,7 +52,21 @@ const Dashboard = () => {
   const [showCards, setShowCards] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [editTenant, setEditTenant] = useState({});
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isEditOpen,
+    onOpen: onEditOpen,
+    onClose: onEditClose,
+  } = useDisclosure();
+  const {
+    isOpen: isRequisitionOpen,
+    onOpen: onRequisitionOpen,
+    onClose: onRequisitionClose,
+  } = useDisclosure();
+  const [requisition, setRequisition] = useState({
+    type: '',
+    description: '',
+  });
+
   const toast = useToast();
   const navigate = useNavigate();
   const { colorMode, toggleColorMode } = useColorMode();
@@ -102,7 +117,7 @@ const Dashboard = () => {
 
   const handleEditClick = () => {
     setEditTenant(tenant);
-    onOpen();
+    onEditOpen();
   };
 
   const handleInputChange = (e) => {
@@ -122,7 +137,7 @@ const Dashboard = () => {
 
       await axios.put(`http://127.0.0.1:8000/api/tenants/${editTenant.id}/`, editTenant, { headers });
       setTenant(editTenant);
-      onClose();
+      onEditClose();
       toast({
         title: 'Tenant details updated successfully.',
         status: 'success',
@@ -133,6 +148,41 @@ const Dashboard = () => {
       console.error('Error updating tenant details:', error);
       toast({
         title: 'Error updating tenant details.',
+        description: error.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const handleRequisitionChange = (e) => {
+    const { name, value } = e.target;
+    setRequisition(prevState => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleRequisitionSubmit = async () => {
+    try {
+      const token = localStorage.getItem('authToken');
+      const headers = {
+        'Authorization': `Token ${token}`,
+      };
+
+      await axios.post('http://127.0.0.1:8000/api/requisitions/', requisition, { headers });
+      onRequisitionClose();
+      toast({
+        title: 'Requisition submitted successfully.',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.error('Error submitting requisition:', error);
+      toast({
+        title: 'Error submitting requisition.',
         description: error.message,
         status: 'error',
         duration: 5000,
@@ -179,6 +229,7 @@ const Dashboard = () => {
             colorScheme="white" variant="outline"
             _hover={{ bg: buttonHoverColor, color: "white" }}
             w="full"
+            onClick={onRequisitionOpen}
           >
             Requisition
           </Button>
@@ -201,23 +252,20 @@ const Dashboard = () => {
                 <Image
                   src={`http://127.0.0.1:8000${tenant.passport_photo}`}
                   alt="Profile Photo"
-                  boxSize="40px"
+                  boxSize="50px"
                   borderRadius="full"
-                  border="2px solid"
                 />
               )}
-              <Text fontSize="lg" fontWeight="bold">{tenant.name}</Text>
+              <Text>{tenant.name}</Text>
             </HStack>
           </HStack>
         </HStack>
 
-        {showNotifications && <Notifications />}
-
         {showCards && (
-          <Grid templateColumns="repeat(2, 1fr)" gap={4} marginTop="70px">
+          <Grid templateColumns="repeat(3, 1fr)" gap={6}>
             <GridItem>
               <Card>
-                <CardHeader>Tenant Details</CardHeader>
+                <CardHeader fontWeight="bold" fontSize="24px"> Tenant Details </CardHeader>
                 <CardBody>
                   <Text>Name: {tenant.name}</Text>
                   <Text>Major: {tenant.major}</Text>
@@ -229,39 +277,40 @@ const Dashboard = () => {
                   <Text>Email: {tenant.email}</Text>
                   <Text>Parent: {tenant.parent}</Text>
                   <Text>Position: {tenant.position}</Text>
-                  
                 </CardBody>
                 <CardFooter>
-                  <Button
-                    colorScheme="teal"
-                    variant="outline"
-                    onClick={handleEditClick}
-                  >
-                    Edit
-                  </Button>
+                  <Button onClick={handleEditClick}>Edit Details</Button>
                 </CardFooter>
               </Card>
             </GridItem>
+
             <GridItem>
               <Card>
-                <CardHeader>Room Details</CardHeader>
+                <CardHeader fontWeight="bold" fontSize="24px"> Room Details </CardHeader>
                 <CardBody>
-                  <Text>Hostel: {hostel.name}</Text>
                   <Text>Room Number: {room.number}</Text>
-                 <Text>Check-in Date: {booking.check_in_date}</Text>
-                  <Text>Check-out Date: {booking.check_out_date}</Text>
-                  
-              
-                  <Image src={`http://127.0.0.1:8000${room.image}`} alt="Room Image" boxSize="200px" />
+                  <Text>Room Type: {ROOM_TYPE_LABELS[room.room_type]}</Text>
+                  <Text>Hostel Name: {hostel.name}</Text>
                 </CardBody>
-                <CardFooter></CardFooter>
+              </Card>
+            </GridItem>
+
+            <GridItem>
+              <Card>
+                <CardHeader fontWeight="bold" fontSize="24px"> Booking Details </CardHeader>
+                <CardBody>
+                  <Text>Check-in Date: {booking.check_in_date}</Text>
+                  <Text>Check-out Date: {booking.check_out_date}</Text>
+                  <Text>Room: {room.number}</Text>
+                  <Text>Tenant: {tenant.name}</Text>
+                </CardBody>
               </Card>
             </GridItem>
           </Grid>
         )}
       </Flex>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isEditOpen} onClose={onEditClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Edit Tenant Details</ModalHeader>
@@ -271,7 +320,7 @@ const Dashboard = () => {
               <FormLabel>Name</FormLabel>
               <Input
                 name="name"
-                value={editTenant.name || ''}
+                value={editTenant.name}
                 onChange={handleInputChange}
               />
             </FormControl>
@@ -279,7 +328,7 @@ const Dashboard = () => {
               <FormLabel>Major</FormLabel>
               <Input
                 name="major"
-                value={editTenant.major || ''}
+                value={editTenant.major}
                 onChange={handleInputChange}
               />
             </FormControl>
@@ -287,7 +336,7 @@ const Dashboard = () => {
               <FormLabel>Admin Number</FormLabel>
               <Input
                 name="admin_number"
-                value={editTenant.admin_number || ''}
+                value={editTenant.admin_number}
                 onChange={handleInputChange}
               />
             </FormControl>
@@ -295,7 +344,7 @@ const Dashboard = () => {
               <FormLabel>Gender</FormLabel>
               <Input
                 name="gender"
-                value={editTenant.gender || ''}
+                value={editTenant.gender}
                 onChange={handleInputChange}
               />
             </FormControl>
@@ -303,7 +352,7 @@ const Dashboard = () => {
               <FormLabel>Nationality</FormLabel>
               <Input
                 name="nationality"
-                value={editTenant.nationality || ''}
+                value={editTenant.nationality}
                 onChange={handleInputChange}
               />
             </FormControl>
@@ -311,7 +360,7 @@ const Dashboard = () => {
               <FormLabel>Passport</FormLabel>
               <Input
                 name="passport"
-                value={editTenant.passport || ''}
+                value={editTenant.passport}
                 onChange={handleInputChange}
               />
             </FormControl>
@@ -319,7 +368,7 @@ const Dashboard = () => {
               <FormLabel>Phone Number</FormLabel>
               <Input
                 name="phone_number"
-                value={editTenant.phone_number || ''}
+                value={editTenant.phone_number}
                 onChange={handleInputChange}
               />
             </FormControl>
@@ -327,7 +376,8 @@ const Dashboard = () => {
               <FormLabel>Email</FormLabel>
               <Input
                 name="email"
-                value={editTenant.email || ''}
+                type="email"
+                value={editTenant.email}
                 onChange={handleInputChange}
               />
             </FormControl>
@@ -335,7 +385,7 @@ const Dashboard = () => {
               <FormLabel>Parent</FormLabel>
               <Input
                 name="parent"
-                value={editTenant.parent || ''}
+                value={editTenant.parent}
                 onChange={handleInputChange}
               />
             </FormControl>
@@ -343,7 +393,7 @@ const Dashboard = () => {
               <FormLabel>Position</FormLabel>
               <Input
                 name="position"
-                value={editTenant.position || ''}
+                value={editTenant.position}
                 onChange={handleInputChange}
               />
             </FormControl>
@@ -352,10 +402,44 @@ const Dashboard = () => {
             <Button colorScheme="blue" mr={3} onClick={handleSave}>
               Save
             </Button>
-            <Button variant="ghost" onClick={onClose}>Cancel</Button>
+            <Button variant="ghost" onClick={onEditClose}>Cancel</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
+
+      <Modal isOpen={isRequisitionOpen} onClose={onRequisitionClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Requisition Form</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormControl>
+              <FormLabel>Type</FormLabel>
+              <Input
+                name="type"
+                value={requisition.type}
+                onChange={handleRequisitionChange}
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Description</FormLabel>
+              <Textarea
+                name="description"
+                value={requisition.description}
+                onChange={handleRequisitionChange}
+              />
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={handleRequisitionSubmit}>
+              Submit
+            </Button>
+            <Button variant="ghost" onClick={onRequisitionClose}>Cancel</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Chatbot />
     </Flex>
   );
 };

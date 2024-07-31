@@ -13,6 +13,7 @@ import AboutUs from './pages/about_us';
 import ContactUs from './pages/contact_us';
 import Dashboard from './pages/dashboard';
 import EditTenant from './pages/edit_tenant';
+import RequisitionPage from './pages/requisition';
 
 function App() {
   return (
@@ -30,6 +31,8 @@ function App() {
         <Route path="/contact_us" element={<MainLayout><ContactUs /></MainLayout>} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/edit_tenant" element={<EditTenant />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/requisition" element={<RequisitionPage/>} />
       </Routes>
     </Router>
   );
