@@ -11,6 +11,7 @@ import {
   Card,
   CardHeader,
   CardBody,
+  CardFooter,
   Image,
   useColorModeValue,
   useColorMode,
@@ -30,12 +31,12 @@ import {
   useDisclosure,
   Select
 } from '@chakra-ui/react';
-import { FaBell, FaMoon, FaSun } from 'react-icons/fa';
+import { FaMoon, FaSun } from 'react-icons/fa';
+import { MdOutlineNotifications, MdOutlineNotificationsNone } from 'react-icons/md';
 import axios from 'axios';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import logo from '../Components/Assets/logo.png';
-import Chatbot from './chatbot';
-import Notifications from './notification';
+import Notifications from './notification'; // Ensure this component handles notification display
 
 const ROOM_TYPE_LABELS = {
   bedsitter: 'Bedsitter',
@@ -51,9 +52,8 @@ const Dashboard = () => {
   const [booking, setBooking] = useState(null);
   const [showCards, setShowCards] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [editTenant, setEditTenant] = useState({});
   const [notifications, setNotifications] = useState([]);
-  const [hasNewNotification, setHasNewNotification] = useState(false);
+  const [editTenant, setEditTenant] = useState({});
   const {
     isOpen: isEditOpen,
     onOpen: onEditOpen,
@@ -67,7 +67,7 @@ const Dashboard = () => {
   const [requisition, setRequisition] = useState({
     type: '',
     description: '',
-    otherType: '', // Add state for 'Other' type specification
+    otherType: '',
   });
 
   const toast = useToast();
@@ -95,13 +95,21 @@ const Dashboard = () => {
         const room = roomResponse.data.find(r => r.number === roomNumber);
         setRoom(room);
 
-        const hostelResponse = await axios.get('http://127.0.0.1:8000/api/hostels/', { headers });
-        const hostel = hostelResponse.data.find(h => h.id === room.hostel);
-        setHostel(hostel);
+        if (room) {
+          const hostelResponse = await axios.get('http://127.0.0.1:8000/api/hostels/', { headers });
+          const hostel = hostelResponse.data.find(h => h.id === room.hostel);
+          setHostel(hostel);
+        }
 
-        const bookingResponse = await axios.get('http://127.0.0.1:8000/api/bookings/', { headers });
-        const booking = bookingResponse.data.find(b => b.tenant === tenant.id);
-        setBooking(booking);
+        if (tenant) {
+          const bookingResponse = await axios.get('http://127.0.0.1:8000/api/bookings/', { headers });
+          const booking = bookingResponse.data.find(b => b.tenant === tenant.id);
+          setBooking(booking);
+        }
+
+        // Fetch notifications
+        const notificationsResponse = await axios.get('http://127.0.0.1:8000/api/notifications/', { headers });
+        setNotifications(notificationsResponse.data);
 
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -117,35 +125,6 @@ const Dashboard = () => {
 
     fetchData();
   }, [tenantName, roomNumber, toast]);
-
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        const token = localStorage.getItem('authToken');
-        const headers = {
-          'Authorization': `Token ${token}`,
-        };
-
-        const response = await axios.get('http://127.0.0.1:8000/api/notifications/', { headers });
-        setNotifications(response.data);
-        setHasNewNotification(response.data.some(notification => !notification.read));
-      } catch (error) {
-        console.error('Error fetching notifications:', error);
-        toast({
-          title: 'Error fetching notifications.',
-          description: error.message,
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-      }
-    };
-
-    fetchNotifications();
-    const interval = setInterval(fetchNotifications, 60000); // Fetch notifications every minute
-
-    return () => clearInterval(interval); // Clear interval on component unmount
-  }, [toast]);
 
   const handleEditClick = () => {
     setEditTenant(tenant);
@@ -223,7 +202,9 @@ const Dashboard = () => {
     }
   };
 
-  if (!tenant || !room || !hostel || !booking) {
+  const unreadNotificationsCount = notifications.filter(notification => !notification.is_read).length;
+
+  if (!tenant || !room || !booking) {
     return <Text>Loading...</Text>;
   }
 
@@ -273,132 +254,230 @@ const Dashboard = () => {
           </Button>
           <HStack spacing={4} align="center">
             <IconButton
-              icon={<FaBell />}
-              colorScheme={hasNewNotification ? 'red' : 'gray'}
-              onClick={() => setShowNotifications(!showNotifications)}
+              icon={unreadNotificationsCount > 0 ? <MdOutlineNotifications /> : <MdOutlineNotificationsNone />}
               aria-label="Notifications"
+              color={unreadNotificationsCount > 0 ? 'red.500' : 'inherit'}
+              onClick={() => setShowNotifications(!showNotifications)}
             />
-            <Text>{tenant.name}</Text>
+            <HStack spacing={2} align="center">
+              {tenant.passport_photo && (
+                <Image
+                  src={`http://127.0.0.1:8000${tenant.passport_photo}`}
+                  alt="Profile Photo"
+                  boxSize="50px"
+                  borderRadius="full"
+                />
+              )}
+              <Text>{tenant.name}</Text>
+            </HStack>
           </HStack>
         </HStack>
 
         {showCards && (
-          <Grid templateColumns="repeat(2, 1fr)" gap={4}>
-            <Card>
-              <CardHeader>Hostel Details</CardHeader>
-              <CardBody>
-                <Text>Name: {hostel.name}</Text>
-                <Text>Location: {hostel.location}</Text>
-                <Text>Manager: {hostel.manager}</Text>
-              </CardBody>
-            </Card>
-            <Card>
-              <CardHeader>Room Details</CardHeader>
-              <CardBody>
-                <Text>Room Number: {room.number}</Text>
-                <Text>Room Type: {ROOM_TYPE_LABELS[room.room_type]}</Text>
-              </CardBody>
-            </Card>
-            <Card>
-              <CardHeader>Tenant Details</CardHeader>
-              <CardBody>
-                <Text>Name: {tenant.name}</Text>
-                <Text>Gender: {tenant.gender}</Text>
-                <Text>Registration Number: {tenant.registration_number}</Text>
-                <Text>Email: {tenant.email}</Text>
-                <Text>Phone Number: {tenant.phone_number}</Text>
-                <Button colorScheme="teal" onClick={handleEditClick}>Edit</Button>
-              </CardBody>
-            </Card>
-            <Card>
-              <CardHeader>Booking Details</CardHeader>
-              <CardBody>
-                <Text>Check-in Date: {booking.check_in_date}</Text>
-                <Text>Check-out Date: {booking.check_out_date}</Text>
-              </CardBody>
-            </Card>
+          <Grid templateColumns="repeat(3, 1fr)" gap={4}>
+            <GridItem>
+              <Card>
+                <CardHeader fontWeight="bold" fontSize="lg">Tenant Info</CardHeader>
+                <CardBody>
+                            <Text>Name: {tenant.name}</Text>
+                  <Text>Major: {tenant.major}</Text>
+                  <Text>Admin Number: {tenant.admin_number}</Text>
+                  <Text>Gender: {tenant.gender}</Text>
+                  <Text>Nationality: {tenant.nationality}</Text>
+                  <Text>Passport: {tenant.passport}</Text>
+                  <Text>Phone Number: {tenant.phone_number}</Text>
+                  <Text>Email: {tenant.email}</Text>
+                  <Text>Parent: {tenant.parent}</Text>
+                  <Text>Position: {tenant.position}</Text>
+                  
+                </CardBody>
+                <CardFooter>
+                  <Button colorScheme="teal" onClick={handleEditClick}>Edit</Button>
+                </CardFooter>
+              </Card>
+            </GridItem>
+            <GridItem>
+              <Card>
+                <CardHeader fontWeight="bold" fontSize="lg">Room Details</CardHeader>
+                <CardBody>
+                  <Text>Hostel: {hostel.name}</Text>
+                  <Text>Room Number: {room.number}</Text>
+                  <Text>Room Type: {ROOM_TYPE_LABELS[room.room_type]}</Text>
+                 
+                </CardBody>
+              </Card>
+            </GridItem>
+            <GridItem>
+              <Card>
+                <CardHeader fontWeight="bold" fontSize="lg">Booking Details</CardHeader>
+                <CardBody>
+                  <Text>Check-in: {booking.check_in_date}</Text>
+                  <Text>Check-out: {booking.check_out_date}</Text>
+                </CardBody>
+              </Card>
+            </GridItem>
           </Grid>
         )}
 
-        {showNotifications && (
-          <Box position="absolute" top="10" right="10" bg="white" p={4} shadow="md">
-            <Notifications notifications={notifications} />
-          </Box>
-        )}
-
-        <Modal isOpen={isEditOpen} onClose={onEditClose}>
+        {/* Notifications Modal */}
+        <Modal isOpen={showNotifications} onClose={() => setShowNotifications(false)}>
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Edit Tenant Details</ModalHeader>
+            <ModalHeader>Notifications</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-              <FormControl>
-                <FormLabel>Name</FormLabel>
-                <Input name="name" value={editTenant.name} onChange={handleInputChange} />
-              </FormControl>
-              <FormControl mt={4}>
-                <FormLabel>Gender</FormLabel>
-                <Select name="gender" value={editTenant.gender} onChange={handleInputChange}>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="other">Other</option>
-                </Select>
-              </FormControl>
-              <FormControl mt={4}>
-                <FormLabel>Registration Number</FormLabel>
-                <Input name="registration_number" value={editTenant.registration_number} onChange={handleInputChange} />
-              </FormControl>
-              <FormControl mt={4}>
-                <FormLabel>Email</FormLabel>
-                <Input name="email" value={editTenant.email} onChange={handleInputChange} />
-              </FormControl>
-              <FormControl mt={4}>
-                <FormLabel>Phone Number</FormLabel>
-                <Input name="phone_number" value={editTenant.phone_number} onChange={handleInputChange} />
-              </FormControl>
+              <Notifications notifications={notifications} />
             </ModalBody>
             <ModalFooter>
-              <Button colorScheme="blue" mr={3} onClick={handleSave}>Save</Button>
-              <Button onClick={onEditClose}>Cancel</Button>
+              <Button colorScheme="blue" onClick={() => setShowNotifications(false)}>Close</Button>
             </ModalFooter>
           </ModalContent>
         </Modal>
 
+        {/* Edit Tenant Modal */}
+        <Modal isOpen={isEditOpen} onClose={onEditClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Edit Tenant Details</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormControl>
+              <FormLabel>Name</FormLabel>
+              <Input
+                name="name"
+                value={editTenant.name}
+                onChange={handleInputChange}
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Major</FormLabel>
+              <Input
+                name="major"
+                value={editTenant.major}
+                onChange={handleInputChange}
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Admin Number</FormLabel>
+              <Input
+                name="admin_number"
+                value={editTenant.admin_number}
+                onChange={handleInputChange}
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Gender</FormLabel>
+              <Input
+                name="gender"
+                value={editTenant.gender}
+                onChange={handleInputChange}
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Nationality</FormLabel>
+              <Input
+                name="nationality"
+                value={editTenant.nationality}
+                onChange={handleInputChange}
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Passport</FormLabel>
+              <Input
+                name="passport"
+                value={editTenant.passport}
+                onChange={handleInputChange}
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Phone Number</FormLabel>
+              <Input
+                name="phone_number"
+                value={editTenant.phone_number}
+                onChange={handleInputChange}
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Email</FormLabel>
+              <Input
+                name="email"
+                type="email"
+                value={editTenant.email}
+                onChange={handleInputChange}
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Parent</FormLabel>
+              <Input
+                name="parent"
+                value={editTenant.parent}
+                onChange={handleInputChange}
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Position</FormLabel>
+              <Input
+                name="position"
+                value={editTenant.position}
+                onChange={handleInputChange}
+              />
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={handleSave}>
+              Save
+            </Button>
+            <Button variant="ghost" onClick={onEditClose}>Cancel</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+        {/* Requisition Modal */}
         <Modal isOpen={isRequisitionOpen} onClose={onRequisitionClose}>
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>Submit Requisition</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-              <FormControl>
+              <FormControl mb={4}>
                 <FormLabel>Type</FormLabel>
-                <Select name="type" value={requisition.type} onChange={handleRequisitionChange}>
-                  <option value="repair">Repair</option>
+                <Select
+                  name="type"
+                  value={requisition.type}
+                  onChange={handleRequisitionChange}
+                >
+                  <option value="">Select Type</option>
                   <option value="maintenance">Maintenance</option>
-                  <option value="cleaning">Cleaning</option>
+                  <option value="facility">Facility</option>
                   <option value="other">Other</option>
                 </Select>
               </FormControl>
               {requisition.type === 'other' && (
-                <FormControl mt={4}>
-                  <FormLabel>Specify Type</FormLabel>
-                  <Input name="otherType" value={requisition.otherType} onChange={handleRequisitionChange} />
+                <FormControl mb={4}>
+                  <FormLabel>Other Type</FormLabel>
+                  <Input
+                    name="otherType"
+                    value={requisition.otherType}
+                    onChange={handleRequisitionChange}
+                  />
                 </FormControl>
               )}
-              <FormControl mt={4}>
+              <FormControl mb={4}>
                 <FormLabel>Description</FormLabel>
-                <Textarea name="description" value={requisition.description} onChange={handleRequisitionChange} />
+                <Textarea
+                  name="description"
+                  value={requisition.description}
+                  onChange={handleRequisitionChange}
+                />
               </FormControl>
             </ModalBody>
             <ModalFooter>
-              <Button colorScheme="blue" mr={3} onClick={handleRequisitionSubmit}>Submit</Button>
-              <Button onClick={onRequisitionClose}>Cancel</Button>
+              <Button colorScheme="blue" onClick={handleRequisitionSubmit}>Submit</Button>
+              <Button colorScheme="gray" onClick={onRequisitionClose} ml={3}>Cancel</Button>
             </ModalFooter>
           </ModalContent>
         </Modal>
       </Flex>
-
-      <Chatbot />
     </Flex>
   );
 };
