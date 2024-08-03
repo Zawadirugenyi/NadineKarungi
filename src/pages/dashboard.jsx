@@ -245,18 +245,27 @@ const Dashboard = () => {
         >
           Requisition
         </Button>
+        <Button
+          colorScheme="white" variant="outline"
+          _hover={{ bg: buttonHoverColor, color: "white" }}
+          w="full"
+          onClick={toggleColorMode}
+        >
+          {colorMode === 'light' ? <FaMoon /> : <FaSun />}
+          {colorMode === 'light' ? ' Dark' : ' Light'}
+        </Button>
       </VStack>
 
       <Flex flex={1} direction="column" p={4} position="relative">
         <HStack mb={4} align="center" justify="space-between">
-          <Button onClick={toggleColorMode} colorScheme="teal">
-            {colorMode === 'light' ? <FaMoon /> : <FaSun />}
+          <Button  colorScheme="white">
+           
           </Button>
           <HStack spacing={4} align="center">
             <IconButton
               icon={unreadNotificationsCount > 0 ? <MdOutlineNotifications /> : <MdOutlineNotificationsNone />}
               aria-label="Notifications"
-              color={unreadNotificationsCount > 0 ? 'red.500' : 'inherit'}
+              color={unreadNotificationsCount > 0 ? 'black' : 'inherit'}
               onClick={() => setShowNotifications(!showNotifications)}
             />
             <HStack spacing={2} align="center">
@@ -274,7 +283,7 @@ const Dashboard = () => {
         </HStack>
 
         {showCards && (
-          <Grid templateColumns="repeat(3, 1fr)" gap={4}>
+          <Grid templateColumns="repeat(3, 1fr)" gap={4} marginTop="25px">
             <GridItem>
               <Card>
                 <CardHeader fontWeight="bold" fontSize="lg">Tenant Info</CardHeader>
