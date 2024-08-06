@@ -138,34 +138,70 @@ const Dashboard = () => {
       [name]: value,
     }));
   };
-
-  const handleSave = async () => {
-    try {
-      const token = localStorage.getItem('authToken');
-      const headers = {
-        'Authorization': `Token ${token}`,
-      };
-
-      await axios.put(`http://127.0.0.1:8000/api/tenants/${editTenant.id}/`, editTenant, { headers });
-      setTenant(editTenant);
-      onEditClose();
-      toast({
-        title: 'Tenant details updated successfully.',
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-      });
-    } catch (error) {
-      console.error('Error updating tenant details:', error);
-      toast({
-        title: 'Error updating tenant details.',
-        description: error.message,
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
+const handleSave = async () => {
+  try {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      throw new Error('No authentication token found. Please log in.');
     }
-  };
+
+    const headers = {
+      'Authorization': `Token ${token}`
+    };
+
+    // Prepare FormData
+    const formData = new FormData();
+    formData.append('name', editTenant.name);
+    formData.append('email', editTenant.email);
+    formData.append('phone_number', editTenant.phone_number);
+    formData.append('major', editTenant.major);
+    formData.append('gender', editTenant.gender);
+    formData.append('position', editTenant.position);
+    formData.append('admin_number', editTenant.admin_number);
+    formData.append('nationality', editTenant.nationality);
+    formData.append('parent', editTenant.parent);
+
+    // Check if passport_photo is a file before appending
+    if (editTenant.passport_photo instanceof File) {
+      formData.append('passport_photo', editTenant.passport_photo);
+    } else {
+      console.warn('passport_photo is not a file.');
+    }
+
+    // Log the FormData to inspect it
+    for (let pair of formData.entries()) {
+      console.log(`${pair[0]}: ${pair[1]}`);
+    }
+
+    await axios.put(`http://127.0.0.1:8000/api/tenants/${editTenant.id}/`, formData, {
+      headers: {
+        ...headers,
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    
+    setTenant(editTenant);
+    onEditClose();
+    toast({
+      title: 'Tenant details updated successfully.',
+      status: 'success',
+      duration: 5000,
+      isClosable: true,
+    });
+  } catch (error) {
+    console.error('Error updating tenant details:', error);
+    console.log('Error Response Data:', error.response?.data);
+
+    toast({
+      title: 'Error updating tenant details.',
+      description: error.response?.data?.detail || error.message,
+      status: 'error',
+      duration: 5000,
+      isClosable: true,
+    });
+  }
+};
+
 
   const handleRequisitionChange = (e) => {
     const { name, value } = e.target;
@@ -175,32 +211,44 @@ const Dashboard = () => {
     }));
   };
 
-  const handleRequisitionSubmit = async () => {
-    try {
-      const token = localStorage.getItem('authToken');
-      const headers = {
-        'Authorization': `Token ${token}`,
-      };
+const handleRequisitionSubmit = async () => {
+  try {
+    const token = localStorage.getItem('authToken');
+    const headers = {
+      'Authorization': `Token ${token}`,
+    };
 
-      await axios.post('http://127.0.0.1:8000/api/requisitions/', requisition, { headers });
-      onRequisitionClose();
-      toast({
-        title: 'Requisition submitted successfully.',
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-      });
-    } catch (error) {
-      console.error('Error submitting requisition:', error);
-      toast({
-        title: 'Error submitting requisition.',
-        description: error.message,
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
+    // Check the structure of requisition data
+    console.log('Requisition data:', requisition);
+
+    // Ensure the requisition data is correctly formatted
+    if (!requisition.type || !requisition.description) {
+      throw new Error('Type and Description are required fields.');
     }
-  };
+
+    const response = await axios.post('http://127.0.0.1:8000/api/maintenance/', requisition, { headers });
+    
+    console.log('Response:', response.data);
+
+    onRequisitionClose();
+    toast({
+      title: 'Requisition submitted successfully.',
+      status: 'success',
+      duration: 5000,
+      isClosable: true,
+    });
+  } catch (error) {
+    console.error('Error submitting requisition:', error.response || error.message);
+    toast({
+      title: 'Error submitting requisition.',
+      description: error.response?.data?.detail || error.message,
+      status: 'error',
+      duration: 5000,
+      isClosable: true,
+    });
+  }
+};
+
 
   const unreadNotificationsCount = notifications.filter(notification => !notification.is_read).length;
 
