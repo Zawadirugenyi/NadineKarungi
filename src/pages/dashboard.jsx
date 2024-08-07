@@ -1,4 +1,6 @@
+
 import React, { useEffect, useState } from 'react';
+
 import {
   Box,
   Flex,
@@ -16,6 +18,7 @@ import {
   useColorModeValue,
   useColorMode,
   Grid,
+  toast,
   GridItem,
   Modal,
   ModalOverlay,
@@ -203,6 +206,26 @@ const handleSave = async () => {
 };
 
 
+const YourComponent = ({ room, onRequisitionClose }) => {
+  const toast = useToast();
+  const [requisition, setRequisition] = useState({
+    type: '',
+    description: '',
+    otherType: '',
+    roomId: room?.id || '',
+    completed: false,
+  });
+
+  useEffect(() => {
+    // Update the roomId when the room prop changes
+    if (room?.id) {
+      setRequisition(prevState => ({
+        ...prevState,
+        roomId: room.id
+      }));
+    }
+  }, [room]);
+
   const handleRequisitionChange = (e) => {
     const { name, value } = e.target;
     setRequisition(prevState => ({
@@ -211,44 +234,77 @@ const handleSave = async () => {
     }));
   };
 
-const handleRequisitionSubmit = async () => {
-  try {
-    const token = localStorage.getItem('authToken');
-    const headers = {
-      'Authorization': `Token ${token}`,
-    };
+  const handleRequisitionSubmit = async (e) => {
+    e.preventDefault(); // Prevent default form submission
+    try {
+      console.log('Submitting requisition:', requisition); // Log state before submission
 
-    // Check the structure of requisition data
-    console.log('Requisition data:', requisition);
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        throw new Error('No authentication token found. Please log in.');
+      }
 
-    // Ensure the requisition data is correctly formatted
-    if (!requisition.type || !requisition.description) {
-      throw new Error('Type and Description are required fields.');
+      const headers = {
+        'Authorization': `Token ${token}`,
+        'Content-Type': 'application/json',
+      };
+
+      if (!requisition.roomId) {
+        throw new Error('Room ID is required.');
+      }
+
+      const requisitionData = {
+        room: requisition.roomId,
+        type: requisition.type,
+        description: requisition.description,
+        otherType: requisition.otherType || '',
+        completed: requisition.completed,
+      };
+
+      await axios.post(
+        'http://127.0.0.1:8000/api/maintenance/',
+        requisitionData,
+        { headers }
+      );
+
+      onRequisitionClose();
+      toast({
+        title: 'Requisition submitted successfully.',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
+
+    } catch (error) {
+      console.error('Error submitting requisition:', error);
+
+      if (error.response) {
+        toast({
+          title: 'Error submitting requisition.',
+          description: error.response.data?.room?.[0] || `Error ${error.response.status}: ${error.response.statusText}`,
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      } else if (error.request) {
+        toast({
+          title: 'Error submitting requisition.',
+          description: 'No response received from the server. Please try again later.',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      } else {
+        toast({
+          title: 'Error submitting requisition.',
+          description: error.message,
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
     }
-
-    const response = await axios.post('http://127.0.0.1:8000/api/maintenance/', requisition, { headers });
-    
-    console.log('Response:', response.data);
-
-    onRequisitionClose();
-    toast({
-      title: 'Requisition submitted successfully.',
-      status: 'success',
-      duration: 5000,
-      isClosable: true,
-    });
-  } catch (error) {
-    console.error('Error submitting requisition:', error.response || error.message);
-    toast({
-      title: 'Error submitting requisition.',
-      description: error.response?.data?.detail || error.message,
-      status: 'error',
-      duration: 5000,
-      isClosable: true,
-    });
-  }
-};
-
+  };
 
   const unreadNotificationsCount = notifications.filter(notification => !notification.is_read).length;
 
@@ -489,54 +545,65 @@ const handleRequisitionSubmit = async () => {
         </ModalContent>
       </Modal>
 
-        {/* Requisition Modal */}
-        <Modal isOpen={isRequisitionOpen} onClose={onRequisitionClose}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Submit Requisition</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <FormControl mb={4}>
-                <FormLabel>Type</FormLabel>
-                <Select
-                  name="type"
-                  value={requisition.type}
-                  onChange={handleRequisitionChange}
-                >
-                  <option value="">Select Type</option>
-                  <option value="maintenance">Maintenance</option>
-                  <option value="facility">Facility</option>
-                  <option value="other">Other</option>
-                </Select>
-              </FormControl>
-              {requisition.type === 'other' && (
-                <FormControl mb={4}>
-                  <FormLabel>Other Type</FormLabel>
-                  <Input
-                    name="otherType"
-                    value={requisition.otherType}
-                    onChange={handleRequisitionChange}
-                  />
-                </FormControl>
-              )}
-              <FormControl mb={4}>
-                <FormLabel>Description</FormLabel>
-                <Textarea
-                  name="description"
-                  value={requisition.description}
-                  onChange={handleRequisitionChange}
-                />
-              </FormControl>
-            </ModalBody>
-            <ModalFooter>
-              <Button colorScheme="blue" onClick={handleRequisitionSubmit}>Submit</Button>
-              <Button colorScheme="gray" onClick={onRequisitionClose} ml={3}>Cancel</Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
+<Modal isOpen={isRequisitionOpen} onClose={onRequisitionClose}>
+  <ModalOverlay />
+  <ModalContent>
+    <ModalHeader>Submit Requisition</ModalHeader>
+    <ModalCloseButton />
+    <ModalBody>
+    <FormControl>
+    <FormLabel>Room Number</FormLabel>
+    <Input
+      name="roomNumber"
+      value={requisition.roomNumber || roomNumber || ''}
+      onChange={handleRequisitionChange}
+      isReadOnly // Ensure the room number is read-only
+    />
+  </FormControl>
+
+      <FormControl mb={4}>
+        <FormLabel>Type</FormLabel>
+        <Select
+          name="type"
+          value={requisition.type}
+          onChange={handleRequisitionChange}
+        >
+          <option value="">Select Type</option>
+          <option value="maintenance">Maintenance</option>
+          <option value="facility">Facility</option>
+          <option value="other">Other</option>
+        </Select>
+      </FormControl>
+      {requisition.type === 'other' && (
+        <FormControl mb={4}>
+          <FormLabel>Other Type</FormLabel>
+          <Input
+            name="otherType"
+            value={requisition.otherType}
+            onChange={handleRequisitionChange}
+          />
+        </FormControl>
+      )}
+      <FormControl mb={4}>
+        <FormLabel>Description</FormLabel>
+        <Textarea
+          name="description"
+          value={requisition.description}
+          onChange={handleRequisitionChange}
+        />
+      </FormControl>
+    </ModalBody>
+    <ModalFooter>
+      <Button colorScheme="blue" onClick={handleRequisitionSubmit}>Submit</Button>
+      <Button colorScheme="gray" onClick={onRequisitionClose} ml={3}>Cancel</Button>
+    </ModalFooter>
+  </ModalContent>
+</Modal>
+
+
       </Flex>
     </Flex>
   );
 };
-
+};
 export default Dashboard;
