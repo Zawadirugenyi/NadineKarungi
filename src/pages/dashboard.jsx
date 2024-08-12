@@ -1,8 +1,6 @@
-
 import React, { useEffect, useState } from 'react';
 
 import {
-  Box,
   Flex,
   VStack,
   HStack,
@@ -18,7 +16,6 @@ import {
   useColorModeValue,
   useColorMode,
   Grid,
-  toast,
   GridItem,
   Modal,
   ModalOverlay,
@@ -39,7 +36,8 @@ import { MdOutlineNotifications, MdOutlineNotificationsNone } from 'react-icons/
 import axios from 'axios';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import logo from '../Components/Assets/logo.png';
-import Notifications from './notification'; // Ensure this component handles notification display
+import Notifications from './notification';
+import Chatbot from './chatbot';  // Ensure this component handles notification display
 
 const ROOM_TYPE_LABELS = {
   bedsitter: 'Bedsitter',
@@ -141,90 +139,57 @@ const Dashboard = () => {
       [name]: value,
     }));
   };
-const handleSave = async () => {
-  try {
-    const token = localStorage.getItem('authToken');
-    if (!token) {
-      throw new Error('No authentication token found. Please log in.');
-    }
 
-    const headers = {
-      'Authorization': `Token ${token}`
-    };
-
-    // Prepare FormData
-    const formData = new FormData();
-    formData.append('name', editTenant.name);
-    formData.append('email', editTenant.email);
-    formData.append('phone_number', editTenant.phone_number);
-    formData.append('major', editTenant.major);
-    formData.append('gender', editTenant.gender);
-    formData.append('position', editTenant.position);
-    formData.append('admin_number', editTenant.admin_number);
-    formData.append('nationality', editTenant.nationality);
-    formData.append('parent', editTenant.parent);
-
-    // Check if passport_photo is a file before appending
-    if (editTenant.passport_photo instanceof File) {
-      formData.append('passport_photo', editTenant.passport_photo);
-    } else {
-      console.warn('passport_photo is not a file.');
-    }
-
-    // Log the FormData to inspect it
-    for (let pair of formData.entries()) {
-      console.log(`${pair[0]}: ${pair[1]}`);
-    }
-
-    await axios.put(`http://127.0.0.1:8000/api/tenants/${editTenant.id}/`, formData, {
-      headers: {
-        ...headers,
-        'Content-Type': 'multipart/form-data'
+  const handleSave = async () => {
+    try {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        throw new Error('No authentication token found. Please log in.');
       }
-    });
-    
-    setTenant(editTenant);
-    onEditClose();
-    toast({
-      title: 'Tenant details updated successfully.',
-      status: 'success',
-      duration: 5000,
-      isClosable: true,
-    });
-  } catch (error) {
-    console.error('Error updating tenant details:', error);
-    console.log('Error Response Data:', error.response?.data);
 
-    toast({
-      title: 'Error updating tenant details.',
-      description: error.response?.data?.detail || error.message,
-      status: 'error',
-      duration: 5000,
-      isClosable: true,
-    });
-  }
-};
+      const headers = {
+        'Authorization': `Token ${token}`,
+        'Content-Type': 'multipart/form-data'
+      };
 
+      const formData = new FormData();
+      formData.append('name', editTenant.name);
+      formData.append('email', editTenant.email);
+      formData.append('phone_number', editTenant.phone_number);
+      formData.append('major', editTenant.major);
+      formData.append('gender', editTenant.gender);
+      formData.append('position', editTenant.position);
+      formData.append('admin_number', editTenant.admin_number);
+      formData.append('nationality', editTenant.nationality);
+      formData.append('parent', editTenant.parent);
 
-const YourComponent = ({ room, onRequisitionClose }) => {
-  const toast = useToast();
-  const [requisition, setRequisition] = useState({
-    type: '',
-    description: '',
-    otherType: '',
-    roomId: room?.id || '',
-    completed: false,
-  });
+      if (editTenant.passport_photo instanceof File) {
+        formData.append('passport_photo', editTenant.passport_photo);
+      } else {
+        console.warn('passport_photo is not a file.');
+      }
 
-  useEffect(() => {
-    // Update the roomId when the room prop changes
-    if (room?.id) {
-      setRequisition(prevState => ({
-        ...prevState,
-        roomId: room.id
-      }));
+      await axios.put(`http://127.0.0.1:8000/api/tenants/${editTenant.id}/`, formData, { headers });
+      
+      setTenant(editTenant);
+      onEditClose();
+      toast({
+        title: 'Tenant details updated successfully.',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.error('Error updating tenant details:', error);
+      toast({
+        title: 'Error updating tenant details.',
+        description: error.response?.data?.detail || error.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
     }
-  }, [room]);
+  };
 
   const handleRequisitionChange = (e) => {
     const { name, value } = e.target;
@@ -235,10 +200,8 @@ const YourComponent = ({ room, onRequisitionClose }) => {
   };
 
   const handleRequisitionSubmit = async (e) => {
-    e.preventDefault(); // Prevent default form submission
+    e.preventDefault();
     try {
-      console.log('Submitting requisition:', requisition); // Log state before submission
-
       const token = localStorage.getItem('authToken');
       if (!token) {
         throw new Error('No authentication token found. Please log in.');
@@ -249,10 +212,6 @@ const YourComponent = ({ room, onRequisitionClose }) => {
         'Content-Type': 'application/json',
       };
 
-      if (!requisition.roomId) {
-        throw new Error('Room ID is required.');
-      }
-
       const requisitionData = {
         room: requisition.roomId,
         type: requisition.type,
@@ -261,11 +220,7 @@ const YourComponent = ({ room, onRequisitionClose }) => {
         completed: requisition.completed,
       };
 
-      await axios.post(
-        'http://127.0.0.1:8000/api/maintenance/',
-        requisitionData,
-        { headers }
-      );
+      await axios.post('http://127.0.0.1:8000/api/maintenance/', requisitionData, { headers });
 
       onRequisitionClose();
       toast({
@@ -277,32 +232,13 @@ const YourComponent = ({ room, onRequisitionClose }) => {
 
     } catch (error) {
       console.error('Error submitting requisition:', error);
-
-      if (error.response) {
-        toast({
-          title: 'Error submitting requisition.',
-          description: error.response.data?.room?.[0] || `Error ${error.response.status}: ${error.response.statusText}`,
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-      } else if (error.request) {
-        toast({
-          title: 'Error submitting requisition.',
-          description: 'No response received from the server. Please try again later.',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-      } else {
-        toast({
-          title: 'Error submitting requisition.',
-          description: error.message,
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-      }
+      toast({
+        title: 'Error submitting requisition.',
+        description: error.response?.data?.room?.[0] || 'Error occurred. Please try again.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
 
@@ -314,7 +250,7 @@ const YourComponent = ({ room, onRequisitionClose }) => {
 
   return (
     <Flex h="100vh">
-      <VStack
+        <VStack
         w="20%"
         h="100vh"
         bg={sidebarBgColor}
@@ -360,18 +296,15 @@ const YourComponent = ({ room, onRequisitionClose }) => {
         </Button>
       </VStack>
 
-      <Flex flex={1} direction="column" p={4} position="relative">
-        <HStack mb={4} align="center" justify="space-between">
-          <Button  colorScheme="white">
-           
-          </Button>
-          <HStack spacing={4} align="center">
+      <Flex w="80%" p={4} direction="column" >
+                 <HStack spacing={4} align="center" marginLeft="80%">
             <IconButton
               icon={unreadNotificationsCount > 0 ? <MdOutlineNotifications /> : <MdOutlineNotificationsNone />}
               aria-label="Notifications"
               color={unreadNotificationsCount > 0 ? 'black' : 'inherit'}
               onClick={() => setShowNotifications(!showNotifications)}
             />
+            
             <HStack spacing={2} align="center">
               {tenant.passport_photo && (
                 <Image
@@ -384,45 +317,53 @@ const YourComponent = ({ room, onRequisitionClose }) => {
               <Text>{tenant.name}</Text>
             </HStack>
           </HStack>
-        </HStack>
+      
 
         {showCards && (
-          <Grid templateColumns="repeat(3, 1fr)" gap={4} marginTop="25px">
+          <Grid templateColumns="repeat(3, 1fr)" gap={6} marginTop="40px">
             <GridItem>
               <Card>
-                <CardHeader fontWeight="bold" fontSize="lg">Tenant Info</CardHeader>
+                <CardHeader>
+                  <Text fontSize="lg">Tenant</Text>
+                </CardHeader>
                 <CardBody>
-                            <Text>Name: {tenant.name}</Text>
-                  <Text>Major: {tenant.major}</Text>
-                  <Text>Admin Number: {tenant.admin_number}</Text>
-                  <Text>Gender: {tenant.gender}</Text>
-                  <Text>Nationality: {tenant.nationality}</Text>
-                  <Text>Passport: {tenant.passport}</Text>
-                  <Text>Phone Number: {tenant.phone_number}</Text>
+                  <Text>Name: {tenant.name}</Text>
                   <Text>Email: {tenant.email}</Text>
-                  <Text>Parent: {tenant.parent}</Text>
+                  <Text>Phone: {tenant.phone_number}</Text>
+                  <Text>Major: {tenant.major}</Text>
+                  <Text>Gender: {tenant.gender}</Text>
                   <Text>Position: {tenant.position}</Text>
-                  
+                  <Text>Admin Number: {tenant.admin_number}</Text>
+                  <Text>Nationality: {tenant.nationality}</Text>
+                  <Text>Parent: {tenant.parent}</Text>
                 </CardBody>
                 <CardFooter>
-                  <Button colorScheme="teal" onClick={handleEditClick}>Edit</Button>
+                  <Button
+                    colorScheme="teal"
+                    onClick={handleEditClick}
+                  >
+                    Edit Tenant
+                  </Button>
                 </CardFooter>
               </Card>
             </GridItem>
             <GridItem>
               <Card>
-                <CardHeader fontWeight="bold" fontSize="lg">Room Details</CardHeader>
+                <CardHeader>
+                  <Text fontSize="lg">Room</Text>
+                </CardHeader>
                 <CardBody>
+                  <Text>Number: {room.number}</Text>
+                  <Text>Type: {ROOM_TYPE_LABELS[room.room_type]}</Text>
                   <Text>Hostel: {hostel.name}</Text>
-                  <Text>Room Number: {room.number}</Text>
-                  <Text>Room Type: {ROOM_TYPE_LABELS[room.room_type]}</Text>
-                 
                 </CardBody>
               </Card>
             </GridItem>
             <GridItem>
               <Card>
-                <CardHeader fontWeight="bold" fontSize="lg">Booking Details</CardHeader>
+                <CardHeader>
+                  <Text fontSize="lg">Booking</Text>
+                </CardHeader>
                 <CardBody>
                   <Text>Check-in: {booking.check_in_date}</Text>
                   <Text>Check-out: {booking.check_out_date}</Text>
@@ -432,7 +373,7 @@ const YourComponent = ({ room, onRequisitionClose }) => {
           </Grid>
         )}
 
-        {/* Notifications Modal */}
+                {/* Notifications Modal */}
         <Modal isOpen={showNotifications} onClose={() => setShowNotifications(false)}>
           <ModalOverlay />
           <ModalContent>
@@ -449,103 +390,108 @@ const YourComponent = ({ room, onRequisitionClose }) => {
 
         {/* Edit Tenant Modal */}
         <Modal isOpen={isEditOpen} onClose={onEditClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Edit Tenant Details</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <FormControl>
-              <FormLabel>Name</FormLabel>
-              <Input
-                name="name"
-                value={editTenant.name}
-                onChange={handleInputChange}
-              />
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel>Major</FormLabel>
-              <Input
-                name="major"
-                value={editTenant.major}
-                onChange={handleInputChange}
-              />
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel>Admin Number</FormLabel>
-              <Input
-                name="admin_number"
-                value={editTenant.admin_number}
-                onChange={handleInputChange}
-              />
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel>Gender</FormLabel>
-              <Input
-                name="gender"
-                value={editTenant.gender}
-                onChange={handleInputChange}
-              />
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel>Nationality</FormLabel>
-              <Input
-                name="nationality"
-                value={editTenant.nationality}
-                onChange={handleInputChange}
-              />
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel>Passport</FormLabel>
-              <Input
-                name="passport"
-                value={editTenant.passport}
-                onChange={handleInputChange}
-              />
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel>Phone Number</FormLabel>
-              <Input
-                name="phone_number"
-                value={editTenant.phone_number}
-                onChange={handleInputChange}
-              />
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel>Email</FormLabel>
-              <Input
-                name="email"
-                type="email"
-                value={editTenant.email}
-                onChange={handleInputChange}
-              />
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel>Parent</FormLabel>
-              <Input
-                name="parent"
-                value={editTenant.parent}
-                onChange={handleInputChange}
-              />
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel>Position</FormLabel>
-              <Input
-                name="position"
-                value={editTenant.position}
-                onChange={handleInputChange}
-              />
-            </FormControl>
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={handleSave}>
-              Save
-            </Button>
-            <Button variant="ghost" onClick={onEditClose}>Cancel</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Edit Tenant</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <FormControl id="name">
+                <FormLabel>Name</FormLabel>
+                <Input
+                  name="name"
+                  value={editTenant.name || ''}
+                  onChange={handleInputChange}
+                />
+              </FormControl>
+              <FormControl id="email" mt={4}>
+                <FormLabel>Email</FormLabel>
+                <Input
+                  name="email"
+                  value={editTenant.email || ''}
+                  onChange={handleInputChange}
+                />
+              </FormControl>
+              <FormControl id="phone_number" mt={4}>
+                <FormLabel>Phone Number</FormLabel>
+                <Input
+                  name="phone_number"
+                  value={editTenant.phone_number || ''}
+                  onChange={handleInputChange}
+                />
+              </FormControl>
+              <FormControl id="major" mt={4}>
+                <FormLabel>Major</FormLabel>
+                <Input
+                  name="major"
+                  value={editTenant.major || ''}
+                  onChange={handleInputChange}
+                />
+              </FormControl>
+              <FormControl id="gender" mt={4}>
+                <FormLabel>Gender</FormLabel>
+                <Select
+                  name="gender"
+                  value={editTenant.gender || ''}
+                  onChange={handleInputChange}
+                >
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </Select>
+              </FormControl>
+              <FormControl id="position" mt={4}>
+                <FormLabel>Position</FormLabel>
+                <Input
+                  name="position"
+                  value={editTenant.position || ''}
+                  onChange={handleInputChange}
+                />
+              </FormControl>
+              <FormControl id="admin_number" mt={4}>
+                <FormLabel>Admin Number</FormLabel>
+                <Input
+                  name="admin_number"
+                  value={editTenant.admin_number || ''}
+                  onChange={handleInputChange}
+                />
+              </FormControl>
+              <FormControl id="nationality" mt={4}>
+                <FormLabel>Nationality</FormLabel>
+                <Input
+                  name="nationality"
+                  value={editTenant.nationality || ''}
+                  onChange={handleInputChange}
+                />
+              </FormControl>
+              <FormControl id="parent" mt={4}>
+                <FormLabel>Parent</FormLabel>
+                <Input
+                  name="parent"
+                  value={editTenant.parent || ''}
+                  onChange={handleInputChange}
+                />
+              </FormControl>
+              <FormControl id="passport_photo" mt={4}>
+                <FormLabel>Passport Photo</FormLabel>
+                <Input
+                  type="file"
+                  name="passport_photo"
+                  onChange={(e) => setEditTenant({ ...editTenant, passport_photo: e.target.files[0] })}
+                />
+              </FormControl>
+            </ModalBody>
+            <ModalFooter>
+              <Button colorScheme="blue" mr={3} onClick={handleSave}>
+                Save
+              </Button>
+              <Button variant="ghost" onClick={onEditClose}>
+                Cancel
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
 
-<Modal isOpen={isRequisitionOpen} onClose={onRequisitionClose}>
+        {/* Requisition Modal */}
+       <Modal isOpen={isRequisitionOpen} onClose={onRequisitionClose}>
   <ModalOverlay />
   <ModalContent>
     <ModalHeader>Submit Requisition</ModalHeader>
@@ -605,5 +551,5 @@ const YourComponent = ({ room, onRequisitionClose }) => {
     </Flex>
   );
 };
-};
+
 export default Dashboard;
