@@ -191,56 +191,64 @@ const Dashboard = () => {
     }
   };
 
-  const handleRequisitionChange = (e) => {
-    const { name, value } = e.target;
-    setRequisition(prevState => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
+const handleRequisitionChange = (e) => {
+  const { name, value } = e.target;
+  setRequisition(prevRequisition => ({
+    ...prevRequisition,
+    [name]: value,
+  }));
+};
 
-  const handleRequisitionSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const token = localStorage.getItem('authToken');
-      if (!token) {
-        throw new Error('No authentication token found. Please log in.');
-      }
 
-      const headers = {
-        'Authorization': `Token ${token}`,
-        'Content-Type': 'application/json',
-      };
+const handleRequisitionSubmit = async (e) => {
+  e.preventDefault();
 
-      const requisitionData = {
-        room: requisition.roomId,
-        type: requisition.type,
-        description: requisition.description,
-        otherType: requisition.otherType || '',
-        completed: requisition.completed,
-      };
-
-      await axios.post('http://127.0.0.1:8000/api/maintenance/', requisitionData, { headers });
-
-      onRequisitionClose();
-      toast({
-        title: 'Requisition submitted successfully.',
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-      });
-
-    } catch (error) {
-      console.error('Error submitting requisition:', error);
-      toast({
-        title: 'Error submitting requisition.',
-        description: error.response?.data?.room?.[0] || 'Error occurred. Please try again.',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
+  try {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      throw new Error('No authentication token found. Please log in.');
     }
-  };
+
+    const headers = {
+      'Authorization': `Token ${token}`,
+      'Content-Type': 'application/json',
+    };
+
+    const requisitionData = {
+      room_number: requisition.roomNumber || roomNumber,
+      type: requisition.type || '',
+      description: requisition.description || '',
+      otherType: requisition.type === 'other' ? requisition.otherType : '',
+      completed: requisition.completed || false,
+    };
+
+    console.log('Submitting requisition with data:', requisitionData);
+
+    const response = await axios.post('http://127.0.0.1:8000/api/maintenance/', requisitionData, { headers });
+
+    console.log('Response from server:', response.data);
+
+    onRequisitionClose();
+    toast({
+      title: 'Requisition submitted successfully.',
+      status: 'success',
+      duration: 5000,
+      isClosable: true,
+    });
+
+  } catch (error) {
+    console.error('Error submitting requisition:', error.response?.data || error);
+
+    toast({
+      title: 'Error submitting requisition.',
+      description: error.response?.data?.error || 'An error occurred. Please try again.',
+      status: 'error',
+      duration: 5000,
+      isClosable: true,
+    });
+  }
+};
+
 
   const unreadNotificationsCount = notifications.filter(notification => !notification.is_read).length;
 
@@ -497,51 +505,57 @@ const Dashboard = () => {
     <ModalHeader>Submit Requisition</ModalHeader>
     <ModalCloseButton />
     <ModalBody>
-    <FormControl>
-    <FormLabel>Room Number</FormLabel>
-    <Input
-      name="roomNumber"
-      value={requisition.roomNumber || roomNumber || ''}
-      onChange={handleRequisitionChange}
-      isReadOnly // Ensure the room number is read-only
-    />
-  </FormControl>
+      <FormControl mb={4}>
+        <FormLabel>Room Number</FormLabel>
+        <Input
+          name="roomNumber"
+          value={requisition.roomNumber || roomNumber || ''}
+          onChange={handleRequisitionChange}
+          isReadOnly // Room number is read-only
+        />
+      </FormControl>
 
       <FormControl mb={4}>
         <FormLabel>Type</FormLabel>
         <Select
           name="type"
-          value={requisition.type}
+          value={requisition.type || ''}
           onChange={handleRequisitionChange}
+          placeholder="Select Type"
         >
-          <option value="">Select Type</option>
           <option value="maintenance">Maintenance</option>
           <option value="facility">Facility</option>
           <option value="other">Other</option>
         </Select>
       </FormControl>
+
       {requisition.type === 'other' && (
         <FormControl mb={4}>
           <FormLabel>Other Type</FormLabel>
           <Input
             name="otherType"
-            value={requisition.otherType}
+            value={requisition.otherType || ''}
             onChange={handleRequisitionChange}
           />
         </FormControl>
       )}
+
       <FormControl mb={4}>
         <FormLabel>Description</FormLabel>
         <Textarea
           name="description"
-          value={requisition.description}
+          value={requisition.description || ''}
           onChange={handleRequisitionChange}
         />
       </FormControl>
     </ModalBody>
     <ModalFooter>
-      <Button colorScheme="blue" onClick={handleRequisitionSubmit}>Submit</Button>
-      <Button colorScheme="gray" onClick={onRequisitionClose} ml={3}>Cancel</Button>
+      <Button colorScheme="blue" onClick={handleRequisitionSubmit}>
+        Submit
+      </Button>
+      <Button colorScheme="gray" onClick={onRequisitionClose} ml={3}>
+        Cancel
+      </Button>
     </ModalFooter>
   </ModalContent>
 </Modal>
