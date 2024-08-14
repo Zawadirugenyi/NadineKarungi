@@ -13,6 +13,7 @@ import {
   CardBody,
   CardFooter,
   Image,
+  Box,
   useColorModeValue,
   useColorMode,
   Grid,
@@ -37,7 +38,7 @@ import axios from 'axios';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import logo from '../Components/Assets/logo.png';
 import Notifications from './notification';
-import Chatbot from './chatbot';  // Ensure this component handles notification display
+import Chatbot from './chatbot'; // Import Chatbot component
 
 const ROOM_TYPE_LABELS = {
   bedsitter: 'Bedsitter',
@@ -79,53 +80,93 @@ const Dashboard = () => {
 
   const sidebarBgColor = useColorModeValue('#0097b2', '#005b7f');
   const buttonHoverColor = useColorModeValue('black', '#003b57');
+  
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const token = localStorage.getItem('authToken');
+      const headers = {
+        'Authorization': `Token ${token}`,
+      };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const token = localStorage.getItem('authToken');
-        const headers = {
-          'Authorization': `Token ${token}`,
-        };
+      // Fetch tenants
+      const tenantResponse = await axios.get('http://127.0.0.1:8000/api/tenants/', { headers });
+      const tenants = tenantResponse.data;
+      const loggedInTenant = tenants.find(t => t.name === tenantName);
 
-        const tenantResponse = await axios.get('http://127.0.0.1:8000/api/tenants/', { headers });
-        const tenant = tenantResponse.data.find(t => t.name === tenantName);
-        setTenant(tenant);
+      // Debug: Log tenant data
+      console.log('Logged In Tenant:', loggedInTenant);
 
-        const roomResponse = await axios.get('http://127.0.0.1:8000/api/rooms/', { headers });
-        const room = roomResponse.data.find(r => r.number === roomNumber);
-        setRoom(room);
+      setTenant(loggedInTenant);
 
-        if (room) {
-          const hostelResponse = await axios.get('http://127.0.0.1:8000/api/hostels/', { headers });
-          const hostel = hostelResponse.data.find(h => h.id === room.hostel);
-          setHostel(hostel);
-        }
+      // Fetch rooms
+      const roomResponse = await axios.get('http://127.0.0.1:8000/api/rooms/', { headers });
+      const room = roomResponse.data.find(r => r.number === roomNumber);
+      setRoom(room);
 
-        if (tenant) {
-          const bookingResponse = await axios.get('http://127.0.0.1:8000/api/bookings/', { headers });
-          const booking = bookingResponse.data.find(b => b.tenant === tenant.id);
-          setBooking(booking);
-        }
+      // Fetch hostels if room exists
+      if (room) {
+        const hostelResponse = await axios.get('http://127.0.0.1:8000/api/hostels/', { headers });
+        const hostel = hostelResponse.data.find(h => h.id === room.hostel);
+        setHostel(hostel);
+      }
 
-        // Fetch notifications
-        const notificationsResponse = await axios.get('http://127.0.0.1:8000/api/notifications/', { headers });
-        setNotifications(notificationsResponse.data);
+      // Fetch bookings if tenant exists
+      if (loggedInTenant) {
+        const bookingResponse = await axios.get('http://127.0.0.1:8000/api/bookings/', { headers });
+        const booking = bookingResponse.data.find(b => b.tenant === loggedInTenant.id);
+        setBooking(booking);
+      }
 
-      } catch (error) {
-        console.error('Error fetching data:', error);
+      // Fetch notifications
+      const notificationsResponse = await axios.get('http://127.0.0.1:8000/api/notifications/', { headers });
+      const notifications = notificationsResponse.data;
+
+      // Debug: Log all notifications
+      console.log('All Notifications:', notifications);
+
+      // Filter notifications based on the logged-in tenant's name
+      const filteredNotifications = notifications.filter(notification => notification.tenant_name === loggedInTenant.name);
+
+      // Debug: Log filtered notifications
+      console.log('Filtered Notifications:', filteredNotifications);
+
+      // Separate notifications into read and unread
+      const unreadNotifications = filteredNotifications.filter(notification => !notification.read);
+      const readNotifications = filteredNotifications.filter(notification => notification.read);
+
+      // Sort notifications by date
+      const sortedNotifications = [...unreadNotifications, ...readNotifications].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      setNotifications(sortedNotifications);
+
+      // Notify user of new notifications
+      if (unreadNotifications.length > 0) {
         toast({
-          title: 'Error fetching data.',
-          description: error.message,
-          status: 'error',
+          title: 'You have new notifications!',
+          description: `You have ${unreadNotifications.length} new notifications.`,
+          status: 'info',
           duration: 5000,
           isClosable: true,
         });
       }
-    };
 
-    fetchData();
-  }, [tenantName, roomNumber, toast]);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      toast({
+        title: 'Error fetching data.',
+        description: error.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
+  fetchData();
+}, [tenantName, roomNumber, toast]);
+
+
 
   const handleEditClick = () => {
     setEditTenant(tenant);
@@ -382,20 +423,20 @@ const handleRequisitionSubmit = async (e) => {
         )}
 
                 {/* Notifications Modal */}
-        <Modal isOpen={showNotifications} onClose={() => setShowNotifications(false)}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Notifications</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <Notifications notifications={notifications} />
-            </ModalBody>
-            <ModalFooter>
-              <Button colorScheme="blue" onClick={() => setShowNotifications(false)}>Close</Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-
+   <Modal isOpen={showNotifications} onClose={() => setShowNotifications(false)}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>Notifications</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+          <Notifications notifications={notifications} />
+        </ModalBody>
+        <ModalFooter>
+          <Button colorScheme="blue" onClick={() => setShowNotifications(false)}>Close</Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  
         {/* Edit Tenant Modal */}
         <Modal isOpen={isEditOpen} onClose={onEditClose}>
           <ModalOverlay />
@@ -560,6 +601,10 @@ const handleRequisitionSubmit = async (e) => {
   </ModalContent>
 </Modal>
 
+   {/* Chatbot Component */}
+        <Box position="absolute" bottom="4" right="4">
+          <Chatbot />
+        </Box>
 
       </Flex>
     </Flex>

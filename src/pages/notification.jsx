@@ -4,23 +4,20 @@ import {
   Flex,
   VStack,
   HStack,
-  IconButton,
   Text,
   Card,
   CardHeader,
   CardBody,
   useToast,
   useColorModeValue,
-  useColorMode,
 } from '@chakra-ui/react';
-import { FaBell, FaUserCircle, FaMoon, FaSun } from 'react-icons/fa';
 import axios from 'axios';
-import Chatbot from './chatbot'; // Import Chatbot component
 
-const Notifications = () => {
+const Dashboard = () => {
   const [notifications, setNotifications] = useState([]);
+  const [filteredNotifications, setFilteredNotifications] = useState([]);
+  const [tenantName, setTenantName] = useState(''); // Initialize tenantName
   const toast = useToast();
-  const { colorMode, toggleColorMode } = useColorMode();
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -31,10 +28,17 @@ const Notifications = () => {
         };
 
         const response = await axios.get('http://127.0.0.1:8000/api/notifications/', { headers });
-
-        console.log('Notifications Data:', response.data);
+        console.log('All Notifications:', response.data);
 
         setNotifications(response.data);
+
+        // Filter notifications based on tenant name
+        const tenantName = 'Fina Mwayuma'; // Example: set this to the actual tenant name
+        setTenantName(tenantName); // Set tenantName state
+        const filtered = response.data.filter(notification => notification.tenant_name === tenantName);
+        setFilteredNotifications(filtered);
+
+        console.log('Filtered Notifications:', filtered);
       } catch (error) {
         console.error('Error fetching notifications:', error);
         toast({
@@ -48,14 +52,18 @@ const Notifications = () => {
     };
 
     fetchNotifications();
-  }, [toast]);
+  }, [toast]); // No need for tenantName as dependency
 
-  // Use color mode value hooks outside of conditionals
+  // Color mode values
   const headerBgColor = useColorModeValue('white', '#1A202C');
   const headerTextColor = useColorModeValue('black', 'white');
   const cardBgColor = useColorModeValue('white', '#2D3748');
-  const buttonHoverColor = useColorModeValue('gray.100', 'gray.600');
-  const iconColor = useColorModeValue('gray.600', 'gray.300'); // Color for icons
+
+  // Format date to readable format
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
 
   return (
     <Flex direction="column" h="100vh">
@@ -68,7 +76,7 @@ const Notifications = () => {
         justify="space-between"
         boxShadow="sm"
       >
-    
+        <Text fontSize="xl">Notifications</Text>
       </HStack>
 
       {/* Main Content */}
@@ -81,20 +89,25 @@ const Notifications = () => {
           borderRadius="md"
           boxShadow="md"
         >
-          <CardHeader>
-            <Text fontSize="2xl" fontWeight="bold">
-              Notifications
-            </Text>
-          </CardHeader>
+   
           <CardBody>
             <VStack spacing={4} align="stretch">
-              {notifications.length > 0 ? (
-                notifications.map((notification) => (
-                  <Box key={notification.id} p={4} bg={cardBgColor} borderRadius="md" boxShadow="sm">
+              {filteredNotifications.length > 0 ? (
+                filteredNotifications.map((notification, index) => (
+                  <Box
+                    key={`${notification.date}-${notification.message}-${index}`} // Unique key based on date, message, and index
+                    p={4}
+                    bg={cardBgColor}
+                    borderRadius="md"
+                    boxShadow="sm"
+                  >
                     <Text fontSize="lg" fontWeight="bold">
-                      {notification.title}
+                      {notification.tenant_name}
                     </Text>
                     <Text fontSize="md">{notification.message}</Text>
+                    <Text fontSize="sm" color="gray.500">
+                      {formatDate(notification.date)}
+                    </Text>
                   </Box>
                 ))
               ) : (
@@ -103,14 +116,9 @@ const Notifications = () => {
             </VStack>
           </CardBody>
         </Card>
-
-        {/* Chatbot Component */}
-        <Box position="absolute" bottom="4" right="4">
-          <Chatbot />
-        </Box>
       </Flex>
     </Flex>
   );
 };
 
-export default Notifications;
+export default Dashboard;
