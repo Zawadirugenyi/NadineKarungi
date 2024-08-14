@@ -104,7 +104,7 @@ const Notifications = () => {
       </HStack>
 
       {/* Main Content */}
-      <Flex flex={1} direction="column" p={4} align="center">
+      <Flex flex={1} direction="column" p={4}>
         <Card
           w="full"
           maxW="md"
@@ -112,6 +112,8 @@ const Notifications = () => {
           borderWidth="1px"
           borderRadius="md"
           boxShadow="md"
+          maxH="70vh"  // Set maximum height for the card
+          overflowY="auto"  // Enable scrolling within the card
         >
           <CardBody>
             <VStack spacing={4} align="stretch">
@@ -160,7 +162,9 @@ const Notifications = () => {
             </Text>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={closeModal}>
+            <Button   bg="#0097b2"
+              color="white"
+              _hover={{ bg: "#073d47" }} mr={3} onClick={closeModal}>
               Close
             </Button>
           </ModalFooter>

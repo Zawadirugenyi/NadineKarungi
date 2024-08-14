@@ -346,26 +346,27 @@ const handleRequisitionSubmit = async (e) => {
       </VStack>
 
       <Flex w="80%" p={4} direction="column" >
-                 <HStack spacing={4} align="center" marginLeft="80%">
-            <IconButton
-              icon={unreadNotificationsCount > 0 ? <MdOutlineNotifications /> : <MdOutlineNotificationsNone />}
-              aria-label="Notifications"
-              color={unreadNotificationsCount > 0 ? 'black' : 'inherit'}
-              onClick={() => setShowNotifications(!showNotifications)}
-            />
-            
-            <HStack spacing={2} align="center">
-              {tenant.passport_photo && (
-                <Image
-                  src={`http://127.0.0.1:8000${tenant.passport_photo}`}
-                  alt="Profile Photo"
-                  boxSize="50px"
-                  borderRadius="full"
-                />
-              )}
-              <Text>{tenant.name}</Text>
-            </HStack>
-          </HStack>
+       <HStack spacing={4} align="center" marginLeft="80%">
+  <IconButton
+    icon={unreadNotificationsCount > 0 ? <MdOutlineNotifications /> : <MdOutlineNotificationsNone />}
+    aria-label="Notifications"
+    color={unreadNotificationsCount > 0 ? 'black' : 'inherit'}
+    onClick={() => setShowNotifications(!showNotifications)}
+  />
+  
+  <HStack spacing={2} align="center">
+    {tenant.passport_photo && (
+      <Image
+        src={`http://127.0.0.1:8000${tenant.passport_photo}`}
+        alt="Profile Photo"
+        boxSize="50px"
+        borderRadius="full"
+      />
+    )}
+    <Text>{tenant.name}</Text>
+  </HStack>
+</HStack>
+
       
 
         {showCards && (
@@ -423,20 +424,22 @@ const handleRequisitionSubmit = async (e) => {
         )}
 
                 {/* Notifications Modal */}
-   <Modal isOpen={showNotifications} onClose={() => setShowNotifications(false)}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Notifications</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          <Notifications notifications={notifications} />
-        </ModalBody>
-        <ModalFooter>
-          <Button colorScheme="blue" onClick={() => setShowNotifications(false)}>Close</Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+<Modal isOpen={showNotifications} onClose={() => setShowNotifications(false)}>
+  <ModalOverlay />
+  <ModalContent
+    height="690px"    
+    display="flex"
+    flexDirection="column"
+  >
+ 
+    <ModalCloseButton />
+    <ModalBody flex="1" overflow="hidden">
+      <Notifications notifications={notifications} />
+    </ModalBody>
   
+  </ModalContent>
+</Modal>
+
         {/* Edit Tenant Modal */}
         <Modal isOpen={isEditOpen} onClose={onEditClose}>
           <ModalOverlay />
@@ -529,7 +532,9 @@ const handleRequisitionSubmit = async (e) => {
               </FormControl>
             </ModalBody>
             <ModalFooter>
-              <Button colorScheme="blue" mr={3} onClick={handleSave}>
+              <Button   bg="#0097b2"
+              color="white"
+              _hover={{ bg: "#073d47" }} mr={3} onClick={handleSave}>
                 Save
               </Button>
               <Button variant="ghost" onClick={onEditClose}>
@@ -591,7 +596,9 @@ const handleRequisitionSubmit = async (e) => {
       </FormControl>
     </ModalBody>
     <ModalFooter>
-      <Button colorScheme="blue" onClick={handleRequisitionSubmit}>
+      <Button   bg="#0097b2"
+              color="white"
+              _hover={{ bg: "#073d47" }}onClick={handleRequisitionSubmit}>
         Submit
       </Button>
       <Button colorScheme="gray" onClick={onRequisitionClose} ml={3}>
