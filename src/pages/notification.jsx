@@ -6,17 +6,26 @@ import {
   HStack,
   Text,
   Card,
-  CardHeader,
   CardBody,
   useToast,
   useColorModeValue,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  Button,
 } from '@chakra-ui/react';
 import axios from 'axios';
 
-const Dashboard = () => {
+const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
   const [filteredNotifications, setFilteredNotifications] = useState([]);
-  const [tenantName, setTenantName] = useState(''); // Initialize tenantName
+  const [tenantName, setTenantName] = useState('');
+  const [selectedNotification, setSelectedNotification] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const toast = useToast();
 
   useEffect(() => {
@@ -33,8 +42,8 @@ const Dashboard = () => {
         setNotifications(response.data);
 
         // Filter notifications based on tenant name
-        const tenantName = 'Fina Mwayuma'; // Example: set this to the actual tenant name
-        setTenantName(tenantName); // Set tenantName state
+        const tenantName = 'Fina Mwayuma';
+        setTenantName(tenantName);
         const filtered = response.data.filter(notification => notification.tenant_name === tenantName);
         setFilteredNotifications(filtered);
 
@@ -52,7 +61,22 @@ const Dashboard = () => {
     };
 
     fetchNotifications();
-  }, [toast]); // No need for tenantName as dependency
+  }, [toast]);
+
+  const handleNotificationClick = (notification) => {
+    setSelectedNotification(notification);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedNotification(null);
+  };
+
+  // Truncate the message if it hasn't been expanded
+  const truncateMessage = (message, maxLength = 50) => {
+    return message.length > maxLength ? `${message.substring(0, maxLength)}...` : message;
+  };
 
   // Color mode values
   const headerBgColor = useColorModeValue('white', '#1A202C');
@@ -89,22 +113,25 @@ const Dashboard = () => {
           borderRadius="md"
           boxShadow="md"
         >
-   
           <CardBody>
             <VStack spacing={4} align="stretch">
               {filteredNotifications.length > 0 ? (
-                filteredNotifications.map((notification, index) => (
+                filteredNotifications.map((notification) => (
                   <Box
-                    key={`${notification.date}-${notification.message}-${index}`} // Unique key based on date, message, and index
+                    key={notification.id}
                     p={4}
                     bg={cardBgColor}
                     borderRadius="md"
                     boxShadow="sm"
+                    cursor="pointer"
+                    onClick={() => handleNotificationClick(notification)}
                   >
                     <Text fontSize="lg" fontWeight="bold">
                       {notification.tenant_name}
                     </Text>
-                    <Text fontSize="md">{notification.message}</Text>
+                    <Text fontSize="md">
+                      {truncateMessage(notification.message)}
+                    </Text>
                     <Text fontSize="sm" color="gray.500">
                       {formatDate(notification.date)}
                     </Text>
@@ -117,8 +144,30 @@ const Dashboard = () => {
           </CardBody>
         </Card>
       </Flex>
+
+      {/* Modal for showing full notification */}
+      <Modal isOpen={isModalOpen} onClose={closeModal}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>{selectedNotification?.tenant_name}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text fontSize="lg">
+              {selectedNotification?.message}
+            </Text>
+            <Text fontSize="sm" color="gray.500" mt={2}>
+              {selectedNotification && formatDate(selectedNotification.date)}
+            </Text>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={closeModal}>
+              Close
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Flex>
   );
 };
 
-export default Dashboard;
+export default Notifications;
