@@ -1,150 +1,107 @@
-import axios from 'axios';
 import React, { useState } from 'react';
-import { Box, Button, FormControl, FormLabel, Input, Center, VStack, Text, useToast } from '@chakra-ui/react';
-import { useLocation } from 'react-router-dom';
+import axios from 'axios';
+import { Button, Input, FormControl, FormLabel, Text,Heading, Flex, Card, CardBody, useBreakpointValue } from '@chakra-ui/react';
+import backgroundImage from '../Components/Assets/superior-room-1.jpeg';
 
 const MpesaPayment = () => {
-  const location = useLocation();
-  const { phone_number, amount, account_reference, transaction_desc } = location.state || {};
-  const [formData, setFormData] = useState({
-    phone_number: phone_number || '',
-    amount: amount || '',
-    account_reference: account_reference || '',
-    transaction_desc: transaction_desc || ''
-  });
+  const [amount, setAmount] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const toast = useToast();
+  const [responseMessage, setResponseMessage] = useState('');
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handlePayment = async () => {
     setLoading(true);
-    setError('');
-    setSuccess('');
+    setResponseMessage('');
 
     try {
-      // Get token from local storage
-      const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('Token not found.');
+      // Send a request to your Django backend to initiate the STK push
+      const response = await axios.post('http://127.0.0.1:8000/lipa_na_mpesa/', {
+        amount: parseFloat(amount),
+        phone_number: phoneNumber,
+      });
+
+      // Check response from the backend
+      if (response.data && response.data.ResponseCode === '0') {
+        setResponseMessage('Payment initiated successfully. Please check your phone for further instructions.');
+      } else {
+        setResponseMessage('Failed to initiate payment. Response Code: ' + response.data.ResponseCode);
       }
-
-      // Make API request to process payment
-      const response = await axios.post(
-        'http://127.0.0.1:8000/api/payments/mpesa/',
-        formData,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Token ${token}`
-          }
-        }
-      );
-
-      // Handle successful response
-      console.log('Response:', response.data);
-      setSuccess('Payment processed successfully');
-      setFormData({
-        phone_number: '',
-        amount: '',
-        account_reference: '',
-        transaction_desc: ''
-      });
-      toast({
-        title: "Success",
-        description: "Payment processed successfully",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
     } catch (error) {
-      // Handle error response
-      console.error('Error during payment processing:', error);
-      setError('Payment processing failed');
-      toast({
-        title: "Error",
-        description: "Payment processing failed",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
-    } finally {
-      setLoading(false);
+      setResponseMessage('Error: ' + error.message);
     }
+
+    setLoading(false);
   };
 
+  // Use responsive layouts for different screen sizes
+  const flexDirection = useBreakpointValue({ base: 'column', md: 'row' });
+
   return (
-    <Center minH="100vh" bg="gray.100">
-      <Box
-        marginTop="-100px"
-        p={8}
-        maxWidth="500px"
-        borderWidth={1}
-        borderRadius={8}
+    <Flex
+      direction={flexDirection}
+      align="center"
+      justify="center"
+      p={5}
+      gap={4}
+    >
+      {/* Card for background image */}
+      <Card
+        w={{ base: 'full', md: '700px' }}  // Adjust width for larger screens
+        h={{ base: '300px', md: '570px' }}  // Adjust height for larger screens
+        p={0}
+        marginRight="90px"
         boxShadow="lg"
-        bg="white"
+        rounded="md"
+        bgPosition="center"
+        bgSize="cover"
+        bgImage={`url(${backgroundImage})`}
       >
-        <form onSubmit={handleSubmit}>
-          <VStack spacing={4}>
-            <FormControl id="phone_number" isRequired>
-              <FormLabel>Phone Number</FormLabel>
-              <Input
-                type="text"
-                name="phone_number"
-                value={formData.phone_number}
-                onChange={handleChange}
-                placeholder="Phone Number"
-              />
-            </FormControl>
-            <FormControl id="amount" isRequired>
-              <FormLabel>Amount</FormLabel>
-              <Input
-                type="text"
-                name="amount"
-                value={formData.amount}
-                onChange={handleChange}
-                placeholder="Amount"
-              />
-            </FormControl>
-            <FormControl id="account_reference" isRequired>
-              <FormLabel>Account Reference</FormLabel>
-              <Input
-                type="text"
-                name="account_reference"
-                value={formData.account_reference}
-                onChange={handleChange}
-                placeholder="Account Reference"
-              />
-            </FormControl>
-            <FormControl id="transaction_desc" isRequired>
-              <FormLabel>Transaction Description</FormLabel>
-              <Input
-                type="text"
-                name="transaction_desc"
-                value={formData.transaction_desc}
-                onChange={handleChange}
-                placeholder="Transaction Description"
-              />
-            </FormControl>
-            <Button
-              type="submit"
-              isLoading={loading}
-              colorScheme="teal"
-              width="full"
-            >
-              {loading ? 'Processing...' : 'Submit'}
-            </Button>
-            {error && <Text color="red.500">{error}</Text>}
-            {success && <Text color="green.500">{success}</Text>}
-          </VStack>
-        </form>
-      </Box>
-    </Center>
+        {/* The image is used as a background */}
+      </Card>
+
+      {/* Card for payment form */}
+      <Card
+        maxW={{ base: 'full', md: 'md' }}
+        borderRadius="lg"
+        boxShadow="lg"
+        p={5}
+        bg="white"
+        w={{ base: 'full', md: '700px' }}  // Adjust width for larger screens
+        h={{ base: '300px', md: '500px' }}
+      >
+        <CardBody marginBottom="50px">
+          <Heading mb={6}>Make Your Payment</Heading>
+
+          <FormControl id="amount" mb={4} marginBottom="20px">
+            <FormLabel>Amount</FormLabel>
+            <Input
+              type="number"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder="Enter amount"
+            />
+          </FormControl>
+          <FormControl id="phoneNumber" mb={4}>
+            <FormLabel>Phone Number</FormLabel>
+            <Input
+              type="text"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              placeholder="Enter phone number"
+            />
+          </FormControl>
+          <Button
+            colorScheme="teal"
+            onClick={handlePayment}
+            isLoading={loading}
+            width="full"
+          >
+            Initiate Payment
+          </Button>
+          {responseMessage && <Text mt={4}>{responseMessage}</Text>}
+        </CardBody>
+      </Card>
+    </Flex>
   );
 };
 
