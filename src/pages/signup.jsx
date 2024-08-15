@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Box, FormControl, FormLabel, Input, Button, Heading, Text, VStack, Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton } from '@chakra-ui/react';
 import { Link, useNavigate } from 'react-router-dom';
-
 import backgroundImage from '../Components/Assets/superior-room-1.jpeg'; // Replace with your actual image path
 
 function Signup() {
@@ -31,7 +30,16 @@ function Signup() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to register');
+        const errorData = await response.json();
+        console.error('Error details:', errorData);
+        
+        // Handle different error cases
+        const errorMessages = errorData?.non_field_errors || 
+          Object.values(errorData).flat().join(', ') || 
+          'Failed to register';
+        
+        setMessage({ type: 'error', text: errorMessages });
+        return;
       }
 
       const data = await response.json();
@@ -59,7 +67,16 @@ function Signup() {
       });
 
       if (!loginResponse.ok) {
-        throw new Error('Failed to log in');
+        const loginErrorData = await loginResponse.json();
+        console.error('Login Error details:', loginErrorData);
+        
+        // Handle login errors
+        const loginErrorMessages = loginErrorData?.non_field_errors || 
+          Object.values(loginErrorData).flat().join(', ') || 
+          'Failed to log in';
+        
+        setMessage({ type: 'error', text: loginErrorMessages });
+        return;
       }
 
       const loginData = await loginResponse.json();
@@ -70,7 +87,7 @@ function Signup() {
 
       navigate('/login'); // Redirect to the login page
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error:', error.message);
       setMessage({ type: 'error', text: error.message });
     }
   };
@@ -95,9 +112,8 @@ function Signup() {
         bg="white"
         boxShadow="lg"
         rounded="md"
-
       >
-        <Heading mb={1} >Sign Up</Heading>
+        <Heading mb={1}>Sign Up</Heading>
         {message.text && (
           <Alert status={message.type} mb={4}>
             <AlertIcon />

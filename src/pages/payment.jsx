@@ -24,13 +24,17 @@ const MpesaPayment = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError('');
+    setSuccess('');
 
     try {
+      // Get token from local storage
       const token = localStorage.getItem('token');
       if (!token) {
         throw new Error('Token not found.');
       }
 
+      // Make API request to process payment
       const response = await axios.post(
         'http://127.0.0.1:8000/api/payments/mpesa/',
         formData,
@@ -42,9 +46,9 @@ const MpesaPayment = () => {
         }
       );
 
-      setLoading(false);
+      // Handle successful response
+      console.log('Response:', response.data);
       setSuccess('Payment processed successfully');
-      setError('');
       setFormData({
         phone_number: '',
         amount: '',
@@ -59,9 +63,9 @@ const MpesaPayment = () => {
         isClosable: true,
       });
     } catch (error) {
-      setLoading(false);
+      // Handle error response
+      console.error('Error during payment processing:', error);
       setError('Payment processing failed');
-      setSuccess('');
       toast({
         title: "Error",
         description: "Payment processing failed",
@@ -69,7 +73,8 @@ const MpesaPayment = () => {
         duration: 5000,
         isClosable: true,
       });
-      console.error('Error during payment processing:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
