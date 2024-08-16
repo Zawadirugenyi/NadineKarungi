@@ -346,7 +346,7 @@ const handleRequisitionSubmit = async (e) => {
       </VStack>
 
       <Flex w="80%" p={4} direction="column" >
-       <HStack spacing={4} align="center" marginLeft="80%">
+       <HStack spacing={4} align="center" marginLeft="77%">
   <IconButton
     icon={unreadNotificationsCount > 0 ? <MdOutlineNotifications /> : <MdOutlineNotificationsNone />}
     aria-label="Notifications"
