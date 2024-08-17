@@ -32,12 +32,11 @@ function Signup() {
       if (!response.ok) {
         const errorData = await response.json();
         console.error('Error details:', errorData);
-        
-        // Handle different error cases
+
         const errorMessages = errorData?.non_field_errors || 
           Object.values(errorData).flat().join(', ') || 
           'Failed to register';
-        
+
         setMessage({ type: 'error', text: errorMessages });
         return;
       }
@@ -69,12 +68,11 @@ function Signup() {
       if (!loginResponse.ok) {
         const loginErrorData = await loginResponse.json();
         console.error('Login Error details:', loginErrorData);
-        
-        // Handle login errors
+
         const loginErrorMessages = loginErrorData?.non_field_errors || 
           Object.values(loginErrorData).flat().join(', ') || 
           'Failed to log in';
-        
+
         setMessage({ type: 'error', text: loginErrorMessages });
         return;
       }
