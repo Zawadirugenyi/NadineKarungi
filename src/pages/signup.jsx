@@ -10,10 +10,46 @@ function Signup() {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const navigate = useNavigate();
+
+  // Function to validate email format
+  const isValidEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  // Function to validate password strength
+  const isValidPassword = (password) => {
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return passwordRegex.test(password);
+  };
 
   const handleSignup = async (e) => {
     e.preventDefault();
+
+    // Client-side email and password validation
+    let valid = true;
+
+    if (!isValidEmail(email)) {
+      setEmailError('Invalid email address. Please provide a valid email.');
+      valid = false;
+    } else {
+      setEmailError('');
+    }
+
+    if (!isValidPassword(password)) {
+      setPasswordError('Password must be at least 8 characters long, include at least one letter, one number, and one special character.');
+      valid = false;
+    } else {
+      setPasswordError('');
+    }
+
+    if (!valid) {
+      return; // Stop form submission if validation fails
+    }
+
     try {
       const response = await fetch('http://127.0.0.1:8000/users/signup/', {
         method: 'POST',
@@ -118,6 +154,22 @@ function Signup() {
             <AlertTitle mr={2}>{message.type === 'success' ? 'Success' : 'Error'}!</AlertTitle>
             <AlertDescription>{message.text}</AlertDescription>
             <CloseButton position="absolute" right="8px" top="8px" onClick={() => setMessage({ type: '', text: '' })} />
+          </Alert>
+        )}
+        {emailError && (
+          <Alert status="error" mb={4}>
+            <AlertIcon />
+            <AlertTitle mr={2}>Error!</AlertTitle>
+            <AlertDescription>{emailError}</AlertDescription>
+            <CloseButton position="absolute" right="8px" top="8px" onClick={() => setEmailError('')} />
+          </Alert>
+        )}
+        {passwordError && (
+          <Alert status="error" mb={4}>
+            <AlertIcon />
+            <AlertTitle mr={2}>Error!</AlertTitle>
+            <AlertDescription>{passwordError}</AlertDescription>
+            <CloseButton position="absolute" right="8px" top="8px" onClick={() => setPasswordError('')} />
           </Alert>
         )}
         <form onSubmit={handleSignup}>

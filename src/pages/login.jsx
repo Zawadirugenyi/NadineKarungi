@@ -8,11 +8,10 @@ function Login() {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState({ type: '', text: '' });
   const [roomNumber, setRoomNumber] = useState('');
-  const [tenantName, setTenantName] = useState(''); // State for tenant name
+  const [tenantName, setTenantName] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Set room number from state if available
   useEffect(() => {
     if (location.state && location.state.roomNumber) {
       setRoomNumber(location.state.roomNumber);
@@ -40,10 +39,8 @@ function Login() {
       const data = await response.json();
       console.log('User logged in:', data);
 
-      // Store the token (assuming the login response contains a token)
-      localStorage.setItem('token', data.token);
-
-      setMessage({ type: 'success', text: 'User logged in successfully!' });
+      // Store the token
+      localStorage.setItem('authToken', data.token);
 
       // Clear the form inputs
       setEmail('');
@@ -66,25 +63,21 @@ function Login() {
       const tenants = tenantData.filter(tenant => tenant.email === email);
 
       if (tenants.length === 1) {
-        // Extract tenant name
         const tenant = tenants[0];
         const tenantName = tenant.name; // Adjust according to your API response
 
-        // Store tenant ID and name in localStorage
         localStorage.setItem('tenantId', tenant.id);
-        setTenantName(tenantName); // Set tenant name
+        setTenantName(tenantName);
 
-        // Redirect to booking page with room number and tenant name
-      navigate('/booking', { state: { roomNumber, tenantName } });
+        navigate('/booking', { state: { roomNumber, tenantName } });
       } else {
-        // Redirect to tenant creation page if no tenants or multiple tenants exist
         navigate('/tenant', { state: { roomNumber } });
       }
 
       // Hide message after 5 seconds
       setTimeout(() => {
         setMessage({ type: '', text: '' });
-      }, 5000); // 5000 milliseconds (5 seconds)
+      }, 5000);
 
     } catch (error) {
       console.error('Error:', error);
@@ -102,7 +95,7 @@ function Login() {
         boxShadow="lg"
         bgSize="cover"
         bgPosition="center"
-        mr={6} // Margin right to create space between image and form
+        mr={6}
         style={{ backgroundImage: `url(${backgroundImage})` }}
       />
       <Box

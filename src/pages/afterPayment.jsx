@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Box, FormControl, FormLabel, Input, Button, Heading, Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton, VStack } from '@chakra-ui/react';
+import {
+  Box, FormControl, FormLabel, Input, Button, Heading, Alert, AlertIcon,
+  AlertTitle, AlertDescription, CloseButton, VStack
+} from '@chakra-ui/react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import backgroundImage from '../Components/Assets/Room2.webp';
+import backgroundImage from '../Components/Assets/Room2.webp'; 
 
-const Booking = () => {
+const AfterPayment = () => {
   const [checkInDate, setCheckInDate] = useState('');
   const [checkOutDate, setCheckOutDate] = useState('');
   const [message, setMessage] = useState({ type: '', text: '' });
@@ -29,23 +32,29 @@ const Booking = () => {
         try {
           const token = localStorage.getItem('authToken');
           if (!token) {
-            setMessage({ type: 'error', text: 'No authentication token found.' });
+            setMessage({ type: 'error', text: 'No authentication token found. Please log in.' });
             return;
           }
 
           const response = await axios.get(`http://127.0.0.1:8000/api/tenants/?name=${tenantName}`, {
-            headers: { Authorization: `Token ${token}` },
+            headers: {
+              Authorization: `Token ${token}`,
+            },
           });
-          if (response.data.length > 0) {
+
+          if (response.data && response.data.length > 0) {
             const tenant = response.data.find(t => t.name === tenantName);
-            if (tenant) setTenantId(tenant.id);
-            else setMessage({ type: 'error', text: 'Tenant not found.' });
+            if (tenant) {
+              setTenantId(tenant.id);
+            } else {
+              setMessage({ type: 'error', text: 'Tenant not found.' });
+            }
           } else {
-            setMessage({ type: 'error', text: 'No tenants found.' });
+            setMessage({ type: 'error', text: 'Tenant not found.' });
           }
         } catch (error) {
-          const errorMessage = error.response?.data?.detail || 'Error fetching tenant ID.';
-          setMessage({ type: 'error', text: errorMessage });
+          console.error('Error fetching tenant ID:', error.response ? error.response.data : error.message);
+          setMessage({ type: 'error', text: 'Error fetching tenant ID.' });
         }
       }
     };
@@ -55,23 +64,29 @@ const Booking = () => {
         try {
           const token = localStorage.getItem('authToken');
           if (!token) {
-            setMessage({ type: 'error', text: 'No authentication token found.' });
+            setMessage({ type: 'error', text: 'No authentication token found. Please log in.' });
             return;
           }
 
           const response = await axios.get(`http://127.0.0.1:8000/api/rooms/?number=${roomNumber}`, {
-            headers: { Authorization: `Token ${token}` },
+            headers: {
+              Authorization: `Token ${token}`,
+            },
           });
-          if (response.data.length > 0) {
+
+          if (response.data && response.data.length > 0) {
             const room = response.data.find(r => r.number === roomNumber);
-            if (room) setRoomId(room.id);
-            else setMessage({ type: 'error', text: 'Room not found.' });
+            if (room) {
+              setRoomId(room.id);
+            } else {
+              setMessage({ type: 'error', text: 'Room not found.' });
+            }
           } else {
-            setMessage({ type: 'error', text: 'No rooms found.' });
+            setMessage({ type: 'error', text: 'Room not found.' });
           }
         } catch (error) {
-          const errorMessage = error.response?.data?.detail || 'Error fetching room ID.';
-          setMessage({ type: 'error', text: errorMessage });
+          console.error('Error fetching room ID:', error.response ? error.response.data : error.message);
+          setMessage({ type: 'error', text: 'Error fetching room ID.' });
         }
       }
     };
@@ -82,36 +97,53 @@ const Booking = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!roomId || !tenantId || !checkInDate || !checkOutDate || new Date(checkInDate) >= new Date(checkOutDate)) {
-      setMessage({ type: 'error', text: 'Please fill out all fields correctly.' });
+
+    if (!roomId || !tenantId) {
+      setMessage({ type: 'error', text: 'Room or tenant not selected correctly.' });
+      return;
+    }
+
+    if (!checkInDate || !checkOutDate) {
+      setMessage({ type: 'error', text: 'Both check-in and check-out dates are required.' });
+      return;
+    }
+
+    if (new Date(checkInDate) >= new Date(checkOutDate)) {
+      setMessage({ type: 'error', text: 'Check-out date must be after check-in date.' });
       return;
     }
 
     try {
       const token = localStorage.getItem('authToken');
       if (!token) {
-        setMessage({ type: 'error', text: 'No authentication token found.' });
+        setMessage({ type: 'error', text: 'No authentication token found. Please log in.' });
         return;
       }
 
-      const bookingResponse = await axios.post('http://127.0.0.1:8000/api/bookings/', {
-        room: roomId,
-        tenant: tenantId,
-        check_in_date: checkInDate,
-        check_out_date: checkOutDate,
-      }, {
-        headers: { Authorization: `Token ${token}` },
-      });
+      const bookingResponse = await axios.post(
+        'http://127.0.0.1:8000/api/bookings/',
+        {
+          room: roomId,
+          tenant: tenantId,
+          check_in_date: checkInDate,
+          check_out_date: checkOutDate,
+        },
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        }
+      );
 
       if (bookingResponse.status === 201) {
         setMessage({ type: 'success', text: 'Booking successful!' });
-        navigate('/payment', { state: { tenantName, roomNumber } });
+        navigate('/dashboard', { state: { tenantName, roomNumber } });
       } else {
         setMessage({ type: 'error', text: 'Booking failed. Please try again.' });
       }
     } catch (error) {
-      const errorMessage = error.response?.data?.detail || `Booking failed. ${error.message}`;
-      setMessage({ type: 'error', text: errorMessage });
+      console.error('Error creating booking:', error.response ? error.response.data : error.message);
+      setMessage({ type: 'error', text: `Booking failed. ${error.response?.data?.detail || error.message}` });
     }
   };
 
@@ -129,30 +161,7 @@ const Booking = () => {
         )}
         <form onSubmit={handleSubmit}>
           <VStack spacing={4}>
-            <FormControl id="room" isRequired>
-              <FormLabel>Room Number</FormLabel>
-              <Input type="text" value={roomNumber} readOnly />
-            </FormControl>
-            <FormControl id="tenant" isRequired>
-              <FormLabel>Tenant Name</FormLabel>
-              <Input type="text" value={tenantName} readOnly />
-            </FormControl>
-            <FormControl id="check_in_date" isRequired>
-              <FormLabel>Check-in Date</FormLabel>
-              <Input
-                type="date"
-                value={checkInDate}
-                onChange={(e) => setCheckInDate(e.target.value)}
-              />
-            </FormControl>
-            <FormControl id="check_out_date" isRequired>
-              <FormLabel>Check-out Date</FormLabel>
-              <Input
-                type="date"
-                value={checkOutDate}
-                onChange={(e) => setCheckOutDate(e.target.value)}
-              />
-            </FormControl>
+            
             <Button
               type="submit"
               bg="#0097b2"
@@ -160,7 +169,7 @@ const Booking = () => {
               _hover={{ bg: "#073d47" }}
               width="full"
             >
-              Create Booking
+            Confirm Booking
             </Button>
           </VStack>
         </form>
@@ -180,4 +189,4 @@ const Booking = () => {
   );
 };
 
-export default Booking;
+export default AfterPayment 

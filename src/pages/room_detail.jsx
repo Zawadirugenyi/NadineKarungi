@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Heading, Text, Image, Stack, Center, Spinner, Button, Modal, ModalOverlay, ModalContent, ModalCloseButton, ModalBody } from '@chakra-ui/react';
+import { Box, Heading, Text, Image, Stack, Center, Spinner, Button, Modal, ModalOverlay, ModalContent, ModalCloseButton, ModalBody, IconButton } from '@chakra-ui/react';
+import { ArrowBackIcon } from '@chakra-ui/icons';
 import { useParams, useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
 import axios from 'axios';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; 
@@ -17,7 +18,7 @@ const RoomDescription = () => {
     useEffect(() => {
         const fetchRoomDescription = async () => {
             try {
-                const token = '520dc5d1657a7b42d3b9ffb3592f9ba88692c1fc'; 
+                const token = 'cedba665f1e8857726164d0635b2c2ab493b9d81'; 
                 const response = await axios.get(`http://127.0.0.1:8000/api/room-descriptions/`, {
                     params: {
                         room__number: roomNumber,
@@ -48,7 +49,7 @@ const RoomDescription = () => {
 
         const fetchRoomStatus = async () => {
             try {
-                const token = '520dc5d1657a7b42d3b9ffb3592f9ba88692c1fc'; 
+                const token = 'cedba665f1e8857726164d0635b2c2ab493b9d81'; 
                 const response = await axios.get(`http://127.0.0.1:8000/api/rooms/`, {
                     params: {
                         number: roomNumber,
@@ -110,8 +111,18 @@ const RoomDescription = () => {
     }
 
     return (
-        <Box p={9} marginTop="25px">
+        <Box p={9} marginTop="0px" >
+                  <IconButton 
+        icon={<ArrowBackIcon />} 
+        aria-label="Back to previous page" 
+        onClick={() => navigate(-1)} 
+        mb={6}
+        bg="white"
+        color="#0097b2"
+        
+      />
             <Stack direction="row" spacing={10}>
+       
                 <Box shadow="md" borderWidth="1px" p={9}>
                     <Stack direction="row" spacing={4} mb={4}>
                         <Image
@@ -197,6 +208,9 @@ const RoomDescription = () => {
                     </ModalContent>
                 </Modal>
             )}
+
+            {/* Back Button */}
+          
         </Box>
     );
 };
