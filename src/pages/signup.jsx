@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, FormControl, FormLabel, Input, Button, Heading, Text, VStack, Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton } from '@chakra-ui/react';
 import { Link, useNavigate } from 'react-router-dom';
-import backgroundImage from '../Components/Assets/superior-room-1.jpeg'; // Replace with your actual image path
+import backgroundImage from '../Components/Assets/satya-kumar-adhikesavulu-kichen-3.jpg'; // Replace with your actual image path
 
 function Signup() {
   const [firstName, setFirstName] = useState('');

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, FormControl, FormLabel, Input, Button, Heading, Text, VStack, Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton } from '@chakra-ui/react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import backgroundImage from '../Components/Assets/Room2.webp';
+import backgroundImage from '../Components/Assets/l-intro-1644597197.jpg';
 
 function Login() {
   const [email, setEmail] = useState('');

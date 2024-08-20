@@ -5,7 +5,7 @@ import {
 } from '@chakra-ui/react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import backgroundImage from '../Components/Assets/superior-room-1.jpeg';
+import backgroundImage from '../Components/Assets/Blue-and-White-Bedroom-Ideas-12-jpg.webp';
 
 const MpesaPayment = () => {
   const [amount, setAmount] = useState('');
