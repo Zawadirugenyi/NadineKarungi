@@ -117,7 +117,7 @@ const Booking = () => {
 
   return (
     <Box display="flex" justifyContent="center" mt={10}>
-      
+
       <Box w="600px" p={6} bg="white" boxShadow="lg" rounded="md" borderWidth="1px" borderRadius="lg" overflow="hidden">
         <Heading mb={6}>Book a Room</Heading>
         {message.text && (
@@ -128,6 +128,7 @@ const Booking = () => {
             <CloseButton position="absolute" right="8px" top="8px" onClick={() => setMessage({ type: '', text: '' })} />
           </Alert>
         )}
+        
         <form onSubmit={handleSubmit}>
           <VStack spacing={4}>
             <FormControl id="room" isRequired>
