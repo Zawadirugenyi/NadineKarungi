@@ -77,7 +77,6 @@ const Dashboard = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const location = useLocation();
   const { tenantName, roomNumber } = location.state || {};
-
   const sidebarBgColor = useColorModeValue('#0097b2', '#005b7f');
   const buttonHoverColor = useColorModeValue('black', '#003b57');
   
