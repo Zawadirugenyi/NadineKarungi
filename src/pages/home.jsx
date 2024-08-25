@@ -51,7 +51,7 @@ function Home() {
       >
         {hostels.map((hostel) => (
           <HostelCard
-            key={hostel.id} // Use a unique identifier for the key
+            key={hostel.id} 
             id={hostel.id}
             name={hostel.name}
             address={hostel.address}
