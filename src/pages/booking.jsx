@@ -15,6 +15,7 @@ const Booking = () => {
   const [tenantId, setTenantId] = useState(null);
   const [roomId, setRoomId] = useState(null);
 
+  // Extract roomNumber and tenantName from location state
   useEffect(() => {
     if (location.state) {
       const { roomNumber, tenantName } = location.state;
@@ -23,6 +24,7 @@ const Booking = () => {
     }
   }, [location.state]);
 
+  // Fetch tenantId based on tenantName
   useEffect(() => {
     const fetchTenantId = async () => {
       if (tenantName) {
@@ -36,6 +38,7 @@ const Booking = () => {
           const response = await axios.get(`http://127.0.0.1:8000/api/tenants/?name=${tenantName}`, {
             headers: { Authorization: `Token ${token}` },
           });
+
           if (response.data.length > 0) {
             const tenant = response.data.find(t => t.name === tenantName);
             if (tenant) setTenantId(tenant.id);
@@ -50,6 +53,11 @@ const Booking = () => {
       }
     };
 
+    fetchTenantId();
+  }, [tenantName]);
+
+  // Fetch roomId based on roomNumber
+  useEffect(() => {
     const fetchRoomId = async () => {
       if (roomNumber) {
         try {
@@ -62,6 +70,7 @@ const Booking = () => {
           const response = await axios.get(`http://127.0.0.1:8000/api/rooms/?number=${roomNumber}`, {
             headers: { Authorization: `Token ${token}` },
           });
+
           if (response.data.length > 0) {
             const room = response.data.find(r => r.number === roomNumber);
             if (room) setRoomId(room.id);
@@ -76,10 +85,10 @@ const Booking = () => {
       }
     };
 
-    fetchTenantId();
     fetchRoomId();
-  }, [tenantName, roomNumber]);
+  }, [roomNumber]);
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!roomId || !tenantId || !checkInDate || !checkOutDate || new Date(checkInDate) >= new Date(checkOutDate)) {
@@ -117,7 +126,6 @@ const Booking = () => {
 
   return (
     <Box display="flex" justifyContent="center" mt={10}>
-
       <Box w="600px" p={6} bg="white" boxShadow="lg" rounded="md" borderWidth="1px" borderRadius="lg" overflow="hidden">
         <Heading mb={6}>Book a Room</Heading>
         {message.text && (

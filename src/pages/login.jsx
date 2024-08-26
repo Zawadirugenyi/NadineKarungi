@@ -8,7 +8,6 @@ function Login() {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState({ type: '', text: '' });
   const [roomNumber, setRoomNumber] = useState('');
-  const [tenantName, setTenantName] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -39,14 +38,11 @@ function Login() {
       const data = await response.json();
       console.log('User logged in:', data);
 
-      // Store the token
       localStorage.setItem('authToken', data.token);
 
-      // Clear the form inputs
       setEmail('');
       setPassword('');
 
-      // Fetch tenant data
       const tenantResponse = await fetch('http://127.0.0.1:8000/api/tenants/', {
         method: 'GET',
         headers: {
@@ -64,20 +60,14 @@ function Login() {
 
       if (tenants.length === 1) {
         const tenant = tenants[0];
-        const tenantName = tenant.name; // Adjust according to your API response
-
         localStorage.setItem('tenantId', tenant.id);
-        setTenantName(tenantName);
-
-        navigate('/booking', { state: { roomNumber, tenantName } });
+        navigate('/booking', { state: { roomNumber, tenantName: tenant.name } });
       } else {
-        navigate('/tenant', { state: { roomNumber } });
+       navigate('/tenant', { state: { roomNumber } });
       }
 
-      // Hide message after 5 seconds
-      setTimeout(() => {
-        setMessage({ type: '', text: '' });
-      }, 5000);
+      setMessage({ type: '', text: '' });
+      setTimeout(() => setMessage({ type: '', text: '' }), 5000);
 
     } catch (error) {
       console.error('Error:', error);
