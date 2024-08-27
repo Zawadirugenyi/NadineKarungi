@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Box, FormControl, FormLabel, Input, Button, Heading, Text, VStack, Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton } from '@chakra-ui/react';
+import { 
+  Box, FormControl, FormLabel, Input, Button, Heading, Text, VStack, 
+  Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton 
+} from '@chakra-ui/react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import backgroundImage from '../Components/Assets/l-intro-1644597197.jpg';
 
@@ -8,6 +11,9 @@ function Login() {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState({ type: '', text: '' });
   const [roomNumber, setRoomNumber] = useState('');
+  const [tenant, setTenant] = useState(null);
+  const [bookingData, setBookingData] = useState([]);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -19,16 +25,17 @@ function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setMessage({ type: '', text: '' });
+
     try {
+      // Authenticate user
       const response = await fetch('http://127.0.0.1:8000/users/login/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
+        body: JSON.stringify({ email, password }),
       });
 
       if (!response.ok) {
@@ -36,13 +43,13 @@ function Login() {
       }
 
       const data = await response.json();
-      console.log('User logged in:', data);
-
       localStorage.setItem('authToken', data.token);
 
+      // Clear input fields
       setEmail('');
       setPassword('');
 
+      // Fetch tenant data
       const tenantResponse = await fetch('http://127.0.0.1:8000/api/tenants/', {
         method: 'GET',
         headers: {
@@ -52,28 +59,56 @@ function Login() {
       });
 
       if (!tenantResponse.ok) {
-        throw new Error('Error fetching tenant status');
+        throw new Error('Error fetching tenant data');
       }
 
       const tenantData = await tenantResponse.json();
-      const tenants = tenantData.filter(tenant => tenant.email === email);
+      const tenant = tenantData.find(t => t.email === email);
 
-      if (tenants.length === 1) {
-        const tenant = tenants[0];
+      if (tenant) {
+        setTenant(tenant);
         localStorage.setItem('tenantId', tenant.id);
-        navigate('/booking', { state: { roomNumber, tenantName: tenant.name } });
+
+        // Fetch bookings for the tenant
+        const bookingResponse = await fetch(`http://127.0.0.1:8000/api/bookings/?tenant=${tenant.id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${data.token}`,
+          },
+        });
+
+        if (!bookingResponse.ok) {
+          throw new Error('Error fetching bookings');
+        }
+
+        const bookingData = await bookingResponse.json();
+        setBookingData(bookingData);
+
+        // Determine navigation based on tenant and booking data
+        if (bookingData.length > 0) {
+          navigate('/dashboard', { 
+            state: { 
+              tenantName: tenant.name, 
+              roomNumber,
+              tenantDetails: tenant,
+              bookings: bookingData,
+            } 
+          });
+        } else {
+          navigate('/booking', { state: { roomNumber, tenantName: tenant.name } });
+        }
       } else {
-       navigate('/tenant', { state: { roomNumber } });
+        navigate('/tenant', { state: { roomNumber } });
       }
-
-      setMessage({ type: '', text: '' });
-      setTimeout(() => setMessage({ type: '', text: '' }), 5000);
-
     } catch (error) {
       console.error('Error:', error);
       setMessage({ type: 'error', text: error.message });
+    } finally {
+      setLoading(false);
     }
   };
+
 
   return (
     <Box display="flex" justifyContent="center" marginTop="50px">

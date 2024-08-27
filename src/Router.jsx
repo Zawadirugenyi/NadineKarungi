@@ -13,8 +13,7 @@ import AboutUs from './pages/about_us';
 import ContactUs from './pages/contact_us';
 import Dashboard from './pages/dashboard';
 import EditTenant from './pages/edit_tenant';
-
-
+import BypassCodePage from './pages/unlockSession'; // Import the BypassCodePage component
 
 function App() {
   return (
@@ -28,13 +27,11 @@ function App() {
         <Route path="/tenant" element={<MainLayout><Tenant /></MainLayout>} />
         <Route path="/booking" element={<MainLayout><Booking /></MainLayout>} />
         <Route path="/payment" element={<MainLayout><Payment /></MainLayout>} /> 
-      
         <Route path="/about_us" element={<MainLayout><AboutUs /></MainLayout>} />
         <Route path="/contact_us" element={<MainLayout><ContactUs /></MainLayout>} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/edit_tenant" element={<EditTenant />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-  
+        <Route path="/unlockSession" element={<BypassCodePage />} /> {/* Add the BypassCodePage route */}
       </Routes>
     </Router>
   );

@@ -52,14 +52,10 @@ const Dashboard = () => {
   const [room, setRoom] = useState(null);
   const [hostel, setHostel] = useState(null);
   const [booking, setBooking] = useState(null);
+  const [showCards, setShowCards] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [editTenant, setEditTenant] = useState({});
-  const [requisition, setRequisition] = useState({
-    type: '',
-    description: '',
-    otherType: '',
-  });
-
   const {
     isOpen: isEditOpen,
     onOpen: onEditOpen,
@@ -70,6 +66,11 @@ const Dashboard = () => {
     onOpen: onRequisitionOpen,
     onClose: onRequisitionClose,
   } = useDisclosure();
+  const [requisition, setRequisition] = useState({
+    type: '',
+    description: '',
+    otherType: '',
+  });
 
   const toast = useToast();
   const navigate = useNavigate();
@@ -78,78 +79,93 @@ const Dashboard = () => {
   const { tenantName, roomNumber } = location.state || {};
   const sidebarBgColor = useColorModeValue('#0097b2', '#005b7f');
   const buttonHoverColor = useColorModeValue('black', '#003b57');
-  const [showCards, setShowCards] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
+  
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const token = localStorage.getItem('authToken');
+      const headers = {
+        'Authorization': `Token ${token}`,
+      };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const token = localStorage.getItem('authToken');
-        const headers = {
-          'Authorization': `Token ${token}`,
-        };
+      // Fetch tenants
+      const tenantResponse = await axios.get('http://127.0.0.1:8000/api/tenants/', { headers });
+      const tenants = tenantResponse.data;
+      const loggedInTenant = tenants.find(t => t.name === tenantName);
 
-        // Fetch tenants
-        const tenantResponse = await axios.get('http://127.0.0.1:8000/api/tenants/', { headers });
-        const tenants = tenantResponse.data;
-        const loggedInTenant = tenants.find(t => t.name === tenantName);
-        setTenant(loggedInTenant);
+      // Debug: Log tenant data
+      console.log('Logged In Tenant:', loggedInTenant);
 
-        // Fetch rooms
-        const roomResponse = await axios.get('http://127.0.0.1:8000/api/rooms/', { headers });
-        const room = roomResponse.data.find(r => r.number === roomNumber);
-        setRoom(room);
+      setTenant(loggedInTenant);
 
-        // Fetch hostels if room exists
-        if (room) {
-          const hostelResponse = await axios.get('http://127.0.0.1:8000/api/hostels/', { headers });
-          const hostel = hostelResponse.data.find(h => h.id === room.hostel);
-          setHostel(hostel);
-        }
+      // Fetch rooms
+      const roomResponse = await axios.get('http://127.0.0.1:8000/api/rooms/', { headers });
+      const room = roomResponse.data.find(r => r.number === roomNumber);
+      setRoom(room);
 
-        // Fetch bookings if tenant exists
-        if (loggedInTenant) {
-          const bookingResponse = await axios.get('http://127.0.0.1:8000/api/bookings/', { headers });
-          const booking = bookingResponse.data.find(b => b.tenant === loggedInTenant.id);
-          setBooking(booking);
-        }
+      // Fetch hostels if room exists
+      if (room) {
+        const hostelResponse = await axios.get('http://127.0.0.1:8000/api/hostels/', { headers });
+        const hostel = hostelResponse.data.find(h => h.id === room.hostel);
+        setHostel(hostel);
+      }
 
-        // Fetch notifications
-        const notificationsResponse = await axios.get('http://127.0.0.1:8000/api/notifications/', { headers });
-        const notifications = notificationsResponse.data;
+      // Fetch bookings if tenant exists
+      if (loggedInTenant) {
+        const bookingResponse = await axios.get('http://127.0.0.1:8000/api/bookings/', { headers });
+        const booking = bookingResponse.data.find(b => b.tenant === loggedInTenant.id);
+        setBooking(booking);
+      }
 
-        // Filter and sort notifications
-        const filteredNotifications = notifications.filter(notification => notification.tenant_name === loggedInTenant.name);
-        const unreadNotifications = filteredNotifications.filter(notification => !notification.read);
-        const readNotifications = filteredNotifications.filter(notification => notification.read);
-        const sortedNotifications = [...unreadNotifications, ...readNotifications].sort((a, b) => new Date(b.date) - new Date(a.date));
+      // Fetch notifications
+      const notificationsResponse = await axios.get('http://127.0.0.1:8000/api/notifications/', { headers });
+      const notifications = notificationsResponse.data;
 
-        setNotifications(sortedNotifications);
+      // Debug: Log all notifications
+      console.log('All Notifications:', notifications);
 
-        // Notify user of new notifications
-        if (unreadNotifications.length > 0) {
-          toast({
-            title: 'You have new notifications!',
-            description: `You have ${unreadNotifications.length} new notifications.`,
-            status: 'info',
-            duration: 5000,
-            isClosable: true,
-          });
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
+      // Filter notifications based on the logged-in tenant's name
+      const filteredNotifications = notifications.filter(notification => notification.tenant_name === loggedInTenant.name);
+
+      // Debug: Log filtered notifications
+      console.log('Filtered Notifications:', filteredNotifications);
+
+      // Separate notifications into read and unread
+      const unreadNotifications = filteredNotifications.filter(notification => !notification.read);
+      const readNotifications = filteredNotifications.filter(notification => notification.read);
+
+      // Sort notifications by date
+      const sortedNotifications = [...unreadNotifications, ...readNotifications].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      setNotifications(sortedNotifications);
+
+      // Notify user of new notifications
+      if (unreadNotifications.length > 0) {
         toast({
-          title: 'Error fetching data.',
-          description: error.message,
-          status: 'error',
+          title: 'You have new notifications!',
+          description: `You have ${unreadNotifications.length} new notifications.`,
+          status: 'info',
           duration: 5000,
           isClosable: true,
         });
       }
-    };
 
-    fetchData();
-  }, [tenantName, roomNumber, toast]);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      toast({
+        title: 'Error fetching data.',
+        description: error.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
+  fetchData();
+}, [tenantName, roomNumber, toast]);
+
+
 
   const handleEditClick = () => {
     setEditTenant(tenant);
@@ -215,64 +231,101 @@ const Dashboard = () => {
     }
   };
 
-  const handleRequisitionChange = (e) => {
-    const { name, value } = e.target;
-    setRequisition(prevRequisition => ({
-      ...prevRequisition,
-      [name]: value,
-    }));
-  };
+const handleRequisitionChange = (e) => {
+  const { name, value } = e.target;
+  setRequisition(prevRequisition => ({
+    ...prevRequisition,
+    [name]: value,
+  }));
+};
 
-  const handleRequisitionSubmit = async (e) => {
-    e.preventDefault();
 
-    try {
-      const token = localStorage.getItem('authToken');
-      if (!token) {
-        throw new Error('No authentication token found. Please log in.');
-      }
+const handleRequisitionSubmit = async (e) => {
+  e.preventDefault();
 
-      const headers = {
-        'Authorization': `Token ${token}`,
-        'Content-Type': 'application/json',
-      };
-
-      const requisitionData = {
-        room_number: requisition.roomNumber || roomNumber,
-        type: requisition.type || '',
-        description: requisition.description || '',
-        otherType: requisition.type === 'other' ? requisition.otherType : '',
-        completed: requisition.completed || false,
-      };
-
-      await axios.post('http://127.0.0.1:8000/api/maintenance/', requisitionData, { headers });
-
-      onRequisitionClose();
-      toast({
-        title: 'Requisition submitted successfully.',
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-      });
-
-    } catch (error) {
-      console.error('Error submitting requisition:', error.response?.data || error);
-
-      toast({
-        title: 'Error submitting requisition.',
-        description: error.response?.data?.error || 'An error occurred. Please try again.',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
+  try {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      throw new Error('No authentication token found. Please log in.');
     }
-  };
 
-  const unreadNotificationsCount = notifications.filter(notification => !notification.read).length;
+    const headers = {
+      'Authorization': `Token ${token}`,
+      'Content-Type': 'application/json',
+    };
+
+    const requisitionData = {
+      room_number: requisition.roomNumber || roomNumber,
+      type: requisition.type || '',
+      description: requisition.description || '',
+      otherType: requisition.type === 'other' ? requisition.otherType : '',
+      completed: requisition.completed || false,
+    };
+
+    console.log('Submitting requisition with data:', requisitionData);
+
+    const response = await axios.post('http://127.0.0.1:8000/api/maintenance/', requisitionData, { headers });
+
+    console.log('Response from server:', response.data);
+
+    onRequisitionClose();
+    toast({
+      title: 'Requisition submitted successfully.',
+      status: 'success',
+      duration: 5000,
+      isClosable: true,
+    });
+
+  } catch (error) {
+    console.error('Error submitting requisition:', error.response?.data || error);
+
+    toast({
+      title: 'Error submitting requisition.',
+      description: error.response?.data?.error || 'An error occurred. Please try again.',
+      status: 'error',
+      duration: 5000,
+      isClosable: true,
+    });
+  }
+};
+
+const handleLogout = async () => {
+  try {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      throw new Error('No authentication token found.');
+    }
+
+    const headers = {
+      'Authorization': `Token ${token}`,
+    };
+
+    // Call the logout API endpoint
+    await axios.post('http://127.0.0.1:8000/users/logout/', null, { headers });
+
+    // Clear the authentication token from local storage
+    localStorage.removeItem('authToken');
+
+    // Redirect to the login page
+    navigate('/login');
+  } catch (error) {
+    console.error('Error during logout:', error);
+    toast({
+      title: 'Error logging out.',
+      description: error.response?.data?.detail || error.message,
+      status: 'error',
+      duration: 5000,
+      isClosable: true,
+    });
+  }
+};
+
+  const unreadNotificationsCount = notifications.filter(notification => !notification.is_read).length;
 
   if (!tenant || !room || !booking) {
     return <Text>Loading...</Text>;
   }
+
   return (
     <Flex h="100vh">
         <VStack
@@ -342,14 +395,7 @@ const Dashboard = () => {
       <Text>{tenant.name}</Text>
     </HStack>
 
-    {/* Add the Logout Button */}
-    <Button 
-      colorScheme="red" 
-      onClick={() => {
-        localStorage.removeItem('authToken');
-        navigate('/login');
-      }}
-    >
+  <Button colorScheme="red" onClick={handleLogout}>
       Logout
     </Button>
   </HStack>
