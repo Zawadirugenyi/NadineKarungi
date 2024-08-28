@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-
 import {
   Flex,
   VStack,
@@ -48,6 +47,7 @@ const ROOM_TYPE_LABELS = {
 };
 
 const Dashboard = () => {
+  const { colorMode, toggleColorMode } = useColorMode();
   const [tenant, setTenant] = useState(null);
   const [room, setRoom] = useState(null);
   const [hostel, setHostel] = useState(null);
@@ -59,7 +59,6 @@ const Dashboard = () => {
     description: '',
     otherType: '',
   });
-
   const {
     isOpen: isEditOpen,
     onOpen: onEditOpen,
@@ -73,7 +72,6 @@ const Dashboard = () => {
 
   const toast = useToast();
   const navigate = useNavigate();
-  const { colorMode, toggleColorMode } = useColorMode();
   const location = useLocation();
   const { tenantName, roomNumber } = location.state || {};
   const sidebarBgColor = useColorModeValue('#0097b2', '#005b7f');
@@ -86,47 +84,50 @@ const Dashboard = () => {
       try {
         const token = localStorage.getItem('authToken');
         const headers = {
-          'Authorization': `Token ${token}`,
+          Authorization: `Token ${token}`,
         };
 
-        // Fetch tenants
+        const savedRoom = JSON.parse(localStorage.getItem('savedRoom'));
+
+        if (savedRoom) {
+          setRoom(savedRoom);
+          const hostelResponse = await axios.get('http://127.0.0.1:8000/api/hostels/', { headers });
+          const foundHostel = hostelResponse.data.find(h => h.id === savedRoom.hostel);
+          setHostel(foundHostel);
+        } else {
+          const roomResponse = await axios.get('http://127.0.0.1:8000/api/rooms/', { headers });
+          const foundRoom = roomResponse.data.find(r => r.number === roomNumber);
+          setRoom(foundRoom);
+
+          if (foundRoom) {
+            const hostelResponse = await axios.get('http://127.0.0.1:8000/api/hostels/', { headers });
+            const foundHostel = hostelResponse.data.find(h => h.id === foundRoom.hostel);
+            setHostel(foundHostel);
+          }
+        }
+
         const tenantResponse = await axios.get('http://127.0.0.1:8000/api/tenants/', { headers });
         const tenants = tenantResponse.data;
         const loggedInTenant = tenants.find(t => t.name === tenantName);
         setTenant(loggedInTenant);
 
-        // Fetch rooms
-        const roomResponse = await axios.get('http://127.0.0.1:8000/api/rooms/', { headers });
-        const room = roomResponse.data.find(r => r.number === roomNumber);
-        setRoom(room);
-
-        // Fetch hostels if room exists
-        if (room) {
-          const hostelResponse = await axios.get('http://127.0.0.1:8000/api/hostels/', { headers });
-          const hostel = hostelResponse.data.find(h => h.id === room.hostel);
-          setHostel(hostel);
-        }
-
-        // Fetch bookings if tenant exists
         if (loggedInTenant) {
           const bookingResponse = await axios.get('http://127.0.0.1:8000/api/bookings/', { headers });
-          const booking = bookingResponse.data.find(b => b.tenant === loggedInTenant.id);
-          setBooking(booking);
+          const foundBooking = bookingResponse.data.find(b => b.tenant === loggedInTenant.id);
+          setBooking(foundBooking);
         }
 
-        // Fetch notifications
         const notificationsResponse = await axios.get('http://127.0.0.1:8000/api/notifications/', { headers });
-        const notifications = notificationsResponse.data;
-
-        // Filter and sort notifications
-        const filteredNotifications = notifications.filter(notification => notification.tenant_name === loggedInTenant.name);
+        const allNotifications = notificationsResponse.data;
+        const filteredNotifications = allNotifications.filter(notification => notification.tenant_name === loggedInTenant?.name);
         const unreadNotifications = filteredNotifications.filter(notification => !notification.read);
         const readNotifications = filteredNotifications.filter(notification => notification.read);
-        const sortedNotifications = [...unreadNotifications, ...readNotifications].sort((a, b) => new Date(b.date) - new Date(a.date));
+        const sortedNotifications = [...unreadNotifications, ...readNotifications].sort(
+          (a, b) => new Date(b.date) - new Date(a.date)
+        );
 
         setNotifications(sortedNotifications);
 
-        // Notify user of new notifications
         if (unreadNotifications.length > 0) {
           toast({
             title: 'You have new notifications!',
@@ -152,7 +153,7 @@ const Dashboard = () => {
   }, [tenantName, roomNumber, toast]);
 
   const handleEditClick = () => {
-    setEditTenant(tenant);
+    setEditTenant(tenant || {});
     onEditOpen();
   };
 
@@ -172,8 +173,8 @@ const Dashboard = () => {
       }
 
       const headers = {
-        'Authorization': `Token ${token}`,
-        'Content-Type': 'multipart/form-data'
+        Authorization: `Token ${token}`,
+        'Content-Type': 'multipart/form-data',
       };
 
       const formData = new FormData();
@@ -194,7 +195,7 @@ const Dashboard = () => {
       }
 
       await axios.put(`http://127.0.0.1:8000/api/tenants/${editTenant.id}/`, formData, { headers });
-      
+
       setTenant(editTenant);
       onEditClose();
       toast({
@@ -233,7 +234,7 @@ const Dashboard = () => {
       }
 
       const headers = {
-        'Authorization': `Token ${token}`,
+        Authorization: `Token ${token}`,
         'Content-Type': 'application/json',
       };
 
@@ -254,13 +255,11 @@ const Dashboard = () => {
         duration: 5000,
         isClosable: true,
       });
-
     } catch (error) {
-      console.error('Error submitting requisition:', error.response?.data || error);
-
+      console.error('Error submitting requisition:', error);
       toast({
         title: 'Error submitting requisition.',
-        description: error.response?.data?.error || 'An error occurred. Please try again.',
+        description: error.response?.data?.detail || error.message,
         status: 'error',
         duration: 5000,
         isClosable: true,
@@ -269,11 +268,7 @@ const Dashboard = () => {
   };
 
   const unreadNotificationsCount = notifications.filter(notification => !notification.read).length;
-
-  if (!tenant || !room || !booking) {
-    return <Text>Loading...</Text>;
-  }
-  return (
+ return (
     <Flex h="100vh">
         <VStack
         w="20%"
@@ -322,7 +317,7 @@ const Dashboard = () => {
       </VStack>
 
 <Flex w="80%" p={4} direction="column">
-  <HStack spacing={4} align="center" marginLeft="77%">
+  <HStack spacing={4} align="center" marginLeft="70%">
     <IconButton
       icon={unreadNotificationsCount > 0 ? <MdOutlineNotifications /> : <MdOutlineNotificationsNone />}
       aria-label="Notifications"
@@ -331,82 +326,106 @@ const Dashboard = () => {
     />
 
     <HStack spacing={2} align="center">
-      {tenant.passport_photo && (
-        <Image
-          src={`http://127.0.0.1:8000${tenant.passport_photo}`}
-          alt="Profile Photo"
-          boxSize="50px"
-          borderRadius="full"
-        />
-      )}
-      <Text>{tenant.name}</Text>
-    </HStack>
+  {tenant?.passport_photo && (
+    <Image
+      src={`http://127.0.0.1:8000${tenant.passport_photo}`}
+      alt="Profile Photo"
+      boxSize="50px"
+      borderRadius="full"
+    />
+  )}
+  <Text>{tenant?.name || 'No Name Available'}</Text>
+</HStack>
 
     {/* Add the Logout Button */}
-    <Button 
-      colorScheme="red" 
-      onClick={() => {
-        localStorage.removeItem('authToken');
-        navigate('/login');
-      }}
-    >
-      Logout
-    </Button>
+<Button 
+  colorScheme="red" 
+  onClick={() => {
+    if (room) {
+      localStorage.setItem('savedRoom', JSON.stringify({
+        number: room.number,
+        room_type: room.room_type,
+        hostel: room.hostel
+      }));
+    }
+    localStorage.removeItem('authToken');
+    navigate('/login');
+  }}
+>
+  Logout
+</Button>
+
+
+
   </HStack>
 
-        {showCards && (
-          <Grid templateColumns="repeat(3, 1fr)" gap={6} marginTop="40px">
-            <GridItem>
-              <Card>
-                <CardHeader>
-                  <Text fontSize="lg">Tenant</Text>
-                </CardHeader>
-                <CardBody>
-                  <Text>Name: {tenant.name}</Text>
-                  <Text>Email: {tenant.email}</Text>
-                  <Text>Phone: {tenant.phone_number}</Text>
-                  <Text>Major: {tenant.major}</Text>
-                  <Text>Gender: {tenant.gender}</Text>
-                  <Text>Position: {tenant.position}</Text>
-                  <Text>Admin Number: {tenant.admin_number}</Text>
-                  <Text>Nationality: {tenant.nationality}</Text>
-                  <Text>Parent: {tenant.parent}</Text>
-                </CardBody>
-                <CardFooter>
-                  <Button
-                    colorScheme="teal"
-                    onClick={handleEditClick}
-                  >
-                    Edit Tenant
-                  </Button>
-                </CardFooter>
-              </Card>
-            </GridItem>
-            <GridItem>
-              <Card>
-                <CardHeader>
-                  <Text fontSize="lg">Room</Text>
-                </CardHeader>
-                <CardBody>
-                  <Text>Number: {room.number}</Text>
-                  <Text>Type: {ROOM_TYPE_LABELS[room.room_type]}</Text>
-                  <Text>Hostel: {hostel.name}</Text>
-                </CardBody>
-              </Card>
-            </GridItem>
-            <GridItem>
-              <Card>
-                <CardHeader>
-                  <Text fontSize="lg">Booking</Text>
-                </CardHeader>
-                <CardBody>
-                  <Text>Check-in: {booking.check_in_date}</Text>
-                  <Text>Check-out: {booking.check_out_date}</Text>
-                </CardBody>
-              </Card>
-            </GridItem>
-          </Grid>
-        )}
+  {showCards && (
+  <Grid templateColumns="repeat(3, 1fr)" gap={6} marginTop="40px">
+    {/* Tenant Card */}
+    <GridItem>
+      <Card>
+        <CardHeader>
+          <Text fontSize="lg">Tenant</Text>
+        </CardHeader>
+        <CardBody>
+          <Text>Name: {tenant.name}</Text>
+          <Text>Email: {tenant.email}</Text>
+          <Text>Phone: {tenant.phone_number}</Text>
+          <Text>Major: {tenant.major}</Text>
+          <Text>Gender: {tenant.gender}</Text>
+          <Text>Position: {tenant.position}</Text>
+          <Text>Admin Number: {tenant.admin_number}</Text>
+          <Text>Nationality: {tenant.nationality}</Text>
+          <Text>Parent: {tenant.parent}</Text>
+        </CardBody>
+        <CardFooter>
+          <Button colorScheme="teal" onClick={handleEditClick}>
+            Edit Tenant
+          </Button>
+        </CardFooter>
+      </Card>
+    </GridItem>
+
+    {/* Room Card */}
+    <GridItem>
+      <Card>
+        <CardHeader>
+          <Text fontSize="lg">Room</Text>
+        </CardHeader>
+        <CardBody>
+          {room ? (
+            <>
+              <Text>Number: {room.number}</Text>
+              <Text>Type: {ROOM_TYPE_LABELS[room.room_type]}</Text>
+              <Text>Hostel: {hostel ? hostel.name : 'Hostel not available'}</Text>
+            </>
+          ) : (
+            <Text>No room information available</Text>
+          )}
+        </CardBody>
+      </Card>
+    </GridItem>
+
+    {/* Booking Card */}
+    <GridItem>
+      <Card>
+        <CardHeader>
+          <Text fontSize="lg">Booking</Text>
+        </CardHeader>
+        <CardBody>
+          {booking ? (
+            <>
+              <Text>Check-in: {booking.check_in_date}</Text>
+              <Text>Check-out: {booking.check_out_date}</Text>
+            </>
+          ) : (
+            <Text>No booking information available</Text>
+          )}
+        </CardBody>
+      </Card>
+    </GridItem>
+  </Grid>
+)}
 
                 {/* Notifications Modal */}
 <Modal isOpen={showNotifications} onClose={() => setShowNotifications(false)}>

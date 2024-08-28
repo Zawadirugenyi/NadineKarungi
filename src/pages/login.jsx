@@ -11,8 +11,6 @@ function Login() {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState({ type: '', text: '' });
   const [roomNumber, setRoomNumber] = useState('');
-  const [tenant, setTenant] = useState(null);
-  const [bookingData, setBookingData] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -66,7 +64,6 @@ function Login() {
       const tenant = tenantData.find(t => t.email === email);
 
       if (tenant) {
-        setTenant(tenant);
         localStorage.setItem('tenantId', tenant.id);
 
         // Fetch bookings for the tenant
@@ -83,13 +80,12 @@ function Login() {
         }
 
         const bookingData = await bookingResponse.json();
-        setBookingData(bookingData);
 
         // Determine navigation based on tenant and booking data
         if (bookingData.length > 0) {
           navigate('/dashboard', { 
             state: { 
-              tenantName: tenant.name, 
+              tenantName: tenant.name,
               roomNumber,
               tenantDetails: tenant,
               bookings: bookingData,
@@ -108,7 +104,6 @@ function Login() {
       setLoading(false);
     }
   };
-
 
   return (
     <Box display="flex" justifyContent="center" marginTop="50px">
