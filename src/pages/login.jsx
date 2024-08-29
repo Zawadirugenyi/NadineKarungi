@@ -83,13 +83,12 @@ function Login() {
 
         // Determine navigation based on tenant and booking data
         if (bookingData.length > 0) {
-          navigate('/dashboard', { 
-            state: { 
+          navigate('/dashboard', {
+            state: {
               tenantName: tenant.name,
-              roomNumber,
-              tenantDetails: tenant,
-              bookings: bookingData,
-            } 
+          roomNumber: roomNumber, // Adjust as needed
+      
+            },
           });
         } else {
           navigate('/booking', { state: { roomNumber, tenantName: tenant.name } });

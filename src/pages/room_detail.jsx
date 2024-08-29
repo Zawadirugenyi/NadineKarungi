@@ -18,7 +18,7 @@ const RoomDescription = () => {
     useEffect(() => {
         const fetchRoomDescription = async () => {
             try {
-                const token = 'cedba665f1e8857726164d0635b2c2ab493b9d81'; 
+                const token = '6272873e268d1cdf6601c63c4a720de4eede301e'; 
                 const response = await axios.get(`http://127.0.0.1:8000/api/room-descriptions/`, {
                     params: {
                         room__number: roomNumber,
@@ -49,7 +49,7 @@ const RoomDescription = () => {
 
         const fetchRoomStatus = async () => {
             try {
-                const token = 'cedba665f1e8857726164d0635b2c2ab493b9d81'; 
+                const token = '6272873e268d1cdf6601c63c4a720de4eede301e'; 
                 const response = await axios.get(`http://127.0.0.1:8000/api/rooms/`, {
                     params: {
                         number: roomNumber,
