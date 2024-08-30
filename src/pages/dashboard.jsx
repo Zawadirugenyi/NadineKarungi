@@ -85,93 +85,84 @@ useEffect(() => {
       const token = localStorage.getItem('authToken');
       const headers = { Authorization: `Token ${token}` };
 
-      let fetchedRoom = null;
-      let fetchedHostel = null;
-
       // Fetch saved room data from local storage
       const savedRoomString = localStorage.getItem('savedRoom');
       console.log('Saved room string from local storage:', savedRoomString);
-      
+
       const savedRoom = savedRoomString ? JSON.parse(savedRoomString) : null;
       console.log('Parsed saved room from local storage:', savedRoom);
 
-      if (savedRoom && savedRoom.number) {
-        fetchedRoom = savedRoom;
+      if (savedRoom && savedRoom.roomNumber) {
+        // If savedRoom exists, use it
+        setRoom(savedRoom);
 
         if (savedRoom.hostel) {
           const hostelResponse = await axios.get('http://127.0.0.1:8000/api/hostels/', { headers });
-          fetchedHostel = hostelResponse.data.find(h => h.id === savedRoom.hostel);
-          console.log('Fetched hostel data:', fetchedHostel);
+          const fetchedHostel = hostelResponse.data.find(h => h.id === savedRoom.hostel);
+          setHostel(fetchedHostel || {});
         }
-      } 
-
-      if (!fetchedRoom || !fetchedRoom.number) {
+      } else {
+        // Otherwise, fetch room data based on roomNumber
         if (roomNumber) {
           const roomResponse = await axios.get('http://127.0.0.1:8000/api/rooms/', { headers });
-          console.log('Room response data:', roomResponse.data);
-          fetchedRoom = roomResponse.data.find(r => r.number === roomNumber);
-          console.log('Fetched room data based on roomNumber:', fetchedRoom);
+          const fetchedRoom = roomResponse.data.find(r => r.number === roomNumber);
+          setRoom(fetchedRoom || {});
 
           if (fetchedRoom && fetchedRoom.hostel) {
             const hostelResponse = await axios.get('http://127.0.0.1:8000/api/hostels/', { headers });
-            fetchedHostel = hostelResponse.data.find(h => h.id === fetchedRoom.hostel);
-            console.log('Fetched hostel data based on room:', fetchedHostel);
+            const fetchedHostel = hostelResponse.data.find(h => h.id === fetchedRoom.hostel);
+            setHostel(fetchedHostel || {});
           }
         }
       }
 
-      setRoom(fetchedRoom || {});
-      setHostel(fetchedHostel || {});
-
       // Fetch tenant and booking data
       const tenantResponse = await axios.get('http://127.0.0.1:8000/api/tenants/', { headers });
-      console.log('Tenant response data:', tenantResponse.data);
       const tenants = tenantResponse.data;
       const loggedInTenant = tenants.find(t => t.name === tenantName);
       setTenant(loggedInTenant || {});
 
       if (loggedInTenant) {
         const bookingResponse = await axios.get('http://127.0.0.1:8000/api/bookings/', { headers });
-        console.log('Booking response data:', bookingResponse.data);
         const foundBooking = bookingResponse.data.find(b => b.tenant === loggedInTenant.id);
         setBooking(foundBooking || {});
       }
 
-      const notificationsResponse = await axios.get('http://127.0.0.1:8000/api/notifications/', { headers });
-      const allNotifications = notificationsResponse.data;
-      const filteredNotifications = allNotifications.filter(notification => notification.tenant_name === loggedInTenant?.name);
-      const unreadNotifications = filteredNotifications.filter(notification => !notification.read);
-      const readNotifications = filteredNotifications.filter(notification => notification.read);
-      const sortedNotifications = [...unreadNotifications, ...readNotifications].sort(
-        (a, b) => new Date(b.date) - new Date(a.date)
-      );
 
-      setNotifications(sortedNotifications);
+        const notificationsResponse = await axios.get('http://127.0.0.1:8000/api/notifications/', { headers });
+        const allNotifications = notificationsResponse.data;
+        const filteredNotifications = allNotifications.filter(notification => notification.tenant_name === loggedInTenant?.name);
+        const unreadNotifications = filteredNotifications.filter(notification => !notification.read);
+        const readNotifications = filteredNotifications.filter(notification => notification.read);
+        const sortedNotifications = [...unreadNotifications, ...readNotifications].sort(
+          (a, b) => new Date(b.date) - new Date(a.date)
+        );
 
-      if (unreadNotifications.length > 0) {
+        setNotifications(sortedNotifications);
+
+        if (unreadNotifications.length > 0) {
+          toast({
+            title: 'You have new notifications!',
+            description: `You have ${unreadNotifications.length} new notifications.`,
+            status: 'info',
+            duration: 5000,
+            isClosable: true,
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
         toast({
-          title: 'You have new notifications!',
-          description: `You have ${unreadNotifications.length} new notifications.`,
-          status: 'info',
+          title: 'Error fetching data.',
+          description: error.message,
+          status: 'error',
           duration: 5000,
           isClosable: true,
         });
       }
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      toast({
-        title: 'Error fetching data.',
-        description: error.message,
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
-    }
-  };
+    };
 
-  fetchData();
-}, [tenantName, roomNumber, toast]);
-
+    fetchData();
+  }, [tenantName, roomNumber, toast]);
 
   const handleEditClick = () => {
     setEditTenant(tenant || {});
@@ -288,53 +279,33 @@ useEffect(() => {
     }
   };
 
-// Handle logout
-
+  // Handle logout
 const handleLogout = async () => {
   try {
     const token = localStorage.getItem('authToken');
-
     if (token) {
       await axios.post(
         'http://127.0.0.1:8000/users/logout/',
         {},
-        {
-          headers: {
-            Authorization: `Token ${token}`,
-          },
-        }
+        { headers: { Authorization: `Token ${token}` } }
       );
     }
 
-    // Save tenant, room, and booking data to localStorage before clearing
-    if (tenant) {
-      localStorage.setItem('savedTenant', JSON.stringify({ id: tenant.id, name: tenant.name }));
-    }
+    // Debugging: Check the room state before saving to local storage
+    console.log('Room data before logout:', room);
 
-    if (room) {
-      localStorage.setItem(
-        'savedRoom',
-        JSON.stringify({ roomNumber: room.number, hostel: room.hostel })
-      );
-    }
+    // Save the room, tenant, and booking data to local storage
+    localStorage.setItem('savedRoom', JSON.stringify(room || {}));
+    localStorage.setItem('savedTenant', JSON.stringify(tenant || {}));
+    localStorage.setItem('savedBooking', JSON.stringify(booking || {}));
 
-    if (booking) {
-      localStorage.setItem('savedBooking', JSON.stringify(booking));
-    }
-
-    // Clear authentication token and other data
     localStorage.removeItem('authToken');
-    localStorage.removeItem('savedTenant');
-    localStorage.removeItem('savedRoom');
-    localStorage.removeItem('savedBooking');
-
-    // Navigate to the login page
-    navigate('/login');
+    navigate('/login/');
   } catch (error) {
-    console.error('Logout failed:', error);
+    console.error('Error logging out:', error);
     toast({
-      title: 'Logout failed.',
-      description: 'There was an error logging out. Please try again.',
+      title: 'Error logging out.',
+      description: error.response?.data?.detail || error.message,
       status: 'error',
       duration: 5000,
       isClosable: true,
@@ -450,23 +421,24 @@ const handleLogout = async () => {
 
     {/* Room Card */}
 <GridItem>
-      <Card>
-        <CardHeader>
-          <Text fontSize="lg">Room</Text>
-        </CardHeader>
-        <CardBody>
-          {room ? (
-            <>
-              <Text>Number: {roomNumber}</Text>
-              <Text>Type: {room.room_type}</Text>
-              <Text>Hostel: {hostel ? hostel.name : 'Hostel not available'}</Text>
-            </>
-          ) : (
-            <Text>No room information available</Text>
-          )}
-        </CardBody>
-      </Card>
-    </GridItem>
+  <Card>
+    <CardHeader>
+      <Text fontSize="lg">Room</Text>
+    </CardHeader>
+    <CardBody>
+      {room ? (
+        <>
+          <Text>Number: {roomNumber}</Text> {/* Displaying room.number instead of roomNumber */}
+          <Text>Type: {room.room_type}</Text>
+          <Text>Hostel: {hostel ? hostel.name : 'Hostel not available'}</Text>
+        </>
+      ) : (
+        <Text>No room information available</Text>
+      )}
+    </CardBody>
+  </Card>
+</GridItem>
+
 
 
     {/* Booking Card */}

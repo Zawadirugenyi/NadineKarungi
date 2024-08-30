@@ -27,7 +27,6 @@ function Login() {
     setMessage({ type: '', text: '' });
 
     try {
-      // Authenticate user
       const response = await fetch('http://127.0.0.1:8000/users/login/', {
         method: 'POST',
         headers: {
@@ -43,11 +42,9 @@ function Login() {
       const data = await response.json();
       localStorage.setItem('authToken', data.token);
 
-      // Clear input fields
       setEmail('');
       setPassword('');
 
-      // Fetch tenant data
       const tenantResponse = await fetch('http://127.0.0.1:8000/api/tenants/', {
         method: 'GET',
         headers: {
@@ -66,7 +63,6 @@ function Login() {
       if (tenant) {
         localStorage.setItem('tenantId', tenant.id);
 
-        // Fetch bookings for the tenant
         const bookingResponse = await fetch(`http://127.0.0.1:8000/api/bookings/?tenant=${tenant.id}`, {
           method: 'GET',
           headers: {
@@ -81,13 +77,11 @@ function Login() {
 
         const bookingData = await bookingResponse.json();
 
-        // Determine navigation based on tenant and booking data
         if (bookingData.length > 0) {
           navigate('/dashboard', {
             state: {
               tenantName: tenant.name,
-          roomNumber: roomNumber, // Adjust as needed
-      
+              roomNumber,
             },
           });
         } else {
