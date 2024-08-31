@@ -29,7 +29,7 @@ const BypassCodePage = () => {
     const handleSubmit = async () => {
         setLoading(true);
         try {
-            const token = 'cedba665f1e8857726164d0635b2c2ab493b9d81'; // Token for authentication
+            const token = '6272873e268d1cdf6601c63c4a720de4eede301e'; // Token for authentication
 
             // Check if the tenant exists
             const tenantResponse = await fetch('http://127.0.0.1:8000/api/tenants/check/', {

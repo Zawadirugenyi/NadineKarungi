@@ -6,7 +6,7 @@ import {
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import backgroundImage from '../Components/Assets/l-intro-1644597197.jpg';
 
-function Login() {
+const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState({ type: '', text: '' });
@@ -22,30 +22,48 @@ function Login() {
   }, [location.state]);
 
   const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage({ type: '', text: '' });
+  e.preventDefault();
+  setLoading(true);
+  setMessage({ type: '', text: '' });
 
-    try {
-      const response = await fetch('http://127.0.0.1:8000/users/login/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+  try {
+    const response = await fetch('http://127.0.0.1:8000/users/login/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
 
-      if (!response.ok) {
-        throw new Error('Incorrect email or password');
-      }
+    if (!response.ok) {
+      throw new Error('Incorrect email or password');
+    }
 
-      const data = await response.json();
-      localStorage.setItem('authToken', data.token);
+    const data = await response.json();
+    localStorage.setItem('authToken', data.token);
 
-      setEmail('');
-      setPassword('');
+    // Fetch tenant data
+    const tenantResponse = await fetch('http://127.0.0.1:8000/api/tenants/', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Token ${data.token}`,
+      },
+    });
 
-      const tenantResponse = await fetch('http://127.0.0.1:8000/api/tenants/', {
+    if (!tenantResponse.ok) {
+      throw new Error('Error fetching tenant data');
+    }
+
+    const tenantData = await tenantResponse.json();
+    const tenant = tenantData.find(t => t.email === email);
+
+    if (tenant) {
+      localStorage.setItem('tenantId', tenant.id);
+      localStorage.setItem('tenantData', JSON.stringify(tenant));
+
+      // Fetch booking data
+      const bookingResponse = await fetch(`http://127.0.0.1:8000/api/bookings/?tenant=${tenant.id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -53,50 +71,36 @@ function Login() {
         },
       });
 
-      if (!tenantResponse.ok) {
-        throw new Error('Error fetching tenant data');
+      if (!bookingResponse.ok) {
+        throw new Error('Error fetching bookings');
       }
 
-      const tenantData = await tenantResponse.json();
-      const tenant = tenantData.find(t => t.email === email);
+      const bookingData = await bookingResponse.json();
+      localStorage.setItem('bookingData', JSON.stringify(bookingData));
 
-      if (tenant) {
-        localStorage.setItem('tenantId', tenant.id);
-
-        const bookingResponse = await fetch(`http://127.0.0.1:8000/api/bookings/?tenant=${tenant.id}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Token ${data.token}`,
+      // Navigate based on booking status
+      if (bookingData.length > 0) {
+        navigate('/dashboard', {
+          state: {
+            tenantName: tenant.name,
+            roomNumber,
           },
         });
-
-        if (!bookingResponse.ok) {
-          throw new Error('Error fetching bookings');
-        }
-
-        const bookingData = await bookingResponse.json();
-
-        if (bookingData.length > 0) {
-          navigate('/dashboard', {
-            state: {
-              tenantName: tenant.name,
-              roomNumber,
-            },
-          });
-        } else {
-          navigate('/booking', { state: { roomNumber, tenantName: tenant.name } });
-        }
       } else {
-        navigate('/tenant', { state: { roomNumber } });
+        navigate('/booking', {
+          state: { roomNumber, tenantName: tenant.name },
+        });
       }
-    } catch (error) {
-      console.error('Error:', error);
-      setMessage({ type: 'error', text: error.message });
-    } finally {
-      setLoading(false);
+    } else {
+      navigate('/tenant', { state: { roomNumber } });
     }
-  };
+  } catch (error) {
+    console.error('Error:', error);
+    setMessage({ type: 'error', text: error.message });
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <Box display="flex" justifyContent="center" marginTop="50px">

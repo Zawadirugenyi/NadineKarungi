@@ -10,7 +10,7 @@ function Home() {
   useEffect(() => {
     const fetchHostels = async () => {
       try {
-        const token = '6272873e268d1cdf6601c63c4a720de4eede301e'; 
+        const token = '9d9c701809388c23bbb1be95b32ee2612261d668'; 
         const response = await fetch('http://127.0.0.1:8000/api/hostels/', {
           headers: {
             Authorization: `Token ${token}`,

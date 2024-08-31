@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+
 import {
   Flex,
   VStack,
@@ -47,18 +48,14 @@ const ROOM_TYPE_LABELS = {
 };
 
 const Dashboard = () => {
-  const { colorMode, toggleColorMode } = useColorMode();
   const [tenant, setTenant] = useState(null);
   const [room, setRoom] = useState(null);
   const [hostel, setHostel] = useState(null);
   const [booking, setBooking] = useState(null);
+  const [showCards, setShowCards] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [editTenant, setEditTenant] = useState({});
-  const [requisition, setRequisition] = useState({
-    type: '',
-    description: '',
-    otherType: '',
-  });
   const {
     isOpen: isEditOpen,
     onOpen: onEditOpen,
@@ -69,109 +66,93 @@ const Dashboard = () => {
     onOpen: onRequisitionOpen,
     onClose: onRequisitionClose,
   } = useDisclosure();
+  const [requisition, setRequisition] = useState({
+    type: '',
+    description: '',
+    otherType: '',
+  });
 
   const toast = useToast();
   const navigate = useNavigate();
+  const { colorMode, toggleColorMode } = useColorMode();
   const location = useLocation();
-  const { tenantName, roomNumber } = location.state || {};
+
+  const { tenantName, roomNumber } = location.state || JSON.parse(localStorage.getItem('lastSessionData')) || {};
   const sidebarBgColor = useColorModeValue('#0097b2', '#005b7f');
   const buttonHoverColor = useColorModeValue('black', '#003b57');
-  const [showCards, setShowCards] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
 
-useEffect(() => {
-  const fetchData = async () => {
-    try {
-      const token = localStorage.getItem('authToken');
-      const headers = { Authorization: `Token ${token}` };
+    useEffect(() => {
+ const fetchData = async () => {
+  try {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      console.log('No token found, redirecting to login.');
+      navigate('/login');
+      return;
+    }
 
-      // Fetch saved room data from local storage
-      const savedRoomString = localStorage.getItem('savedRoom');
-      console.log('Saved room string from local storage:', savedRoomString);
-
-      const savedRoom = savedRoomString ? JSON.parse(savedRoomString) : null;
-      console.log('Parsed saved room from local storage:', savedRoom);
-
-      if (savedRoom && savedRoom.roomNumber) {
-        // If savedRoom exists, use it
-        setRoom(savedRoom);
-
-        if (savedRoom.hostel) {
-          const hostelResponse = await axios.get('http://127.0.0.1:8000/api/hostels/', { headers });
-          const fetchedHostel = hostelResponse.data.find(h => h.id === savedRoom.hostel);
-          setHostel(fetchedHostel || {});
-        }
-      } else {
-        // Otherwise, fetch room data based on roomNumber
-        if (roomNumber) {
-          const roomResponse = await axios.get('http://127.0.0.1:8000/api/rooms/', { headers });
-          const fetchedRoom = roomResponse.data.find(r => r.number === roomNumber);
-          setRoom(fetchedRoom || {});
-
-          if (fetchedRoom && fetchedRoom.hostel) {
-            const hostelResponse = await axios.get('http://127.0.0.1:8000/api/hostels/', { headers });
-            const fetchedHostel = hostelResponse.data.find(h => h.id === fetchedRoom.hostel);
-            setHostel(fetchedHostel || {});
-          }
-        }
-      }
-
-      // Fetch tenant and booking data
-      const tenantResponse = await axios.get('http://127.0.0.1:8000/api/tenants/', { headers });
-      const tenants = tenantResponse.data;
-      const loggedInTenant = tenants.find(t => t.name === tenantName);
-      setTenant(loggedInTenant || {});
-
-      if (loggedInTenant) {
-        const bookingResponse = await axios.get('http://127.0.0.1:8000/api/bookings/', { headers });
-        const foundBooking = bookingResponse.data.find(b => b.tenant === loggedInTenant.id);
-        setBooking(foundBooking || {});
-      }
-
-
-        const notificationsResponse = await axios.get('http://127.0.0.1:8000/api/notifications/', { headers });
-        const allNotifications = notificationsResponse.data;
-        const filteredNotifications = allNotifications.filter(notification => notification.tenant_name === loggedInTenant?.name);
-        const unreadNotifications = filteredNotifications.filter(notification => !notification.read);
-        const readNotifications = filteredNotifications.filter(notification => notification.read);
-        const sortedNotifications = [...unreadNotifications, ...readNotifications].sort(
-          (a, b) => new Date(b.date) - new Date(a.date)
-        );
-
-        setNotifications(sortedNotifications);
-
-        if (unreadNotifications.length > 0) {
-          toast({
-            title: 'You have new notifications!',
-            description: `You have ${unreadNotifications.length} new notifications.`,
-            status: 'info',
-            duration: 5000,
-            isClosable: true,
-          });
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        toast({
-          title: 'Error fetching data.',
-          description: error.message,
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-      }
+    const headers = {
+      Authorization: `Token ${token}`,
     };
 
-    fetchData();
-  }, [tenantName, roomNumber, toast]);
+    // Fetch tenants
+    const tenantResponse = await axios.get('http://127.0.0.1:8000/api/tenants/', { headers });
+    const tenants = tenantResponse.data;
+    const loggedInTenant = tenants.find((t) => t.name === tenantName);
+    setTenant(loggedInTenant);
+
+    // Fetch rooms
+    const roomResponse = await axios.get('http://127.0.0.1:8000/api/rooms/', { headers });
+    const room = roomResponse.data.find((r) => r.number === roomNumber);
+    setRoom(room);
+
+    // Fetch hostels if room exists
+    if (room) {
+      const hostelResponse = await axios.get('http://127.0.0.1:8000/api/hostels/', { headers });
+      const hostel = hostelResponse.data.find((h) => h.id === room.hostel);
+      setHostel(hostel);
+    }
+
+    // Fetch bookings if tenant exists
+    if (loggedInTenant) {
+      const bookingResponse = await axios.get('http://127.0.0.1:8000/api/bookings/', { headers });
+      const booking = bookingResponse.data.find((b) => b.tenant === loggedInTenant.id);
+      setBooking(booking);
+    }
+
+    // Fetch notifications
+    const notificationsResponse = await axios.get('http://127.0.0.1:8000/api/notifications/', { headers });
+    const notifications = notificationsResponse.data;
+    const filteredNotifications = notifications.filter(
+      (notification) => notification.tenant_name === loggedInTenant.name
+    );
+    setNotifications(filteredNotifications);
+
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    toast({
+      title: 'Error fetching data.',
+      description: error.message,
+      status: 'error',
+      duration: 5000,
+      isClosable: true,
+    });
+  }
+};
+
+
+  fetchData();
+}, [tenantName, roomNumber, toast, navigate]);
+
 
   const handleEditClick = () => {
-    setEditTenant(tenant || {});
+    setEditTenant(tenant);
     onEditOpen();
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setEditTenant(prevState => ({
+    setEditTenant((prevState) => ({
       ...prevState,
       [name]: value,
     }));
@@ -230,7 +211,7 @@ useEffect(() => {
 
   const handleRequisitionChange = (e) => {
     const { name, value } = e.target;
-    setRequisition(prevRequisition => ({
+    setRequisition((prevRequisition) => ({
       ...prevRequisition,
       [name]: value,
     }));
@@ -258,7 +239,11 @@ useEffect(() => {
         completed: requisition.completed || false,
       };
 
-      await axios.post('http://127.0.0.1:8000/api/maintenance/', requisitionData, { headers });
+      console.log('Submitting requisition with data:', requisitionData);
+
+      const response = await axios.post('http://127.0.0.1:8000/api/maintenance/', requisitionData, { headers });
+
+      console.log('Response from server:', response.data);
 
       onRequisitionClose();
       toast({
@@ -268,10 +253,11 @@ useEffect(() => {
         isClosable: true,
       });
     } catch (error) {
-      console.error('Error submitting requisition:', error);
+      console.error('Error submitting requisition:', error.response?.data || error);
+
       toast({
         title: 'Error submitting requisition.',
-        description: error.response?.data?.detail || error.message,
+        description: error.response?.data?.error || 'An error occurred. Please try again.',
         status: 'error',
         duration: 5000,
         isClosable: true,
@@ -279,43 +265,55 @@ useEffect(() => {
     }
   };
 
-  // Handle logout
 const handleLogout = async () => {
   try {
     const token = localStorage.getItem('authToken');
-    if (token) {
-      await axios.post(
-        'http://127.0.0.1:8000/users/logout/',
-        {},
-        { headers: { Authorization: `Token ${token}` } }
-      );
+    if (!token) {
+      console.log('No token found for logout');
+      return;
     }
 
-    // Debugging: Check the room state before saving to local storage
-    console.log('Room data before logout:', room);
-
-    // Save the room, tenant, and booking data to local storage
-    localStorage.setItem('savedRoom', JSON.stringify(room || {}));
-    localStorage.setItem('savedTenant', JSON.stringify(tenant || {}));
-    localStorage.setItem('savedBooking', JSON.stringify(booking || {}));
-
-    localStorage.removeItem('authToken');
-    navigate('/login/');
-  } catch (error) {
-    console.error('Error logging out:', error);
-    toast({
-      title: 'Error logging out.',
-      description: error.response?.data?.detail || error.message,
-      status: 'error',
-      duration: 5000,
-      isClosable: true,
+    console.log('Sending logout request with token:', token);
+    const response = await fetch('http://127.0.0.1:8000/users/logout/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Token ${token}`,
+      },
     });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Logout failed: ${errorText}`);
+    }
+
+    console.log('Logout successful');
+    localStorage.removeItem('authToken');
+    console.log('Token removed from localStorage');
+
+    // Optionally clear other session data
+    localStorage.removeItem('tenantId');
+    localStorage.removeItem('lastSessionData');
+    console.log('Session data removed from localStorage');
+
+       navigate('/login', {
+          state: { roomNumber, tenantName: tenant.name },
+        });
+  } catch (error) {
+    console.error('Error during logout:', error);
   }
 };
 
 
-  const unreadNotificationsCount = notifications.filter(notification => !notification.read).length;
- return (
+
+
+  const unreadNotificationsCount = notifications.filter((notification) => !notification.read).length;
+
+  if (!tenant || !booking) {
+    return <Text>Loading...</Text>;
+  }
+
+  return (
     <Flex h="100vh">
         <VStack
         w="20%"
@@ -364,7 +362,7 @@ const handleLogout = async () => {
       </VStack>
 
 <Flex w="80%" p={4} direction="column">
-  <HStack spacing={4} align="center" marginLeft="70%">
+  <HStack spacing={4} align="center" marginLeft="77%">
     <IconButton
       icon={unreadNotificationsCount > 0 ? <MdOutlineNotifications /> : <MdOutlineNotificationsNone />}
       aria-label="Notifications"
@@ -373,94 +371,91 @@ const handleLogout = async () => {
     />
 
     <HStack spacing={2} align="center">
-  {tenant?.passport_photo && (
-    <Image
-      src={`http://127.0.0.1:8000${tenant.passport_photo}`}
-      alt="Profile Photo"
-      boxSize="50px"
-      borderRadius="full"
-    />
-  )}
-  <Text>{tenant?.name || 'No Name Available'}</Text>
-</HStack>
+      {tenant.passport_photo && (
+        <Image
+          src={`http://127.0.0.1:8000${tenant.passport_photo}`}
+          alt="Profile Photo"
+          boxSize="50px"
+          borderRadius="full"
+        />
+      )}
+      <Text>{tenant.name}</Text>
+    </HStack>
 
-    {/* Add the Logout Button */}
+  
+        <Button colorScheme="red" onClick={handleLogout}>
+          Logout
+        </Button>
     
- <Button colorScheme="red" onClick={handleLogout}>
-            Logout
-          </Button>
-
   </HStack>
 
-  {showCards && (
-  <Grid templateColumns="repeat(3, 1fr)" gap={6} marginTop="40px">
-    {/* Tenant Card */}
+        {showCards && (
+          <Grid templateColumns="repeat(3, 1fr)" gap={6} marginTop="40px">
+            <GridItem>
+              <Card>
+                <CardHeader>
+                  <Text fontSize="lg">Tenant</Text>
+                </CardHeader>
+                <CardBody>
+                  <Text>Name: {tenant.name}</Text>
+                  <Text>Email: {tenant.email}</Text>
+                  <Text>Phone: {tenant.phone_number}</Text>
+                  <Text>Major: {tenant.major}</Text>
+                  <Text>Gender: {tenant.gender}</Text>
+                  <Text>Position: {tenant.position}</Text>
+                  <Text>Admin Number: {tenant.admin_number}</Text>
+                  <Text>Nationality: {tenant.nationality}</Text>
+                  <Text>Parent: {tenant.parent}</Text>
+                </CardBody>
+                <CardFooter>
+                  <Button
+                    colorScheme="teal"
+                    onClick={handleEditClick}
+                  >
+                    Edit Tenant
+                  </Button>
+                </CardFooter>
+              </Card>
+            </GridItem>
     <GridItem>
-      <Card>
-        <CardHeader>
-          <Text fontSize="lg">Tenant</Text>
-        </CardHeader>
-        <CardBody>
-          <Text>Name: {tenant.name}</Text>
-          <Text>Email: {tenant.email}</Text>
-          <Text>Phone: {tenant.phone_number}</Text>
-          <Text>Major: {tenant.major}</Text>
-          <Text>Gender: {tenant.gender}</Text>
-          <Text>Position: {tenant.position}</Text>
-          <Text>Admin Number: {tenant.admin_number}</Text>
-          <Text>Nationality: {tenant.nationality}</Text>
-          <Text>Parent: {tenant.parent}</Text>
-        </CardBody>
-        <CardFooter>
-          <Button colorScheme="teal" onClick={handleEditClick}>
-            Edit Tenant
-          </Button>
-        </CardFooter>
-      </Card>
-    </GridItem>
-
-    {/* Room Card */}
-<GridItem>
-  <Card>
-    <CardHeader>
-      <Text fontSize="lg">Room</Text>
-    </CardHeader>
-    <CardBody>
-      {room ? (
-        <>
-          <Text>Number: {roomNumber}</Text> {/* Displaying room.number instead of roomNumber */}
-          <Text>Type: {room.room_type}</Text>
-          <Text>Hostel: {hostel ? hostel.name : 'Hostel not available'}</Text>
-        </>
-      ) : (
-        <Text>No room information available</Text>
-      )}
-    </CardBody>
-  </Card>
-</GridItem>
-
-
-
-    {/* Booking Card */}
-    <GridItem>
-      <Card>
-        <CardHeader>
-          <Text fontSize="lg">Booking</Text>
-        </CardHeader>
-        <CardBody>
-          {booking ? (
-            <>
-              <Text>Check-in: {booking.check_in_date}</Text>
-              <Text>Check-out: {booking.check_out_date}</Text>
-            </>
-          ) : (
-            <Text>No booking information available</Text>
-          )}
-        </CardBody>
-      </Card>
-    </GridItem>
-  </Grid>
-)}
+            <Card>
+              <CardHeader>
+                <Text fontSize="lg">Room</Text>
+              </CardHeader>
+              <CardBody>
+                {room ? (
+                  <>
+                    <Text>Number: {room.number}</Text>
+                    <Text>Type: {room.room_type}</Text>
+                    <Text>Hostel: {hostel.name}</Text>
+                  </>
+                ) : (
+                  <Text>Loading room details...</Text>
+                )}
+              </CardBody>
+              <CardFooter>
+                <Button
+                  colorScheme="teal"
+                  onClick={() => alert('Edit Room')}
+                >
+                  Edit Room
+                </Button>
+              </CardFooter>
+            </Card>
+          </GridItem>
+            <GridItem>
+              <Card>
+                <CardHeader>
+                  <Text fontSize="lg">Booking</Text>
+                </CardHeader>
+                <CardBody>
+                  <Text>Check-in: {booking.check_in_date}</Text>
+                  <Text>Check-out: {booking.check_out_date}</Text>
+                </CardBody>
+              </Card>
+            </GridItem>
+          </Grid>
+        )}
 
                 {/* Notifications Modal */}
 <Modal isOpen={showNotifications} onClose={() => setShowNotifications(false)}>
