@@ -29,7 +29,7 @@ const BypassCodePage = () => {
     const handleSubmit = async () => {
         setLoading(true);
         try {
-            const token = '6272873e268d1cdf6601c63c4a720de4eede301e'; // Token for authentication
+            const token = '9d9c701809388c23bbb1be95b32ee2612261d668'; // Token for authentication
 
             // Check if the tenant exists
             const tenantResponse = await fetch('http://127.0.0.1:8000/api/tenants/check/', {
@@ -52,8 +52,10 @@ const BypassCodePage = () => {
                 const storedCode = localStorage.getItem('bypassCode');
 
                 if (bypassCode === storedCode) {
-                    // Redirect to dashboard with tenant data
-                    navigate('/login');
+                    // Redirect to login with tenant data
+                    navigate('/login', {
+                      state: { tenantName },
+                    });
                 } else {
                     toast({
                         title: 'Invalid Bypass Code',
