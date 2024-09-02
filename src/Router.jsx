@@ -13,13 +13,15 @@ import AboutUs from './pages/about_us';
 import ContactUs from './pages/contact_us';
 import Dashboard from './pages/dashboard';
 import EditTenant from './pages/edit_tenant';
-import BypassCodePage from './pages/unlockSession'; // Import the BypassCodePage component
+import BypassCodePage from './pages/unlockSession'; 
+import HeroSection from './pages/heroSection';
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<MainLayout><Home /></MainLayout>} />
+        <Route path="/" element={<HeroSection />} /> {/* Set HeroSection as the landing page */}
+        <Route path="/home" element={<MainLayout><Home /></MainLayout>} />
         <Route path="/room/:hostelName" element={<MainLayout><RoomPage /></MainLayout>} />
         <Route path="/signup" element={<MainLayout><Signup /></MainLayout>} />
         <Route path="/login" element={<MainLayout><Login /></MainLayout>} />
@@ -31,7 +33,7 @@ function App() {
         <Route path="/contact_us" element={<MainLayout><ContactUs /></MainLayout>} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/edit_tenant" element={<EditTenant />} />
-        <Route path="/unlockSession" element={<BypassCodePage />} /> {/* Add the BypassCodePage route */}
+        <Route path="/unlockSession" element={<BypassCodePage />} />
       </Routes>
     </Router>
   );

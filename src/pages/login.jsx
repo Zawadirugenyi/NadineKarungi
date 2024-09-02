@@ -4,7 +4,7 @@ import {
   Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton 
 } from '@chakra-ui/react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import backgroundImage from '../Components/Assets/l-intro-1644597197.jpg';
+import backgroundImage from '../Components/Assets/elegant-white-wardrobe-designs-for-bedroom.jpg';
 
 const Login = () => {
   const [email, setEmail] = useState('');

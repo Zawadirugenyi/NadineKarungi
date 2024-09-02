@@ -17,6 +17,9 @@ import {
   useColorModeValue,
   useColorMode,
   Grid,
+  Menu, 
+  MenuButton,
+   MenuList, MenuItem,
   GridItem,
   Modal,
   ModalOverlay,
@@ -30,8 +33,11 @@ import {
   Input,
   Textarea,
   useDisclosure,
+  
   Select
 } from '@chakra-ui/react';
+import { ChevronDownIcon } from '@chakra-ui/icons';
+
 import { FaMoon, FaSun } from 'react-icons/fa';
 import { MdOutlineNotifications, MdOutlineNotificationsNone } from 'react-icons/md';
 import axios from 'axios';
@@ -52,7 +58,7 @@ const Dashboard = () => {
   const [room, setRoom] = useState(null);
   const [hostel, setHostel] = useState(null);
   const [booking, setBooking] = useState(null);
-  const [showCards, setShowCards] = useState(false);
+  const [showCards, setShowCards] = useState(true);
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [editTenant, setEditTenant] = useState({});
@@ -333,7 +339,7 @@ const handleLogout = async () => {
     localStorage.removeItem('lastSessionData');
     console.log('Session data removed from localStorage');
 
-       navigate('/login', {
+       navigate('/unlockSession', {
           state: { roomNumber, tenantName: tenant.name },
         });
   } catch (error) {
@@ -346,7 +352,7 @@ const handleLogout = async () => {
 
   const unreadNotificationsCount = notifications.filter((notification) => !notification.read).length;
 
-  if (!tenant  || !booking) {
+  if (!tenant ||!room || !room.number|| !booking) {
     return <Text>Loading...</Text>;
   }
 
@@ -387,6 +393,7 @@ const handleLogout = async () => {
         >
           Requisition
         </Button>
+        
         <Button
           colorScheme="white" variant="outline"
           _hover={{ bg: buttonHoverColor, color: "white" }}
@@ -396,17 +403,31 @@ const handleLogout = async () => {
           {colorMode === 'light' ? <FaMoon /> : <FaSun />}
           {colorMode === 'light' ? ' Dark' : ' Light'}
         </Button>
+
+        
       </VStack>
 
 <Flex w="80%" p={4} direction="column">
-  <HStack spacing={4} align="center" marginLeft="77%">
-    <IconButton
-      icon={unreadNotificationsCount > 0 ? <MdOutlineNotifications /> : <MdOutlineNotificationsNone />}
-      aria-label="Notifications"
-      color={unreadNotificationsCount > 0 ? 'black' : 'inherit'}
-      onClick={() => setShowNotifications(!showNotifications)}
-    />
 
+   
+<HStack spacing={4} align="center" marginLeft="83%">
+  <IconButton
+    icon={unreadNotificationsCount > 0 ? <MdOutlineNotifications /> : <MdOutlineNotificationsNone />}
+    aria-label="Notifications"
+    color={unreadNotificationsCount > 0 ? 'black' : 'inherit'}
+    onClick={() => setShowNotifications(!showNotifications)}
+  />
+
+
+<Menu>
+  <MenuButton
+    as={Button}
+    rightIcon={<ChevronDownIcon />}
+    bg="white"
+    color="black"
+    _hover={{ bg: 'white', color: 'black' }} // Override hover effect
+   
+  >
     <HStack spacing={2} align="center">
       {tenant.passport_photo && (
         <Image
@@ -414,17 +435,31 @@ const handleLogout = async () => {
           alt="Profile Photo"
           boxSize="50px"
           borderRadius="full"
+          border="2px solid white"
         />
       )}
-      <Text>{tenant.name}</Text>
-    </HStack>
-
   
-        <Button colorScheme="red" onClick={handleLogout}>
-          Logout
-        </Button>
-    
-  </HStack>
+    </HStack>
+  </MenuButton>
+  <MenuList
+    bg="white"
+    border="1px solid teal.500"
+    boxShadow="md"
+    borderRadius="md"
+    py={2}
+  >
+    <MenuItem
+      onClick={handleLogout}
+      color="black"
+      fontWeight="bold"
+    >
+      Logout
+    </MenuItem>
+  </MenuList>
+</Menu>
+
+</HStack > 
+  <Text fontWeight="bold" fontSize="25px" marginBottom="40px"> Welcome {tenant.name}!!</Text>
 
         {showCards && (
           <Grid templateColumns="repeat(3, 1fr)" gap={6} marginTop="40px">
@@ -434,15 +469,15 @@ const handleLogout = async () => {
                   <Text fontSize="lg">Tenant</Text>
                 </CardHeader>
                 <CardBody>
-                  <Text>Name: {tenant.name}</Text>
+                  <Text>FullName: {tenant.name}</Text>
+                  <Text>Admin Number: {tenant.admin_number}</Text>
                   <Text>Email: {tenant.email}</Text>
                   <Text>Phone: {tenant.phone_number}</Text>
                   <Text>Major: {tenant.major}</Text>
                   <Text>Gender: {tenant.gender}</Text>
                   <Text>Position: {tenant.position}</Text>
-                  <Text>Admin Number: {tenant.admin_number}</Text>
                   <Text>Nationality: {tenant.nationality}</Text>
-                  <Text>Parent: {tenant.parent}</Text>
+                  <Text>Parent: {tenant.parent}</Text> 
                 </CardBody>
                 <CardFooter>
                   <Button
@@ -462,22 +497,15 @@ const handleLogout = async () => {
               <CardBody>
                 {room ? (
                   <>
-                    <Text>Number: {room.number}</Text>
-                    <Text>Type: {room.room_type}</Text>
-                    <Text>Hostel: {hostel.name}</Text>
+                   <Text>Number: {room.number}</Text>
+                   <Text>Type: {room.room_type}</Text>
+                   <Text>Hostel: {room?.hostel_name || 'Loading...'}</Text>
                   </>
                 ) : (
                   <Text>Loading room details...</Text>
                 )}
               </CardBody>
-              <CardFooter>
-                <Button
-                  colorScheme="teal"
-                  onClick={() => alert('Edit Room')}
-                >
-                  Edit Room
-                </Button>
-              </CardFooter>
+          
             </Card>
           </GridItem>
             <GridItem>
@@ -626,7 +654,7 @@ const handleLogout = async () => {
         <FormLabel>Room Number</FormLabel>
         <Input
           name="roomNumber"
-          value={requisition.roomNumber || roomNumber || ''}
+          value={requisition.roomNumber || room.number || ''}
           onChange={handleRequisitionChange}
           isReadOnly // Room number is read-only
         />
