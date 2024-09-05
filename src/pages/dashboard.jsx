@@ -57,6 +57,7 @@ const Dashboard = () => {
   const [tenant, setTenant] = useState(null);
   const [room, setRoom] = useState(null);
   const [hostel, setHostel] = useState(null);
+  const [loggedInTenant, setLoggedInTenant] = useState(null);
   const [booking, setBooking] = useState(null);
   const [showCards, setShowCards] = useState(true);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -87,106 +88,106 @@ const Dashboard = () => {
   const sidebarBgColor = useColorModeValue('#0097b2', '#005b7f');
   const buttonHoverColor = useColorModeValue('black', '#003b57');
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        console.log('Starting data fetch...');
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      console.log('Starting data fetch...');
 
-        const token = localStorage.getItem('authToken');
-        console.log('Token:', token);
-        if (!token) {
-          console.log('No token found, redirecting to login.');
-          navigate('/login');
-          return;
-        }
+      const token = localStorage.getItem('authToken');
+      console.log('Token:', token);
 
-        const headers = {
-          Authorization: `Token ${token}`,
-        };
-
-        // Fetch tenants
-        console.log('Fetching tenants...');
-        const tenantResponse = await axios.get('http://127.0.0.1:8000/api/tenants/', { headers });
-        const tenants = tenantResponse.data || [];
-        console.log('Tenants fetched:', tenants);
-
-        const loggedInTenant = tenantName
-          ? tenants.find((t) => t.name === tenantName)
-          : null;
-        console.log('Logged in tenant:', loggedInTenant);
-        setTenant(loggedInTenant);
-
-        // Fetch rooms
-        console.log('Fetching rooms...');
-        const roomResponse = await axios.get('http://127.0.0.1:8000/api/rooms/', { headers });
-        const rooms = roomResponse.data || [];
-        console.log('Rooms fetched:', rooms);
-
-        const room = roomNumber
-          ? rooms.find((r) => r.number === roomNumber)
-          : null;
-        console.log('Room found:', room);
-        setRoom(room);
-
-        // Fetch hostels if room exists
-        if (room) {
-          console.log('Fetching hostels...');
-          const hostelResponse = await axios.get('http://127.0.0.1:8000/api/hostels/', { headers });
-          const hostels = hostelResponse.data || [];
-          console.log('Hostels fetched:', hostels);
-
-          const hostel = hostels.find((h) => h.id === room.hostel);
-          console.log('Hostel found:', hostel);
-          setHostel(hostel);
-        }
-
-        // Fetch bookings if tenant exists
-        if (loggedInTenant) {
-          console.log('Fetching bookings...');
-          const bookingResponse = await axios.get('http://127.0.0.1:8000/api/bookings/', { headers });
-          const bookings = bookingResponse.data || [];
-          console.log('Bookings fetched:', bookings);
-
-          const booking = bookings.find((b) => b.tenant === loggedInTenant.id);
-          console.log('Booking found:', booking);
-          setBooking(booking);
-
-          // Find the room related to the booking
-          if (booking) {
-            const bookedRoom = rooms.find((r) => r.id === booking.room);
-            console.log('Booked room found:', bookedRoom);
-            setRoom(bookedRoom);
-          }
-        }
-
-        // Fetch notifications
-        console.log('Fetching notifications...');
-        const notificationsResponse = await axios.get('http://127.0.0.1:8000/api/notifications/', { headers });
-        const notifications = notificationsResponse.data || [];
-        console.log('Notifications fetched:', notifications);
-
-        const filteredNotifications = loggedInTenant
-          ? notifications.filter(
-              (notification) => notification.tenant_name === loggedInTenant.name
-            )
-          : [];
-        console.log('Filtered notifications:', filteredNotifications);
-        setNotifications(filteredNotifications);
-
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        toast({
-          title: 'Error fetching data.',
-          description: error.message,
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
+      if (!token) {
+        console.log('No token found, redirecting to login.');
+        navigate('/login');
+        return;
       }
-    };
 
-    fetchData();
-  }, [tenantName, roomNumber, toast, navigate]);
+      const headers = {
+        Authorization: `Token ${token}`,
+      };
+
+      // Fetch tenants
+      console.log('Fetching tenants...');
+      const tenantResponse = await axios.get('http://127.0.0.1:8000/api/tenants/', { headers });
+      const tenants = tenantResponse.data || [];
+      console.log('Tenants fetched:', tenants);
+
+      const loggedInTenant = tenantName
+        ? tenants.find((t) => t.name === tenantName)
+        : null;
+      console.log('Logged in tenant:', loggedInTenant);
+      setTenant(loggedInTenant);
+
+      // Fetch rooms
+      console.log('Fetching rooms...');
+      const roomResponse = await axios.get('http://127.0.0.1:8000/api/rooms/', { headers });
+      const rooms = roomResponse.data || [];
+      console.log('Rooms fetched:', rooms);
+
+      const room = roomNumber
+        ? rooms.find((r) => r.number === roomNumber)
+        : null;
+      console.log('Room found:', room);
+      setRoom(room);
+
+      // Fetch hostels if room exists
+      if (room) {
+        console.log('Fetching hostels...');
+        const hostelResponse = await axios.get('http://127.0.0.1:8000/api/hostels/', { headers });
+        const hostels = hostelResponse.data || [];
+        console.log('Hostels fetched:', hostels);
+
+        const hostel = hostels.find((h) => h.id === room.hostel);
+        console.log('Hostel found:', hostel);
+        setHostel(hostel);
+      }
+
+      // Fetch bookings if tenant exists
+      if (loggedInTenant) {
+        console.log('Fetching bookings...');
+        const bookingResponse = await axios.get('http://127.0.0.1:8000/api/bookings/', { headers });
+        const bookings = bookingResponse.data || [];
+        console.log('Bookings fetched:', bookings);
+
+        const booking = bookings.find((b) => b.tenant === loggedInTenant.id);
+        console.log('Booking found:', booking);
+        setBooking(booking);
+
+        // Find the room related to the booking
+        if (booking) {
+          const bookedRoom = rooms.find((r) => r.id === booking.room);
+          console.log('Booked room found:', bookedRoom);
+          setRoom(bookedRoom);
+        }
+      }
+
+      // Fetch notifications
+      console.log('Fetching notifications...');
+      const notificationResponse = await axios.get('http://127.0.0.1:8000/api/notifications/', { headers });
+      const notifications = notificationResponse.data || [];
+      console.log('Notifications fetched:', notifications);
+
+      // Assuming you might want to filter notifications by tenant
+      const filteredNotifications = loggedInTenant
+        ? notifications.filter((notification) => notification.tenant_name === loggedInTenant.name)
+        : [];
+      console.log('Filtered notifications:', filteredNotifications);
+      setNotifications(filteredNotifications);
+
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      toast({
+        title: 'Error fetching data.',
+        description: error.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
+  fetchData();
+}, [tenantName, roomNumber, toast, navigate]);
 
   const handleEditClick = () => {
     setEditTenant(tenant);
@@ -525,17 +526,24 @@ const handleLogout = async () => {
                 {/* Notifications Modal */}
 <Modal isOpen={showNotifications} onClose={() => setShowNotifications(false)}>
   <ModalOverlay />
-  <ModalContent
-    height="690px"    
-    display="flex"
-    flexDirection="column"
-  >
- 
+  <ModalContent height="690px" display="flex" flexDirection="column">
+    <ModalHeader>Notifications</ModalHeader>
     <ModalCloseButton />
-    <ModalBody flex="1" overflow="hidden">
-      <Notifications notifications={notifications} />
+    <ModalBody>
+      {/* Insert Notifications component here */}
+      <Notifications loggedInTenant={loggedInTenant} />
     </ModalBody>
-  
+    <ModalFooter>
+      <Button
+        bg="#0097b2"
+        color="white"
+        _hover={{ bg: '#073d47' }}
+        mr={3}
+        onClick={() => setShowNotifications(false)}
+      >
+        Close
+      </Button>
+    </ModalFooter>
   </ModalContent>
 </Modal>
 

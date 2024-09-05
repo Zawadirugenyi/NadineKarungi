@@ -1,177 +1,101 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  Flex,
-  VStack,
-  HStack,
-  Text,
-  Card,
-  CardBody,
-  useToast,
-  useColorModeValue,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
-  Button,
-} from '@chakra-ui/react';
+import { Box, Text, VStack, useToast, Spinner } from '@chakra-ui/react';
 import axios from 'axios';
 
-const Notifications = () => {
+const NotificationPage = () => {
   const [notifications, setNotifications] = useState([]);
-  const [filteredNotifications, setFilteredNotifications] = useState([]);
-  const [tenantName, setTenantName] = useState('');
-  const [selectedNotification, setSelectedNotification] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [tenant, setTenant] = useState(null);
+  const [loading, setLoading] = useState(true);
   const toast = useToast();
 
   useEffect(() => {
-    const fetchNotifications = async () => {
+    const fetchData = async () => {
       try {
+        console.log('Fetching notifications...');
         const token = localStorage.getItem('authToken');
-        const headers = {
-          Authorization: `Token ${token}`,
-        };
+        if (!token) {
+          console.log('No token found, redirecting to login.');
+          // Redirect to login if no token (could use navigate from react-router if applicable)
+          return;
+        }
 
-        const response = await axios.get('http://127.0.0.1:8000/api/notifications/', { headers });
-        console.log('All Notifications:', response.data);
+        const headers = { Authorization: `Token ${token}` };
 
-        setNotifications(response.data);
+        // Fetch tenant details
+        console.log('Fetching tenant...');
+        const tenantResponse = await axios.get('http://127.0.0.1:8000/api/tenants/', { headers });
+        const loggedInTenant = tenantResponse.data[0]; // Adjust if needed
+        console.log('Logged in tenant:', loggedInTenant);
+        setTenant(loggedInTenant);
 
-        // Filter notifications based on tenant name
-        const tenantName = 'Fina Mwayuma';
-        setTenantName(tenantName);
-        const filtered = response.data.filter(notification => notification.tenant_name === tenantName);
-        setFilteredNotifications(filtered);
+        // Fetch notifications
+        console.log('Fetching notifications...');
+        const notificationResponse = await axios.get('http://127.0.0.1:8000/api/notifications/', { headers });
+        const notifications = notificationResponse.data || [];
+        console.log('Notifications fetched:', notifications);
 
-        console.log('Filtered Notifications:', filtered);
+        // Filter notifications based on the logged-in tenant
+        const filteredNotifications = loggedInTenant
+          ? notifications.filter(notification => {
+              // Log the values being compared
+              console.log('Notification tenant_name:', notification.tenant_name);
+              console.log('Logged in tenant name:', loggedInTenant.name);
+
+              // Normalize and trim names before comparison
+              return notification.tenant_name.trim().toLowerCase() === loggedInTenant.name.trim().toLowerCase();
+            })
+          : [];
+        console.log('Filtered notifications:', filteredNotifications);
+        setNotifications(filteredNotifications);
+
       } catch (error) {
-        console.error('Error fetching notifications:', error);
+        console.error('Error fetching data:', error);
         toast({
-          title: 'Error fetching notifications.',
+          title: 'Error fetching data.',
           description: error.message,
           status: 'error',
           duration: 5000,
           isClosable: true,
         });
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchNotifications();
+    fetchData();
   }, [toast]);
 
-  const handleNotificationClick = (notification) => {
-    setSelectedNotification(notification);
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setSelectedNotification(null);
-  };
-
-  // Truncate the message if it hasn't been expanded
-  const truncateMessage = (message, maxLength = 50) => {
-    return message.length > maxLength ? `${message.substring(0, maxLength)}...` : message;
-  };
-
-  // Color mode values
-  const headerBgColor = useColorModeValue('white', '#1A202C');
-  const headerTextColor = useColorModeValue('black', 'white');
-  const cardBgColor = useColorModeValue('white', '#2D3748');
-
-  // Format date to readable format
-  const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
-    return new Date(dateString).toLocaleDateString(undefined, options);
-  };
+  if (loading) {
+    return (
+      <Box textAlign="center" mt={8}>
+        <Spinner size="xl" />
+        <Text mt={4}>Loading notifications...</Text>
+      </Box>
+    );
+  }
 
   return (
-    <Flex direction="column" h="100vh">
-      {/* Header */}
-      <HStack
-        w="100%"
-        p={4}
-        bg={headerBgColor}
-        color={headerTextColor}
-        justify="space-between"
-        boxShadow="sm"
-      >
-        <Text fontSize="xl">Notifications</Text>
-      </HStack>
-
-      {/* Main Content */}
-      <Flex flex={1} direction="column" p={4}>
-        <Card
-          w="full"
-          maxW="md"
-          bg={cardBgColor}
-          borderWidth="1px"
-          borderRadius="md"
-          boxShadow="md"
-          maxH="70vh"  // Set maximum height for the card
-          overflowY="auto"  // Enable scrolling within the card
-        >
-          <CardBody>
-            <VStack spacing={4} align="stretch">
-              {filteredNotifications.length > 0 ? (
-                filteredNotifications.map((notification) => (
-                  <Box
-                    key={notification.id}
-                    p={4}
-                    bg={cardBgColor}
-                    borderRadius="md"
-                    boxShadow="sm"
-                    cursor="pointer"
-                    onClick={() => handleNotificationClick(notification)}
-                  >
-                    <Text fontSize="lg" fontWeight="bold">
-                      {notification.tenant_name}
-                    </Text>
-                    <Text fontSize="md">
-                      {truncateMessage(notification.message)}
-                    </Text>
-                    <Text fontSize="sm" color="gray.500">
-                      {formatDate(notification.date)}
-                    </Text>
-                  </Box>
-                ))
-              ) : (
-                <Text>No notifications available.</Text>
-              )}
-            </VStack>
-          </CardBody>
-        </Card>
-      </Flex>
-
-      {/* Modal for showing full notification */}
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>{selectedNotification?.tenant_name}</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Text fontSize="lg">
-              {selectedNotification?.message}
-            </Text>
-            <Text fontSize="sm" color="gray.500" mt={2}>
-              {selectedNotification && formatDate(selectedNotification.date)}
-            </Text>
-          </ModalBody>
-          <ModalFooter>
-            <Button   bg="#0097b2"
-              color="white"
-              _hover={{ bg: "#073d47" }} mr={3} onClick={closeModal}>
-              Close
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </Flex>
+    <Box>
+      <Text fontSize="xl" mb={4}>Notifications</Text>
+      <VStack spacing={4}>
+        {notifications.length > 0 ? (
+          notifications.map((notification) => (
+            <Box key={notification.id || notification.date} p={4} shadow="md" borderWidth="1px" width="380px">
+              <Text fontWeight="bold">
+                {notification.tenant_name || 'Unknown Tenant'}
+              </Text>
+              <Text>{notification.message}</Text>
+              <Text color="gray.500">
+                {new Date(notification.date).toLocaleString()}
+              </Text>
+            </Box>
+          ))
+        ) : (
+          <Text>No notifications available.</Text>
+        )}
+      </VStack>
+    </Box>
   );
 };
 
-export default Notifications;
+export default NotificationPage;
