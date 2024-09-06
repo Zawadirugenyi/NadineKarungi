@@ -43,7 +43,7 @@ import { MdOutlineNotifications, MdOutlineNotificationsNone } from 'react-icons/
 import axios from 'axios';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import logo from '../Components/Assets/logo.png';
-import Notifications from './notification';
+import NotificationPage from './notification';
 import Chatbot from './chatbot'; // Import Chatbot component
 
 const ROOM_TYPE_LABELS = {
@@ -276,7 +276,7 @@ useEffect(() => {
       };
 
       const requisitionData = {
-        room_number: requisition.roomNumber || roomNumber,
+        room_number: requisition.roomNumber ||room.number ,
         type: requisition.type || '',
         description: requisition.description || '',
         otherType: requisition.type === 'other' ? requisition.otherType : '',
@@ -524,28 +524,27 @@ const handleLogout = async () => {
         )}
 
                 {/* Notifications Modal */}
-<Modal isOpen={showNotifications} onClose={() => setShowNotifications(false)}>
-  <ModalOverlay />
-  <ModalContent height="690px" display="flex" flexDirection="column">
-    <ModalHeader>Notifications</ModalHeader>
-    <ModalCloseButton />
-    <ModalBody>
-      {/* Insert Notifications component here */}
-      <Notifications loggedInTenant={loggedInTenant} />
-    </ModalBody>
-    <ModalFooter>
-      <Button
-        bg="#0097b2"
-        color="white"
-        _hover={{ bg: '#073d47' }}
-        mr={3}
-        onClick={() => setShowNotifications(false)}
-      >
-        Close
-      </Button>
-    </ModalFooter>
-  </ModalContent>
-</Modal>
+ <Modal isOpen={showNotifications} onClose={() => setShowNotifications(false)}>
+          <ModalOverlay />
+          <ModalContent height="690px" display="flex" flexDirection="column">
+            <ModalHeader>Notifications</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <NotificationPage tenant={tenant} />
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                bg="#0097b2"
+                color="white"
+                _hover={{ bg: '#073d47' }}
+                mr={3}
+                onClick={() => setShowNotifications(false)}
+              >
+                Close
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
 
         {/* Edit Tenant Modal */}
         <Modal isOpen={isEditOpen} onClose={onEditClose}>

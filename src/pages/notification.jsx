@@ -2,9 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Box, Text, VStack, useToast, Spinner } from '@chakra-ui/react';
 import axios from 'axios';
 
-const NotificationPage = () => {
+const NotificationPage = ({ tenant }) => {
   const [notifications, setNotifications] = useState([]);
-  const [tenant, setTenant] = useState(null);
   const [loading, setLoading] = useState(true);
   const toast = useToast();
 
@@ -13,6 +12,7 @@ const NotificationPage = () => {
       try {
         console.log('Fetching notifications...');
         const token = localStorage.getItem('authToken');
+        
         if (!token) {
           console.log('No token found, redirecting to login.');
           // Redirect to login if no token (could use navigate from react-router if applicable)
@@ -21,37 +21,24 @@ const NotificationPage = () => {
 
         const headers = { Authorization: `Token ${token}` };
 
-        // Fetch tenant details
-        console.log('Fetching tenant...');
-        const tenantResponse = await axios.get('http://127.0.0.1:8000/api/tenants/', { headers });
-        const loggedInTenant = tenantResponse.data[0]; // Adjust if needed
-        console.log('Logged in tenant:', loggedInTenant);
-        setTenant(loggedInTenant);
-
         // Fetch notifications
-        console.log('Fetching notifications...');
         const notificationResponse = await axios.get('http://127.0.0.1:8000/api/notifications/', { headers });
-        const notifications = notificationResponse.data || [];
-        console.log('Notifications fetched:', notifications);
+        const allNotifications = notificationResponse.data || [];
+        console.log('All notifications fetched:', allNotifications);
 
         // Filter notifications based on the logged-in tenant
-        const filteredNotifications = loggedInTenant
-          ? notifications.filter(notification => {
-              // Log the values being compared
-              console.log('Notification tenant_name:', notification.tenant_name);
-              console.log('Logged in tenant name:', loggedInTenant.name);
-
-              // Normalize and trim names before comparison
-              return notification.tenant_name.trim().toLowerCase() === loggedInTenant.name.trim().toLowerCase();
-            })
+        const filteredNotifications = tenant
+          ? allNotifications.filter(notification => 
+              notification.tenant_name === tenant.name
+            )
           : [];
         console.log('Filtered notifications:', filteredNotifications);
         setNotifications(filteredNotifications);
 
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching notifications:', error);
         toast({
-          title: 'Error fetching data.',
+          title: 'Error fetching notifications.',
           description: error.message,
           status: 'error',
           duration: 5000,
@@ -63,7 +50,7 @@ const NotificationPage = () => {
     };
 
     fetchData();
-  }, [toast]);
+  }, [tenant]);
 
   if (loading) {
     return (
@@ -76,14 +63,12 @@ const NotificationPage = () => {
 
   return (
     <Box>
-      <Text fontSize="xl" mb={4}>Notifications</Text>
+      <Text fontSize="xl" mb={4}>Your Notifications</Text>
       <VStack spacing={4}>
         {notifications.length > 0 ? (
           notifications.map((notification) => (
             <Box key={notification.id || notification.date} p={4} shadow="md" borderWidth="1px" width="380px">
-              <Text fontWeight="bold">
-                {notification.tenant_name || 'Unknown Tenant'}
-              </Text>
+              <Text fontWeight="bold">{notification.title}</Text>
               <Text>{notification.message}</Text>
               <Text color="gray.500">
                 {new Date(notification.date).toLocaleString()}
