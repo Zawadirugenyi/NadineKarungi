@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Text, VStack, useToast, Spinner } from '@chakra-ui/react';
+import { Box, Text, VStack, useToast, Spinner, HStack, IconButton } from '@chakra-ui/react';
+import { MdDelete } from 'react-icons/md';
 import axios from 'axios';
 
 const NotificationPage = ({ tenant }) => {
@@ -10,33 +11,29 @@ const NotificationPage = ({ tenant }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log('Fetching notifications...');
         const token = localStorage.getItem('authToken');
-        
         if (!token) {
-          console.log('No token found, redirecting to login.');
-          // Redirect to login if no token (could use navigate from react-router if applicable)
+          toast({
+            title: 'Authentication required.',
+            description: 'Please log in to view notifications.',
+            status: 'error',
+            duration: 5000,
+            isClosable: true,
+          });
           return;
         }
 
         const headers = { Authorization: `Token ${token}` };
-
-        // Fetch notifications
         const notificationResponse = await axios.get('http://127.0.0.1:8000/api/notifications/', { headers });
         const allNotifications = notificationResponse.data || [];
-        console.log('All notifications fetched:', allNotifications);
 
-        // Filter notifications based on the logged-in tenant
+        // Filter notifications by tenant name if tenant exists
         const filteredNotifications = tenant
-          ? allNotifications.filter(notification => 
-              notification.tenant_name === tenant.name
-            )
-          : [];
-        console.log('Filtered notifications:', filteredNotifications);
-        setNotifications(filteredNotifications);
+          ? allNotifications.filter(notification => notification.tenant_name === tenant.name)
+          : allNotifications;
 
+        setNotifications(filteredNotifications);
       } catch (error) {
-        console.error('Error fetching notifications:', error);
         toast({
           title: 'Error fetching notifications.',
           description: error.message,
@@ -50,7 +47,91 @@ const NotificationPage = ({ tenant }) => {
     };
 
     fetchData();
-  }, [tenant]);
+  }, [tenant, toast]);
+
+  const handleNotificationClick = async (id, read) => {
+    if (!id) {
+      console.log("Notification ID is undefined"); // Prevent making a request if ID is undefined
+      return;
+    }
+
+    if (read) return; // Don't do anything if it's already read
+
+    try {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        toast({
+          title: 'Authentication required.',
+          description: 'Please log in to mark notifications as read.',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+        return;
+      }
+
+      const headers = { Authorization: `Token ${token}` };
+
+      await axios.patch(`http://127.0.0.1:8000/api/notifications/${id}/mark_as_read/`, {}, { headers });
+
+
+      // Update the state to mark the notification as read
+      setNotifications((prevNotifications) =>
+        prevNotifications.map((notification) =>
+          notification.id === id ? { ...notification, read: true } : notification
+        )
+      );
+    } catch (error) {
+      toast({
+        title: 'Error marking notification as read.',
+        description: error.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const handleDeleteNotification = async (id, event) => {
+    event.stopPropagation(); // Prevent click event from bubbling up
+    try {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        toast({
+          title: 'Authentication required.',
+          description: 'Please log in to delete notifications.',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+        return;
+      }
+
+      const headers = { Authorization: `Token ${token}` };
+
+      await axios.delete(`http://127.0.0.1:8000/api/notifications/${id}/`, { headers });
+
+      // Remove the deleted notification from state
+      setNotifications((prevNotifications) =>
+        prevNotifications.filter((notification) => notification.id !== id)
+      );
+
+      toast({
+        title: 'Notification deleted.',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      toast({
+        title: 'Error deleting notification.',
+        description: error.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
 
   if (loading) {
     return (
@@ -63,14 +144,35 @@ const NotificationPage = ({ tenant }) => {
 
   return (
     <Box>
-      <Text fontSize="xl" mb={4}>Your Notifications</Text>
+      <Text fontSize="xl" mb={4}>{tenant?.name}'s Notifications</Text>
       <VStack spacing={4}>
         {notifications.length > 0 ? (
           notifications.map((notification) => (
-            <Box key={notification.id || notification.date} p={4} shadow="md" borderWidth="1px" width="380px">
-              <Text fontWeight="bold">{notification.title}</Text>
-              <Text>{notification.message}</Text>
-              <Text color="gray.500">
+            <Box 
+              key={notification.id || notification.date} 
+              p={4} 
+              shadow="md" 
+              borderWidth="1px" 
+              width="380px"
+              cursor="pointer"
+              bg={notification.read ? 'white' : 'blue.50'}
+              onClick={() => handleNotificationClick(notification.id, notification.read)} // Ensure ID is passed
+            >
+              <HStack justifyContent="space-between">
+                <Text fontWeight={notification.read ? 'normal' : 'bold'} color={notification.read ? 'gray.600' : 'black'}>
+                  {notification.title || 'No Title'} {/* Use a placeholder if title is missing */}
+                </Text>
+                <IconButton
+                  size="sm"
+                  aria-label="Delete notification"
+                  icon={<MdDelete />}
+                  onClick={(e) => handleDeleteNotification(notification.id, e)} // Pass the event object
+                />
+              </HStack>
+              <Text color={notification.read ? 'gray.600' : 'black'}>
+                {notification.message}
+              </Text>
+              <Text color="gray.500" marginLeft="64%" fontSize="11px" fontWeight="bold">
                 {new Date(notification.date).toLocaleString()}
               </Text>
             </Box>
