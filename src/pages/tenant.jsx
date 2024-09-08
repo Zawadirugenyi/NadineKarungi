@@ -171,7 +171,7 @@ const Tenant = () => {
                     <GridItem colSpan={1}>
                         <FormControl id="phone_number" isRequired>
                             <FormLabel>Phone Number</FormLabel>
-                            <Input type="text" name="phone_number" value={formData.phone_number} onChange={handleChange} />
+                            <Input type="number" name="phone_number" value={formData.phone_number} onChange={handleChange} />
                         </FormControl>
                     </GridItem>
 
@@ -199,7 +199,7 @@ const Tenant = () => {
                     <GridItem colSpan={1}>
                         <FormControl id="sponsor_contact" isRequired>
                             <FormLabel>Sponsor Contact</FormLabel>
-                            <Input type="text" name="sponsor_contact" value={formData.sponsor_contact} onChange={handleChange} />
+                            <Input type="number" name="sponsor_contact" value={formData.sponsor_contact} onChange={handleChange} />
                         </FormControl>
                     </GridItem>
 

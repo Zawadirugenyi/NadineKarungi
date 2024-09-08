@@ -15,6 +15,7 @@ import Dashboard from './pages/dashboard';
 import EditTenant from './pages/edit_tenant';
 import BypassCodePage from './pages/unlockSession'; 
 import HeroSection from './pages/heroSection';
+import Ticket from './pages/ticket'
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/edit_tenant" element={<EditTenant />} />
         <Route path="/unlockSession" element={<BypassCodePage />} />
+        <Route path="/ticket" element={<Ticket />} />
       </Routes>
     </Router>
   );

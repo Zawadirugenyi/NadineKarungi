@@ -198,7 +198,7 @@ function Signup() {
                 onChange={(e) => setEmail(e.target.value)} 
               />
             </FormControl>
-            <FormControl id="phone-number" isRequired>
+            <FormControl type="number" id="phone-number" isRequired>
               <FormLabel>Phone Number</FormLabel>
               <Input 
                 type="text" 

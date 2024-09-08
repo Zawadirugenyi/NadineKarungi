@@ -1,35 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Box, Button, Input, VStack, Text, IconButton, useDisclosure } from '@chakra-ui/react';
 import { FaRobot } from 'react-icons/fa';
 import { CloseIcon } from '@chakra-ui/icons';
-import axios from 'axios';
 
 const Chatbot = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [apiKey, setApiKey] = useState(null);
+
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  useEffect(() => {
-    fetch('/api/get-openai-api-key/')
-      .then(response => response.json())
-      .then(data => {
-        setApiKey(data.apiKey);
-      })
-      .catch(error => {
-        console.error('Error fetching API key:', error);
-        setError('Failed to retrieve API key. Please try again later.');
-      });
-  }, []);
+  // Hostel-specific FAQs and responses
+  const responses = {
+    'hello': 'Hi there! How can I help you today?',
+    'hey': 'Hello! What can I assist you with?',
+    'what are the hostel requirements': 'To apply for a hostel, you need to provide a valid ID, proof of enrollment in the institution, and a deposit payment.',
+    'how much is the hostel fee': 'The hostel fee varies depending on the room type. Single rooms are $200/month, shared rooms are $150/month.',
+    'what facilities are available': 'Our hostel offers free Wi-Fi, laundry services, a study area, and 24/7 security.',
+    'are visitors allowed': 'Yes, visitors are allowed between 9 AM and 9 PM. Overnight stays are not permitted.',
+    'can i book a hostel online': 'Yes, you can book a hostel online through our website. Visit the "Booking" section to get started.',
+    'what is the check-in time': 'Check-in time is from 2 PM to 6 PM. Early check-in can be arranged upon request.',
+    'default': 'Sorry, For more information, please contact smarthostelpro@gmail.com.'
+  };
 
-  const handleSend = async () => {
-    if (!apiKey) {
-      setError('API key is required to send messages.');
-      return;
-    }
-
+  const handleSend = () => {
     if (input.trim() && !isLoading) {
       const userMessage = { text: input, sender: 'user' };
       setMessages(prevMessages => [...prevMessages, userMessage]);
@@ -38,50 +33,12 @@ const Chatbot = () => {
       setIsLoading(true);
       setError(null);
 
-      try {
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Add a delay to prevent rate limiting
-        
-        const response = await getBotResponse(input);
-        setMessages(prevMessages => [...prevMessages, { text: response, sender: 'bot' }]);
-      } catch (error) {
-        console.error('Error fetching response:', error);
-        setError('Error fetching response. Please try again.');
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  };
-
-  const getBotResponse = async (userInput) => {
-    try {
-      const response = await axios.post('https://api.openai.com/v1/chat/completions', {
-        model: 'gpt-3.5-turbo',
-        messages: [{ role: 'user', content: userInput }],
-        max_tokens: 150,
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
-        }
-      });
-
-      console.log('Full API response:', JSON.stringify(response.data, null, 2));
-
-      if (response.data.choices && response.data.choices.length > 0) {
-        return response.data.choices[0].message.content.trim();
-      } else {
-        throw new Error('Invalid response structure');
-      }
-    } catch (error) {
-      console.error('API request error details:', error.response ? error.response : error);
+      // Determine the response based on user input
+      const lowercasedInput = input.toLowerCase();
+      const response = responses[lowercasedInput] || responses['default'];
+      setMessages(prevMessages => [...prevMessages, { text: response, sender: 'bot' }]);
       
-      if (error.response && error.response.status === 429) {
-        throw new Error('Rate limit exceeded. Try again later.');
-      } else if (error.response && error.response.status === 401) {
-        throw new Error('Unauthorized access. Check your API key.');
-      }
-      
-      throw error;
+      setIsLoading(false);
     }
   };
 

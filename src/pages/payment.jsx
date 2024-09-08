@@ -9,7 +9,7 @@ import backgroundImage from '../Components/Assets/Blue-and-White-Bedroom-Ideas-1
 
 const MpesaPayment = () => {
   const [amount, setAmount] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('254'); // Start with 254
   const [loading, setLoading] = useState(false);
   const [responseMessage, setResponseMessage] = useState('');
   const navigate = useNavigate();
@@ -18,9 +18,27 @@ const MpesaPayment = () => {
   // Extract tenantName and roomNumber from location state
   const { tenantName, roomNumber } = location.state || {};
 
+  // Validation for phone number and amount
+  const validatePhoneNumber = (number) => {
+    const phoneRegex = /^254\d{9}$/; // Validates phone numbers starting with 254 and 9 more digits
+    return phoneRegex.test(number);
+  };
+
+  const validateAmount = (amt) => parseFloat(amt) > 0;
+
   const handlePayment = async () => {
-    setLoading(true);
     setResponseMessage('');
+    if (!validatePhoneNumber(phoneNumber)) {
+      setResponseMessage('Invalid phone number. It should start with 254 and have 12 digits total.');
+      return;
+    }
+
+    if (!validateAmount(amount)) {
+      setResponseMessage('Amount must be greater than 0.');
+      return;
+    }
+
+    setLoading(true);
 
     try {
       const response = await axios.post('http://127.0.0.1:8000/lipa_na_mpesa/', {
@@ -33,8 +51,8 @@ const MpesaPayment = () => {
         
         // Redirect to dashboard after successful payment
         setTimeout(() => {
-          navigate('/dashboard', { state: { tenantName, roomNumber } }); // Redirect to dashboard
-        }, 2000); // Delay to show success message
+          navigate('/dashboard', { state: { tenantName, roomNumber } });
+        }, 2000);
       } else {
         setResponseMessage('Failed to initiate payment. Response Code: ' + response.data.ResponseCode);
       }
@@ -87,7 +105,7 @@ const MpesaPayment = () => {
               type="text"
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
-              placeholder="Enter phone number"
+              placeholder="Enter phone number starting with 254"
             />
           </FormControl>
           <Button
@@ -98,7 +116,7 @@ const MpesaPayment = () => {
           >
             Initiate Payment
           </Button>
-          {responseMessage && <Text mt={4}>{responseMessage}</Text>}
+          {responseMessage && <Text mt={4} color={responseMessage.includes('Error') ? 'red.500' : 'green.500'}>{responseMessage}</Text>}
         </CardBody>
       </Card>
     </Flex>

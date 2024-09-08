@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Box, FormControl, FormLabel, Input, Button, Heading, Alert, AlertIcon, AlertTitle, AlertDescription, CloseButton, VStack } from '@chakra-ui/react';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -92,8 +91,16 @@ const Booking = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!roomId || !tenantId || !checkInDate || !checkOutDate || new Date(checkInDate) >= new Date(checkOutDate)) {
+    if (!roomId || !tenantId || !checkInDate || !checkOutDate) {
       setMessage({ type: 'error', text: 'Please fill out all fields correctly.' });
+      return;
+    }
+
+    // Check valid date comparison
+    const checkIn = new Date(checkInDate);
+    const checkOut = new Date(checkOutDate);
+    if (isNaN(checkIn) || isNaN(checkOut) || checkIn >= checkOut) {
+      setMessage({ type: 'error', text: 'Check-in date must be before the check-out date.' });
       return;
     }
 
@@ -115,7 +122,14 @@ const Booking = () => {
 
       if (bookingResponse.status === 201) {
         setMessage({ type: 'success', text: 'Booking successful!' });
-        navigate('/payment', { state: { tenantName, roomNumber } });
+        navigate('/ticket', {
+          state: {
+            tenantName,
+            roomNumber,
+            checkInDate,
+            checkOutDate,
+          },
+        });
       } else {
         setMessage({ type: 'error', text: 'Booking failed. Please try again.' });
       }

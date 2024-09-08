@@ -340,7 +340,7 @@ const handleLogout = async () => {
     localStorage.removeItem('lastSessionData');
     console.log('Session data removed from localStorage');
 
-       navigate('/unlockSession', {
+       navigate('/', {
           state: { roomNumber, tenantName: tenant.name },
         });
   } catch (error) {
@@ -572,6 +572,7 @@ const handleLogout = async () => {
               <FormControl id="phone_number" mt={4}>
                 <FormLabel>Phone Number</FormLabel>
                 <Input
+                  type="number"
                   name="phone_number"
                   value={editTenant.phone_number || ''}
                   onChange={handleInputChange}
