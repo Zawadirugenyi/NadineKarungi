@@ -169,7 +169,7 @@ const BypassCodePage = () => {
                 <Heading mb={6} textAlign="center" fontSize="30px" marginBottom="30px">Bypass Code Verification</Heading>
                 <VStack spacing={4} align="stretch">
                     <FormControl>
-                        <FormLabel>Tenant Name</FormLabel>
+                        <FormLabel>Tenant</FormLabel>
                         <Input
                             type="text"
                             value={tenantName}

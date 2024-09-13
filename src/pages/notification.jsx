@@ -160,7 +160,7 @@ const NotificationPage = ({ tenant }) => {
             >
               <HStack justifyContent="space-between">
                 <Text fontWeight={notification.read ? 'normal' : 'bold'} color={notification.read ? 'gray.600' : 'black'}>
-                  {notification.title || 'No Title'} {/* Use a placeholder if title is missing */}
+                  {notification.title || 'Information'} {/* Use a placeholder if title is missing */}
                 </Text>
                 <IconButton
                   size="sm"
@@ -172,7 +172,7 @@ const NotificationPage = ({ tenant }) => {
               <Text color={notification.read ? 'gray.600' : 'black'}>
                 {notification.message}
               </Text>
-              <Text color="gray.500" marginLeft="64%" fontSize="11px" fontWeight="bold">
+              <Text color="gray.500" marginLeft="63%" fontSize="11px" fontWeight="bold">
                 {new Date(notification.date).toLocaleString()}
               </Text>
             </Box>

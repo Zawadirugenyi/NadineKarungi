@@ -19,7 +19,8 @@ const Chatbot = () => {
     'how much is the hostel fee': 'The hostel fee varies depending on the room type. Single rooms are $200/month, shared rooms are $150/month.',
     'what facilities are available': 'Our hostel offers free Wi-Fi, laundry services, a study area, and 24/7 security.',
     'are visitors allowed': 'Yes, visitors are allowed between 9 AM and 9 PM. Overnight stays are not permitted.',
-    'can i book a hostel online': 'Yes, you can book a hostel online through our website. Visit the "Booking" section to get started.',
+    'what can I do if i wanna change the room or a hostel': 'It is simple for you to check a room or a hostel the only thing you have to do is to make a request, click on the requisition button on your right and make a request and you will receive a notification.',
+    'can i book a hostel online': 'Yes, you can book a hostel online through our website. Visit the "SmartHostelPro" section to get started.',
     'what is the check-in time': 'Check-in time is from 2 PM to 6 PM. Early check-in can be arranged upon request.',
     'default': 'Sorry, For more information, please contact smarthostelpro@gmail.com.'
   };
