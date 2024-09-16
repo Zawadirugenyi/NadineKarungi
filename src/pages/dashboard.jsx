@@ -348,9 +348,7 @@ const handleLogout = async () => {
   }
 };
 
-
-
-
+ 
   const unreadNotificationsCount = notifications.filter((notification) => !notification.read).length;
 
   if (!tenant ||!room || !room.number|| !booking) {
@@ -386,6 +384,27 @@ const handleLogout = async () => {
             Home
           </Button>
         </Link>
+      
+        <Link 
+          to={`/event?tenantName=${encodeURIComponent(tenantName)}`}
+        >
+    <Button
+      colorScheme="white" variant="outline"
+      _hover={{ bg: buttonHoverColor, color: "white" }}
+      w="full"
+    >
+      Events
+    </Button>
+  </Link>
+        <Link to="/facilities">
+          <Button
+            colorScheme="white" variant="outline"
+            _hover={{ bg: buttonHoverColor, color: "white" }}
+            w="full"
+          >
+            Facilities
+          </Button>
+        </Link>
         <Button
           colorScheme="white" variant="outline"
           _hover={{ bg: buttonHoverColor, color: "white" }}
@@ -394,6 +413,7 @@ const handleLogout = async () => {
         >
           Requisition
         </Button>
+
         
         <Button
           colorScheme="white" variant="outline"

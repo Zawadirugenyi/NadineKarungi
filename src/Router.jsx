@@ -15,7 +15,9 @@ import Dashboard from './pages/dashboard';
 import EditTenant from './pages/edit_tenant';
 import BypassCodePage from './pages/unlockSession'; 
 import HeroSection from './pages/heroSection';
-import Ticket from './pages/ticket'
+import Ticket from './pages/ticket';
+import EventPage from './pages/event';
+import Facilities from './pages/facilities'
 
 function App() {
   return (
@@ -36,7 +38,9 @@ function App() {
         <Route path="/edit_tenant" element={<EditTenant />} />
         <Route path="/unlockSession" element={<BypassCodePage />} />
         <Route path="/ticket" element={<Ticket />} />
-      </Routes>
+        <Route path="/event" element ={<EventPage/>}/>
+        <Route path="/facilities" element ={<Facilities/>}/>
+        </Routes>
     </Router>
   );
 }
