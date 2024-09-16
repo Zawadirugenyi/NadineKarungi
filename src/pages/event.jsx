@@ -17,9 +17,9 @@ import { FaHeart, FaDownload, FaMoon, FaSun, FaArrowLeft } from "react-icons/fa"
 import axios from "axios";
 import { Link, useLocation, useNavigate } from "react-router-dom"; // Import useNavigate
 
-const logo = "/path/to/logo.png"; // Update this path accordingly
-const sidebarBgColor = "teal.600";
-const buttonHoverColor = "teal.500";
+import logo from '../Components/Assets/logo.png';// Update this path accordingly
+const sidebarBgColor = "#0097b2";
+const buttonHoverColor = "black";
 
 const EventPage = () => {
   const [events, setEvents] = useState([]);
@@ -162,7 +162,7 @@ const EventPage = () => {
           aria-label="Go Back"
         />
         <Link
-          to={`/event?tenantName=${encodeURIComponent(tenantName || '')}&roomNumber=${encodeURIComponent(roomNumber || '')}`}
+          to={`/facilities?tenantName=${encodeURIComponent(tenantName || '')}&roomNumber=${encodeURIComponent(roomNumber || '')}`}
         >
           <Button
             colorScheme="white"
@@ -170,7 +170,7 @@ const EventPage = () => {
             _hover={{ bg: buttonHoverColor, color: "white" }}
             w="full"
           >
-            Events
+            Facilities
           </Button>
         </Link>
         <Button

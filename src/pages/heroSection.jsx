@@ -13,7 +13,7 @@ const HeroSection = () => {
     };
 
     const handleViewRoomsClick = () => {
-        navigate('/unlockSession');
+        navigate('/login');
     };
 
     const handleManageBookingsClick = () => {

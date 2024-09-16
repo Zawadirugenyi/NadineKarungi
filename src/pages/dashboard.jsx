@@ -384,7 +384,15 @@ const handleLogout = async () => {
             Home
           </Button>
         </Link>
-      
+           <Button
+          colorScheme="white" variant="outline"
+          _hover={{ bg: buttonHoverColor, color: "white" }}
+          w="full"
+          onClick={onRequisitionOpen}
+        >
+          Requisition
+        </Button>
+
         <Link 
           to={`/event?tenantName=${encodeURIComponent(tenantName)}`}
         >
@@ -396,7 +404,8 @@ const handleLogout = async () => {
       Events
     </Button>
   </Link>
-        <Link to="/facilities">
+        <Link  to={`/facilities?tenantName=${encodeURIComponent(tenantName)}`}
+        >
           <Button
             colorScheme="white" variant="outline"
             _hover={{ bg: buttonHoverColor, color: "white" }}
@@ -405,14 +414,7 @@ const handleLogout = async () => {
             Facilities
           </Button>
         </Link>
-        <Button
-          colorScheme="white" variant="outline"
-          _hover={{ bg: buttonHoverColor, color: "white" }}
-          w="full"
-          onClick={onRequisitionOpen}
-        >
-          Requisition
-        </Button>
+  
 
         
         <Button

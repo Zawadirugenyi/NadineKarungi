@@ -1,283 +1,194 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
-  Image,
+  Heading,
   Text,
-  Button,
-  IconButton,
-  SimpleGrid,
-  Spinner,
+  Image,
+  Stack,
   Center,
-  Flex,
-  VStack,
-  HStack,
-  useToast,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-} from "@chakra-ui/react";
-import { FaHeart, FaDownload, FaMoon, FaSun } from "react-icons/fa";
-import { MdOutlineNotifications, MdOutlineNotificationsNone } from "react-icons/md";
-import { ChevronDownIcon } from "@chakra-ui/icons";
-import axios from "axios";
-import { Link } from "react-router-dom";
+  Spinner,
+  Button,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalCloseButton,
+  ModalBody,
+  AlertDialog,
+  AlertDialogOverlay,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogBody,
+  AlertDialogFooter,
+  useDisclosure,
+} from '@chakra-ui/react';
+import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import { Carousel } from 'react-responsive-carousel';
 
-// Define logo or import it if it's a local file
-const logo = "/path/to/logo.png"; // Update this path accordingly
-const sidebarBgColor = "teal.600";
-const buttonHoverColor = "teal.500";
-
-const EventPage = () => {
-  const [events, setEvents] = useState([]);
+const RoomDescription = () => {
+  const { roomNumber, hostelName } = useParams();
   const [loading, setLoading] = useState(true);
+  const [roomDescription, setRoomDescription] = useState(null);
   const [error, setError] = useState(null);
-  const [showCards, setShowCards] = useState(true);
-  const [showNotifications, setShowNotifications] = useState(false);
-  const [colorMode, setColorMode] = useState("light");
-  const [tenant, setTenant] = useState({ passport_photo: "" });
-  const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
-  const toast = useToast();
+  const [zoomedImage, setZoomedImage] = useState(null);
+  const [isRoomAvailable, setIsRoomAvailable] = useState(null); // Track availability of the room
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const cancelRef = useRef();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("authToken");
+    const fetchRoomDescription = async () => {
+      try {
+        const token = '520dc5d1657a7b42d3b9ffb3592f9ba88692c1fc';
+        const response = await axios.get('http://127.0.0.1:8000/api/rooms/', {
+          params: {
+            number: roomNumber,
+            hostel_name: hostelName,
+          },
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        });
 
-    if (!token) {
-      window.location.href = "/login";
-      return;
-    }
+        console.log('Response:', response.data);
 
-    axios.get("http://127.0.0.1:8000/api/events/", {
-      headers: {
-        Authorization: `Token ${token}`,
-      },
-    })
-    .then((response) => {
-      setEvents(response.data);
-      setLoading(false);
-    })
-    .catch((error) => {
-      console.error("Error fetching events:", error);
-      setError("An error occurred while fetching events.");
-      setLoading(false);
-    });
-  }, []);
+        // Find the room description for the given room number and hostel name
+        const roomDesc = response.data.find(
+          (desc) => desc.number === roomNumber && desc.hostel_name === hostelName
+        );
 
-  const handleLike = (id) => {
-    setEvents(prevEvents =>
-      prevEvents.map(event =>
-        event.id === id ? { ...event, liked: !event.liked } : event
-      )
-    );
+        if (!roomDesc) {
+          setError('Room description not found');
+          setIsRoomAvailable(false); // Room not found means it’s not available
+        } else {
+          setRoomDescription(roomDesc);
+          setIsRoomAvailable(roomDesc.status); // Check if the status is true
+        }
+      } catch (error) {
+        console.error('Error fetching room description:', error);
+        setError('Error fetching room description');
+        setIsRoomAvailable(false); // If there's an error, assume room is not available
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRoomDescription();
+  }, [roomNumber, hostelName]);
+
+  const handleImageClick = (imageSrc) => {
+    setZoomedImage(imageSrc);
   };
 
-  const handleDownloadRVP = (rvpFile) => {
-    if (rvpFile) {
-      window.open(`http://127.0.0.1:8000${rvpFile}`, "_blank");
+  const closeZoom = () => {
+    setZoomedImage(null);
+  };
+
+  const handleBookNowClick = () => {
+    if (isRoomAvailable) {
+      // Room is available, redirect to login
+      navigate('/login', { state: { roomNumber, hostelName } });
     } else {
-      toast({
-        title: "No RVP File",
-        description: "No RVP file available for download.",
-        status: "warning",
-        duration: 5000,
-        isClosable: true,
-      });
+      // Room is not available, show alert dialog
+      onOpen();
     }
-  };
-
-  const toggleColorMode = () => {
-    setColorMode(prevMode => (prevMode === "light" ? "dark" : "light"));
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("authToken");
-    window.location.href = "/login";
   };
 
   if (loading) {
     return (
-      <Center h="100vh">
+      <Center height="300px">
         <Spinner size="xl" />
       </Center>
     );
   }
 
   if (error) {
-    return (
-      <Center h="100vh">
-        <Text color="red.500">{error}</Text>
-      </Center>
-    );
+    return <Text>Error: {error}</Text>;
+  }
+
+  if (!roomDescription || !roomDescription.number) {
+    return <Text>No room description found for Room {roomNumber}.</Text>;
   }
 
   return (
-    <Flex h="100vh">
-      <VStack
-        w="20%"
-        h="100vh"
-        bg={sidebarBgColor}
-        color="white"
-        spacing={4}
-        align="stretch"
-        p={4}
-      >
-        <Image src={logo} alt="Logo" boxSize="100px" mb={4} />
-        <Button
-          colorScheme="white"
-          variant="outline"
-          _hover={{ bg: buttonHoverColor, color: "white" }}
-          w="full"
-          onClick={() => setShowCards(!showCards)}
-        >
-          {showCards ? 'Hide Dashboard' : 'Show Dashboard'}
-        </Button>
-        <Link to="/">
-          <Button
-            colorScheme="white"
-            variant="outline"
-            _hover={{ bg: buttonHoverColor, color: "white" }}
-            w="full"
-          >
-            Home
-          </Button>
-        </Link>
-        <Link to="/event">
-          <Button
-            colorScheme="white"
-            variant="outline"
-            _hover={{ bg: buttonHoverColor, color: "white" }}
-            w="full"
-          >
-            Events
-          </Button>
-        </Link>
-        <Link to="/facilities">
-          <Button
-            colorScheme="white"
-            variant="outline"
-            _hover={{ bg: buttonHoverColor, color: "white" }}
-            w="full"
-          >
-            Facilities
-          </Button>
-        </Link>
-        <Button
-          colorScheme="white"
-          variant="outline"
-          _hover={{ bg: buttonHoverColor, color: "white" }}
-          w="full"
-          onClick={() => {/* Add your requisition logic here */}}
-        >
-          Requisition
-        </Button>
-        <Button
-          colorScheme="white"
-          variant="outline"
-          _hover={{ bg: buttonHoverColor, color: "white" }}
-          w="full"
-          onClick={toggleColorMode}
-        >
-          {colorMode === 'light' ? <FaMoon /> : <FaSun />}
-          {colorMode === 'light' ? ' Dark' : ' Light'}
-        </Button>
-      </VStack>
-
-      <Flex w="80%" p={4} direction="column">
-        <HStack spacing={4} align="center" ml="auto">
-          <IconButton
-            icon={unreadNotificationsCount > 0 ? <MdOutlineNotifications /> : <MdOutlineNotificationsNone />}
-            aria-label="Notifications"
-            color={unreadNotificationsCount > 0 ? 'black' : 'inherit'}
-            onClick={() => setShowNotifications(!showNotifications)}
-          />
-          <Menu>
-            <MenuButton
-              as={Button}
-              rightIcon={<ChevronDownIcon />}
-              bg="white"
-              color="black"
-              _hover={{ bg: 'white', color: 'black' }}
-            >
-              <HStack spacing={2} align="center">
-                {tenant.passport_photo && (
-                  <Image
-                    src={`http://127.0.0.1:8000${tenant.passport_photo}`}
-                    alt="Profile Photo"
-                    boxSize="50px"
-                    borderRadius="full"
-                    border="2px solid white"
-                  />
-                )}
-              </HStack>
-            </MenuButton>
-            <MenuList
-              bg="white"
-              border="1px solid teal.500"
-              boxShadow="md"
-              borderRadius="md"
-              py={2}
-            >
-              <MenuItem
-                onClick={handleLogout}
-                color="black"
-                fontWeight="bold"
-              >
-                Logout
-              </MenuItem>
-            </MenuList>
-          </Menu>
-        </HStack>
-
-        <Box bg="gray.100" minH="100vh" p={10}>
-          <Text as="h1" fontSize="3xl" mb={8} textAlign="center" color="teal.500">
-            Upcoming Events
-          </Text>
-          <SimpleGrid columns={[1, 2, 3]} spacing={10}>
-            {events.map((event) => (
-              <Box
-                key={event.id}
-                bg="white"
-                p={5}
-                shadow="md"
-                borderWidth="1px"
-                borderRadius="md"
-              >
-                <Image
-                  src={event.image ? `http://127.0.0.1:8000${event.image}` : "/path/to/placeholder.jpg"}
-                  alt={event.title}
-                  borderRadius="md"
-                  objectFit="cover"
-                  width="100%"
-                  height="200px"
-                />
-                <Text mt={4} fontWeight="bold" fontSize="xl">
-                  {event.title}
-                </Text>
-                <Text mt={2}> Location: {event.location}</Text>
-                <Text color="gray.500">{new Date(event.date).toLocaleDateString()}</Text>
-                <Flex justify="space-between" align="center" mt={4}>
-                  <Button
-                    colorScheme="teal"
-                    onClick={() => handleDownloadRVP(event.rvp_file)}
-                    leftIcon={<FaDownload />}
-                    disabled={!event.rvp_file}
-                  >
-                    {event.rvp_file ? "Download RVP" : "No RVP File"}
-                  </Button>
-                  <IconButton
-                    icon={<FaHeart />}
-                    colorScheme={event.liked ? "red" : "gray"}
-                    onClick={() => handleLike(event.id)}
-                    aria-label="Like Event"
-                  />
-                </Flex>
-              </Box>
-            ))}
-          </SimpleGrid>
+    <Box p={9} marginTop="25px">
+      <Stack direction="row" spacing={10}>
+        <Box shadow="md" borderWidth="1px" p={9}>
+          <Stack direction="row" spacing={4} mb={4}>
+            <Image
+              src={`http://127.0.0.1:8000${roomDescription.image}`}
+              alt={`Room ${roomDescription.number}`}
+              boxSize="400px"
+              cursor="pointer"
+              onClick={() => handleImageClick(`http://127.0.0.1:8000${roomDescription.image}`)}
+            />
+          </Stack>
         </Box>
-      </Flex>
-    </Flex>
+        <Box width="40%">
+          <Box shadow="md" borderWidth="1px" p={9} h="500px">
+            <Heading as="h2" size="lg" mb={4}>
+              Room {roomDescription.number} Description
+            </Heading>
+            <Text mb={4}>
+              Description: {roomDescription.description || 'No description available'}
+            </Text>
+            <Text mb={4} fontWeight="bold" fontSize="17px">
+              Price: Ksh {roomDescription.price || 'Not available'}
+            </Text>
+            <Button
+              bg="white"
+              color="#0097b2"
+              border="1px solid #0097b2"
+              boxShadow="md"
+              _hover={{ bg: "#0097b2", color: "white" }}
+              onClick={handleBookNowClick}
+              isDisabled={!isRoomAvailable} // Disable button if room is not available
+            >
+              {isRoomAvailable ? "Book Now" : "Room Not Available"}
+            </Button>
+          </Box>
+        </Box>
+      </Stack>
+
+      {zoomedImage && (
+        <Modal isOpen={!!zoomedImage} onClose={closeZoom} isCentered>
+          <ModalOverlay />
+          <ModalContent maxWidth="57%">
+            <ModalCloseButton />
+            <ModalBody shadow="md">
+              <Carousel showThumbs={false}>
+                <div>
+                  <img src={`http://127.0.0.1:8000${roomDescription.image}`} alt={`Room ${roomDescription.number}`} />
+                </div>
+              </Carousel>
+            </ModalBody>
+          </ModalContent>
+        </Modal>
+      )}
+
+      {/* Alert Dialog for unavailable room */}
+      <AlertDialog
+        isOpen={isOpen}
+        onClose={onClose}
+        leastDestructiveRef={cancelRef}
+        isCentered
+      >
+        <AlertDialogOverlay />
+        <AlertDialogContent>
+          <AlertDialogHeader>Room Not Available</AlertDialogHeader>
+          <AlertDialogBody>
+            The selected room is not available for booking. Please choose another room.
+          </AlertDialogBody>
+          <AlertDialogFooter>
+            <Button ref={cancelRef} onClick={onClose}>
+              Close
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </Box>
   );
 };
 
-export default EventPage;
+export default RoomDescription;
