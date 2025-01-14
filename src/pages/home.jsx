@@ -51,7 +51,7 @@ const HomePage = () => {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:8000/api/services/');
+        const response = await axios.get('https://microtousadmin.onrender.com/api/services/');
         setServices(response.data);
         setError('');
       } catch (err) {
@@ -70,7 +70,7 @@ const HomePage = () => {
   useEffect(() => {
     const fetchPromotions = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:8000/api/promotions/'); // Adjust endpoint as needed
+        const response = await axios.get('https://microtousadmin.onrender.com/api/promotions/'); // Adjust endpoint as needed
         setPromotions(response.data);
         setError('');
       } catch (err) {
@@ -88,7 +88,7 @@ const HomePage = () => {
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:8000/api/activities/'); // Adjust endpoint as needed
+        const response = await axios.get('https://microtousadmin.onrender.com/api/activities/'); // Adjust endpoint as needed
         setActivities(response.data);
         setError('');
       } catch (err) {
@@ -106,7 +106,7 @@ const HomePage = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:8000/api/jobinternships/'); // Adjust the endpoint if needed
+        const response = await axios.get('https://microtousadmin.onrender.com/api/jobinternships/'); // Adjust the endpoint if needed
         setJobs(response.data);
         setError('');
       } catch (err) {
@@ -134,7 +134,7 @@ const HomePage = () => {
   useEffect(() => {
     const fetchTestimonials = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:8000/api/testimonials/');
+        const response = await axios.get('https://microtousadmin.onrender.com/api/testimonials/');
         setTestimonials(response.data);
         setError('');
       } catch (err) {
@@ -170,7 +170,7 @@ const HomePage = () => {
     // Fetch team members data
     const fetchTeamMembers = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/team_members/');
+        const response = await fetch('https://microtousadmin.onrender.com/api/team_members/');
         const data = await response.json();
         setTeamMembers(data); // Set the fetched data to the state
       } catch (error) {
