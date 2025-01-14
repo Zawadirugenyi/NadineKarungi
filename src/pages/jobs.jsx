@@ -87,7 +87,7 @@ const JobsSection = () => {
                 _hover={{ bg: 'yellow.200' }}
                 px={8}
                 as="a"
-                href="home"
+                href="application"
                 mt="10px">
                   Apply
                 </Button>

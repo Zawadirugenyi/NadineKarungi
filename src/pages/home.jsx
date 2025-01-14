@@ -268,12 +268,11 @@ const HomePage = () => {
           <img
             src={aboutImage}
             alt="About Us"
-            style={{
-              width: '98%',
-              height: '87vh',
-              objectFit: 'cover',
-              borderRadius: '8px', // Add rounded corners like the text card
-            }}
+          
+          width="100%"
+          height="100%"
+          objectFit="cover"
+          borderRadius="md"
           />
         </Box>
 
