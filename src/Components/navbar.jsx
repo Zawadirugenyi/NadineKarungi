@@ -82,6 +82,7 @@ function Navbar() {
         </Menu>
       </Box>
 
+      {/* Desktop Menu for additional options */}
       <Box display={{ base: 'none', md: 'block' }}>
         <Menu>
           <MenuButton
@@ -129,6 +130,9 @@ function Navbar() {
             {[
               { name: 'Home', path: '/home' },
               { name: 'About Us', path: '/about_us' },
+              { name: 'Services', path: '/services' },
+              { name: 'Epargne', path: '/epargne' },
+              { name: 'Crédit', path: '/credit' },
               { name: 'Contact Us', path: '/contact_us' },
               { name: 'Job/Internship', path: '/jobs' },
               { name: 'Activities', path: '/activities' },
@@ -148,9 +152,6 @@ function Navbar() {
                 {item.name}
               </MenuItem>
             ))}
-
-            <MenuItem as={Link} to="/epargne">Épargne</MenuItem>
-            <MenuItem as={Link} to="/credit">Crédit</MenuItem>
           </MenuList>
         </Menu>
       </Box>

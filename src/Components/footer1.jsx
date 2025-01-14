@@ -8,36 +8,35 @@ const Footer1 = () => {
       bg="black" 
       color="white" 
       py={12} 
-      px={15} 
+      px={{ base: 4, md: 15 }} 
       justifyContent="space-between" 
       flexWrap="wrap"
     >
       {/* Logo and Description */}
       <Box 
         flex="1" 
-        minW="350px" 
+        minW={{ base: "100%", md: "350px" }} 
         mb={6} 
-        textAlign="center"
+        textAlign="left"  // Ensuring text aligns to the left
         px={{ base: 4, md: 8 }} 
       >
         <Heading as="h3" size="lg" mb={4}>
-          <Flex align="center" justify="center">
+          <Flex align="center" justify="left">
             <Image src={logo} alt="Logo de la société" boxSize="60px" mr={3} />
             CoopecMicrotous
           </Flex>
         </Heading>
-        <Text fontSize={{ base: 'sm', md: 'md' }} lineHeight="1.8" align="left">
+        <Text fontSize={{ base: 'sm', md: 'md' }} lineHeight="1.8" align="left" px={{ base: 4, md: 8 }}>
           Nous offrons des services exceptionnels de gestion de logements. Notre système simplifie vos opérations et garantit une expérience utilisateur fluide.
         </Text>
       </Box>
 
       {/* Links */}
       <Box 
-        marginLeft="120px"
         flex="1" 
-        minW="250px" 
+        minW={{ base: "100%", md: "250px" }} 
         mb={6} 
-        textAlign="left"
+        textAlign="left"  // Ensuring text aligns to the left
         px={{ base: 4, md: 8 }}
       >
         <Heading as="h4" size="md" mb={4}>
@@ -49,16 +48,15 @@ const Footer1 = () => {
           <Link href="#" mb={2}>Services</Link>
           <Link href="#" mb={2}>Contact</Link>
           <Link href="#" mb={2}>Autres</Link>
-    
         </Flex>
       </Box>
 
       {/* Products */}
       <Box 
         flex="1" 
-        minW="200px" 
+        minW={{ base: "100%", md: "200px" }} 
         mb={6} 
-        textAlign="left"
+        textAlign="left"  // Ensuring text aligns to the left
         px={{ base: 4, md: 8 }}
       >
         <Heading as="h4" size="md" mb={4}>
@@ -74,9 +72,9 @@ const Footer1 = () => {
       {/* Contact and Timetable */}
       <Box 
         flex="1" 
-        minW="450px" 
+        minW={{ base: "100%", md: "450px" }} 
         mb={6} 
-        textAlign={{ base: "center", md: "left" }} 
+        textAlign="left"  // Ensuring text aligns to the left on smaller screens
         px={{ base: 4, md: 8 }}
       >
         <Heading as="h4" size="md" mb={4}>

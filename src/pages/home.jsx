@@ -894,7 +894,7 @@ const HomePage = () => {
 
                  <Button
 
-        marginLeft="150px"                     
+                           
         color="#2a8fc1"
         size="lg"
         _hover={{ bg: 'yellow.200' }}
