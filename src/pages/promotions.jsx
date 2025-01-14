@@ -139,9 +139,7 @@ const PromotionsSection = () => {
         </SimpleGrid>
 
         {/* Read More Button */}
-        <Button as="a" href="#read-more-promotions" colorScheme="teal" _hover={{ bg: 'teal.500' }} mt={8}>
-          Read More
-        </Button>
+       
       </Box>
     </Flex>
     </Box>

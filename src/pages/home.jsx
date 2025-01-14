@@ -853,11 +853,18 @@ const HomePage = () => {
 
       {/* Contact Section */}
       
-<Box id="about-us" p={8} bg="gray.100">
+<Box id="about-us"   
+        bg="white"
+        borderRadius="md"
+        boxShadow="lg"
+        p={8}
+        width={{ base: '100%', md: '95%', lg: '100%' }} // Adjust width based on screen size
+        textAlign="center" >
+          
       <Flex 
         id="contact" 
         p={8} 
-        bg="gray.100" 
+        bg="gray.10" 
         justifyContent="center" 
         alignItems="center" 
         flexDirection={{ base: 'column', md: 'row' }} // Stack vertically on small screens and horizontally on larger screens
@@ -869,7 +876,7 @@ const HomePage = () => {
           borderRadius="md"
           boxShadow="lg"
           p={8}
-          width={{ base: '100%', md: '60%' }}
+          width={{ base: '100%', md: '100%' }}
           mr={{ base: 0, md: 8 }}
           mb={{ base: 8, md: 0 }}
         >
