@@ -1,94 +1,139 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Box, Button, Heading, Text, VStack, HStack, useBreakpointValue } from '@chakra-ui/react';
-import backgroundImage from '../Components/Assets/l-intro-1644597197.jpg'; // Import your image
+import React, { useState, useEffect } from 'react';
+import { Box, Button, Heading, Text } from '@chakra-ui/react';
+import backgroundImage1 from '../Components/Assetes/hoome.jpeg';
+import backgroundImage2 from '../Components/Assetes/1113.jpeg';
+import backgroundImage3 from '../Components/Assetes/home3.jpg';
 
 const HeroSection = () => {
-    const navigate = useNavigate();
-    const buttonSize = useBreakpointValue({ base: 'md', md: 'lg' });
-    const buttonHoverColor = '#073d47'; // Define the hover color
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-    const handleHomeClick = () => {
-        navigate('/home');
-    };
+  const images = [
+    {
+      src: backgroundImage1,
+      lang: 'en',
+      heading: 'Welcome to COOPECMICROTOUS',
+      message: 'Let’s build our empire.',
+      buttonText: 'Get Started',
+    },
+    {
+      src: backgroundImage2,
+      lang: 'fr',
+      heading: 'Bienvenue chez COOPECMICROTOUS',
+      message: 'Bâtissons notre empire.',
+      buttonText: 'Commencer',
+    },
+    {
+      src: backgroundImage3,
+      lang: 'sw',
+      heading: 'Karibu COOPECMICROTOUS',
+      message: 'Tujenge ufalme wetu.',
+      buttonText: 'Anza',
+    },
+  ];
 
-    const handleViewRoomsClick = () => {
-        navigate('/login');
-    };
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+    }, 5000); // Change slide every 5 seconds
+    return () => clearInterval(interval);
+  }, []);
 
-    const handleManageBookingsClick = () => {
-        // Redirect to the Django admin panel
-        window.location.href = 'http://127.0.0.1:8000/en/admin/login/';
-    };
-
-    return (
+  return (
+    <>
+      {/* Hero Section Container */}
+      <Box
+        w="100vw"
+        h="100vh"
+        overflow="hidden" // Prevent scrolling
+        position="relative"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        bg="black"
+      >
+        {/* Sliding Images */}
         <Box
-            w="100%"
-            h="100vh"
-            position="relative" // Position relative for overlay positioning
-            backgroundImage={`url(${backgroundImage})`} // Use imported image
-            backgroundSize="cover"
-            backgroundPosition="center"
-            color="white"
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            p={4}
+          display="flex"
+          width="300%"
+          transform={`translateX(-${currentIndex * 100}vw)`}
+          transition="transform 1s ease-in-out"
+          position="absolute"
+          top="0"
+          left="0"
         >
-            {/* Overlay with opacity */}
+          {images.map((image, index) => (
             <Box
-                position="absolute"
-                top={0}
-                left={0}
-                w="100%"
-                h="100%"
-                bg="rgba(0, 0, 0, 0.5)" // Semi-transparent black
-                zIndex={1} // Ensure overlay is above the background image
+              key={index}
+              width="100vw"
+              height="100vh"
+              backgroundImage={`url(${image.src})`}
+              backgroundSize="cover"
+              backgroundPosition="center"
+              flex="none"
             />
-            {/* Content */}
-            <VStack spacing={6} textAlign="center" zIndex={2}>
-                <Heading fontSize={{ base: '3xl', md: '5xl' }} mb={4}>
-                    Welcome to SmartHostelPro
-                </Heading>
-                <Text fontSize={{ base: 'lg', md: 'xl' }} mb={6}>
-               Where Safety and Comfort are Our Responsibility
-
-                </Text>
-                <HStack spacing={4} justify="center">
-                    <Button
-                        colorScheme="white"
-                        variant="outline"
-                        size={buttonSize}
-                        onClick={handleHomeClick}
-                        _hover={{ bg: buttonHoverColor, color: "white" }}
-                        w="full"
-                    >
-                        Get Started
-                    </Button>
-                    <Button
-                        colorScheme="white"
-                        variant="outline"
-                        size={buttonSize}
-                        onClick={handleViewRoomsClick}
-                        _hover={{ bg: buttonHoverColor, color: "white" }}
-                        w="full"
-                    >
-                        My Account
-                    </Button>
-                    <Button
-                        colorScheme="white"
-                        variant="outline"
-                        size={buttonSize}
-                        onClick={handleManageBookingsClick}
-                        _hover={{ bg: buttonHoverColor, color: "white" }}
-                        w="full"
-                    >
-                        Admin
-                    </Button>
-                </HStack>
-            </VStack>
+          ))}
         </Box>
-    );
+
+        {/* Gradient Overlay */}
+        <Box
+          position="absolute"
+          top="0"
+          left="0"
+          w="100%"
+          h="100%"
+          bg="rgba(0, 0, 0, 0.5)"
+          zIndex="1"
+        />
+
+        {/* Hero Content */}
+        <Box zIndex="2" textAlign="center" px={4} py={{ base: 12, md: 24 }}>
+          <Heading
+            color="white"
+            fontSize={{ base: '4xl', md: '5xl', lg: '6xl' }}
+            fontWeight="bold"
+            mb={4}
+            textShadow="2px 2px 4px rgba(0, 0, 0, 0.5)"
+            mt="-170px" // Added margin-top to move the heading down a bit
+          >
+            {images[currentIndex].heading}
+          </Heading>
+          <Text
+            color="white"
+            fontSize={{ base: 'lg', md: 'xl' }}
+            mb={8}
+            maxW="700px"
+            mx="auto"
+            textShadow="2px 2px 4px rgba(0, 0, 0, 0.5)"
+            mt="-10px" // Added margin-top to move the text down a bit
+          >
+            {images[currentIndex].message}
+          </Text>
+          <Button
+            color="#2a8fc1"
+            size="lg"
+            _hover={{ bg: 'yellow.400' }}
+            px={8}
+            as="a"
+            href="home"
+            mt="-9px" // Added margin-top to move the button down a bit
+          >
+            {images[currentIndex].buttonText}
+          </Button>
+        </Box>
+      </Box>
+
+      {/* Global Style to prevent scrolling */}
+      <style>
+        {`
+          html, body {
+            height: 100%;
+            margin: 0;
+            overflow: hidden; /* Ensures no scrolling */
+          }
+        `}
+      </style>
+    </>
+  );
 };
 
 export default HeroSection;

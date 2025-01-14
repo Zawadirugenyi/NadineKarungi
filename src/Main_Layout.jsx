@@ -1,16 +1,17 @@
-// src/MainLayout.jsx
 import React from 'react';
 import Navbar from './Components/navbar';
 import Footer from './Components/footer';
+import Footer1 from './Components/footer1';
 
 const MainLayout = ({ children }) => {
   return (
     <>
       <Navbar />
-      {children}
+      <main>{children}</main>
+      <Footer1/>
       <Footer />
     </>
   );
 };
 
-export default MainLayout;
+export default MainLayout; // Default export

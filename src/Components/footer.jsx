@@ -1,5 +1,7 @@
 import React from 'react';
-import { Flex, Box, Text, Link as ChakraLink } from '@chakra-ui/react';
+import { Flex, Box, Text, Icon, Link } from '@chakra-ui/react';
+import { FaFacebook, FaInstagram, FaLinkedin } from 'react-icons/fa';
+import { AiFillCloseCircle } from 'react-icons/ai'; // X icon for X.com
 
 function Footer() {
   return (
@@ -8,26 +10,32 @@ function Footer() {
       align="center"
       justify="space-between"
       wrap="wrap"
-      bg="#073d47"
+      bg="#2a8fc1"
       color="white"
       p={4}
       position="fixed"
       bottom="0"
       width="100%"
     >
+      {/* Left Section - Brand Name */}
       <Box>
-        <Text>© 2024 Smart Hostel Pro </Text>
+        <Text fontSize="lg" fontWeight="bold">
+          &copy;2025coopecmicrotous
+        </Text>
       </Box>
+
+      {/* Right Section - Social Media Links */}
       <Box>
-        <ChakraLink href="#" mr={4}>
-          Privacy Policy
-        </ChakraLink>
-        <ChakraLink href="#" mr={4}>
-          Terms of Service
-        </ChakraLink>
-        <ChakraLink href="#">
-          Contact Us
-        </ChakraLink>
+        <Link href="https://www.facebook.com" isExternal mx={2}>
+          <Icon as={FaFacebook} boxSize={5} _hover={{ color: 'teal.300' }} />
+        </Link>
+        <Link href="https://www.instagram.com" isExternal mx={2}>
+          <Icon as={FaInstagram} boxSize={5} _hover={{ color: 'teal.300' }} />
+        </Link>
+        <Link href="https://www.linkedin.com" isExternal mx={2}>
+          <Icon as={FaLinkedin} boxSize={5} _hover={{ color: 'teal.300' }} />
+        </Link>
+        
       </Box>
     </Flex>
   );
