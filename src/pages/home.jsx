@@ -9,7 +9,7 @@ import { Box, Button, Heading, Grid,Text,Card, CardBody ,Image,
 import backgroundImage1 from '../Components/Assetes/home1.webp';
 import backgroundImage2 from '../Components/Assetes/111.webp';
 import backgroundImage3 from '../Components/Assetes/home3.jpg';
-import aboutImage from '../Components/Assetes/Gerante1.jpeg'
+import aboutImage from '../Components/Assetes/Gerante1-removebg-preview.png'
 import backgroundImage4 from '../Components/Assetes/1113.jpeg';
 import { FaWhatsapp } from 'react-icons/fa'; 
 import { useTranslation } from 'react-i18next'; 
@@ -264,14 +264,14 @@ const HomePage = () => {
       >
         {/* Image Card */}
         <Box
-         
+     
         >
           <img
             src={aboutImage}
             alt="About Us"
             style={{
-              width: '80%',
-              height: '70vh',
+              width: '98%',
+              height: '87vh',
               objectFit: 'cover',
               borderRadius: '8px', // Add rounded corners like the text card
             }}
