@@ -253,7 +253,8 @@ const HomePage = () => {
       </Box>
 
       {/* About Us Section */}
-   <Box id="about-us" p={8} bg="gray.100">
+   
+    <Box id="about-us" p={8} bg="gray.100">
       <Grid
         templateColumns={{
           base: '1fr', // Single column on smaller screens
@@ -263,9 +264,7 @@ const HomePage = () => {
         alignItems="center"
       >
         {/* Image Card */}
-        <Box
-     
-        >
+        <Box>
           <img
             src={aboutImage}
             alt="About Us"
@@ -285,7 +284,7 @@ const HomePage = () => {
           boxShadow="lg"
           bg="white"
           p={8}
-          height="70vh" // Let the content height adjust based on text
+          height="auto" // Allow content to adjust based on text height
         >
           <Heading as="h2" size="xl" mb={4}>
             About Us
@@ -296,19 +295,22 @@ const HomePage = () => {
           <Text mb={4} fontSize="lg">
             Our diverse team includes experts from various industries, ensuring that we bring the best ideas and strategies to the table. We understand the challenges that our clients face, and we work tirelessly to provide them with solutions that not only address their immediate needs but also position them for long-term success. Whether you're looking for cutting-edge technology or a reliable partner for your business, we are here to help you achieve your goals.
           </Text>
-               <Button  
-                color="#2a8fc1"
-              size="lg"
-              _hover={{ bg: 'yellow.200' }}
-              px={8}
-              as="a"
-              href="/about_us"
-              mt="10px">
-                  Learn More 
-                </Button>
-         
-        
-       
+
+          {/* Learn More Button */}
+          <Button
+            color="#2a8fc1"
+            size="lg"
+            _hover={{ bg: 'yellow.200' }}
+            px={8}
+            as="a"
+            href="/about_us"
+            mt={4} // Adjusted margin for spacing
+            width="100%" // Ensure the button takes up full width on mobile screens
+            display={{ base: 'block', sm: 'inline-block' }} // Ensure the button is block on mobile and inline-block on larger screens
+            textAlign="center" // Center align text on smaller screens
+          >
+            Learn More
+          </Button>
         </Box>
       </Grid>
     </Box>
@@ -789,67 +791,64 @@ const HomePage = () => {
     
       {/* Team Section */}
       
-<Flex
-      direction="column"
-      alignItems="center"
-      justifyContent="center"
-      minHeight="80vh" // Adjust height to fit content
-      bgImage={`url(${home3})`} // Background image
-      bgSize="cover" // Ensure the image covers the section
-      bgPosition="center" // Center the image
-      p={4}
-      backgroundBlendMode="overlay" // Overlay effect to darken the image
-      backgroundColor="rgba(0, 0, 0, 0.5)" // Darken the background for better text contrast
-    >
-      <Box
-        bg="white"
-        borderRadius="md"
-        boxShadow="lg"
-        p={8}
-        width={{ base: '100%', md: '95%', lg: '100%' }} // Adjust width based on screen size
-        textAlign="center" // Center text horizontally
+ <Flex
+        direction="column"
+        alignItems="center"
+        justifyContent="center"
+        minHeight="80vh" // Adjust height to fit content
+        bgImage={`url(${home3})`} // Background image
+        bgSize="cover" // Ensure the image covers the section
+        bgPosition="center" // Center the image
+        p={4}
+        backgroundBlendMode="overlay" // Overlay effect to darken the image
+        backgroundColor="rgba(0, 0, 0, 0.5)" // Darken the background for better text contrast
       >
-        <Heading as="h2" size="xl" mb={4}>
-          Our Team
-        </Heading>
-        <Text mb={4}>
-          Meet the brilliant minds behind our success. Our team is the backbone of our business.
-        </Text>
+        <Box
+          bg="white"
+          borderRadius="md"
+          boxShadow="lg"
+          p={8}
+          width={{ base: '100%', md: '95%', lg: '100%' }} // Adjust width based on screen size
+          textAlign="center" // Center text horizontally
+        >
+          <Heading as="h2" size="xl" mb={4}>
+            Our Team
+          </Heading>
+          <Text mb={4}>
+            Meet the brilliant minds behind our success. Our team is the backbone of our business.
+          </Text>
 
-        {/* Render the team members */}
-        <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 5 }} spacing={8} mt={8}>
-          {teamMembers.map((member) => (
-            <Box
-              key={member.id}
-              bg="white"
-              p={6}
-              borderRadius="md"
-              boxShadow="lg"
-              textAlign="center"
-            >
-              {/* Display team member's photo */}
-              <Image
-                src={member.image} // Team member photo
-                borderRadius="full"
-                boxSize="120px"
-                margin="40px"
-                objectFit="cover"
-                mb={4}
-              />
-              <Heading as="h3" size="md" mb={2}>
-                {member.name}
-              </Heading>
-              <Text fontSize="sm" color="gray.500">
-                {member.role}
-              </Text>
-            </Box>
-          ))}
-        </SimpleGrid>
-
-        {/* Read More Button */}
-    
-      </Box>
-    </Flex>
+          {/* Render the team members */}
+          <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 5 }} spacing={8} mt={8}>
+            {teamMembers.map((member) => (
+              <Box
+                key={member.id}
+                bg="white"
+                p={6}
+                borderRadius="md"
+                boxShadow="lg"
+                textAlign="center"
+              >
+                {/* Display team member's photo */}
+                <Image
+                  src={member.image} // Team member photo
+                  borderRadius="full"
+                  boxSize={{ base: '100px', md: '120px' }} // Make image size responsive
+                  objectFit="cover"
+                  mb={4}
+                  mx="auto" // Center the image horizontally
+                />
+                <Heading as="h3" size="md" mb={2}>
+                  {member.name}
+                </Heading>
+                <Text fontSize="sm" color="gray.500">
+                  {member.role}
+                </Text>
+              </Box>
+            ))}
+          </SimpleGrid>
+        </Box>
+      </Flex>
 
       {/* Contact Section */}
       
@@ -860,7 +859,7 @@ const HomePage = () => {
         p={8}
         width={{ base: '100%', md: '95%', lg: '100%' }} // Adjust width based on screen size
         textAlign="center" >
-          
+
       <Flex 
         id="contact" 
         p={8} 
