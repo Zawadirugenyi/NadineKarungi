@@ -12,7 +12,7 @@ const TeamSection = () => {
     // Fetch team members data
     const fetchTeamMembers = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/team_members/');
+        const response = await fetch('https://microtousadmin.onrender.com/api/team_members/');
         const data = await response.json();
         setTeamMembers(data); // Set the fetched data to the state
       } catch (error) {

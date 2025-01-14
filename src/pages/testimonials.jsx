@@ -12,7 +12,7 @@ const TestimonialsSection = () => {
   useEffect(() => {
     const fetchTestimonials = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/testimonials/');
+        const response = await fetch('https://microtousadmin.onrender.com/api/testimonials/');
         const data = await response.json();
         setTestimonials(data); // Save testimonials data
       } catch (error) {

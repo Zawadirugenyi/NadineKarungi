@@ -11,7 +11,7 @@ const CreditSection = () => {
   useEffect(() => {
     const fetchSubservices = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:8000/api/credit/');
+        const response = await axios.get('https://microtousadmin.onrender.com/api/credit/');
         setcredit(response.data);
         setError('');
       } catch (err) {

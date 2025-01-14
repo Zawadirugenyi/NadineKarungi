@@ -11,7 +11,7 @@ const ServicesSection = () => {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:8000/api/services/');
+        const response = await axios.get('https://microtousadmin.onrender.com/api/services/');
         setServices(response.data);
         setError('');
       } catch (err) {

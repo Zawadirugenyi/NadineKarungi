@@ -11,7 +11,7 @@ const SubServicesSection = () => {
   useEffect(() => {
     const fetchSubservices = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:8000/api/subservices/');
+        const response = await axios.get('https://microtousadmin.onrender.com/api/subservices/');
         setSubservices(response.data);
         setError('');
       } catch (err) {

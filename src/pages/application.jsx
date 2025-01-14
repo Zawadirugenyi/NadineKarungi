@@ -44,7 +44,7 @@ const ApplicationForm = () => {
     }
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/applications/', formDataToSend, {
+      const response = await axios.post('https://microtousadmin.onrender.com/api/applications/', formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

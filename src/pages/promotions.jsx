@@ -12,7 +12,7 @@ const PromotionsSection = () => {
     // Fetch promotions data
     const fetchPromotions = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/promotions/');
+        const response = await fetch('https://microtousadmin.onrender.com/api/promotions/');
         const data = await response.json();
         setPromotions(data); // Set the fetched data to the state
         setIsLoading(false);

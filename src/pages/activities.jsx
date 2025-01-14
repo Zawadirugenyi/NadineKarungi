@@ -12,7 +12,7 @@ const ActivitiesSection = () => {
     // Fetch activities data
     const fetchActivities = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/activities/');
+        const response = await fetch('https://microtousadmin.onrender.com/api/activities/');
         const data = await response.json();
         setActivities(data); // Set the fetched data to the state
         setIsLoading(false);

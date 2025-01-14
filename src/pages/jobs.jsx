@@ -10,7 +10,7 @@ const JobsSection = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:8000/api/jobinternships/'); // Adjust the endpoint if needed
+        const response = await axios.get('https://microtousadmin.onrender.com/api/jobinternships/'); // Adjust the endpoint if needed
         setJobs(response.data);
         setError('');
       } catch (err) {
