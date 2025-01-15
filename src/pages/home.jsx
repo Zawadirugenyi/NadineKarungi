@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import { Box, Button, Heading, Grid,Text,Card, CardBody ,Image,
@@ -12,41 +13,22 @@ import backgroundImage3 from '../Components/Assetes/home3.jpg';
 import aboutImage from '../Components/Assetes/Gerante1.jpeg'
 import backgroundImage4 from '../Components/Assetes/1113.jpeg';
 import { FaWhatsapp } from 'react-icons/fa'; 
-import { useTranslation } from 'react-i18next'; 
 import backgroundImage from '../Components/Assetes/home3.jpg'; 
 import home3 from '../Components/Assetes/home2.jpg'; 
 import { Input, Textarea,  FormControl, FormLabel } from '@chakra-ui/react';
 import contactImage from '../Components/Assetes/Equipe.jpeg'; 
 
 
-const LanguageSwitcher = () => {
-  const { i18n } = useTranslation();
 
-  const handleLanguageChange = (lang) => {
-    i18n.changeLanguage(lang);
-  };
 
-  return (
-    <div style={{ position: 'fixed', top: '20px', right: '20px', zIndex: 1000 }}>
-      <div className="language-switcher">
-        <button onClick={() => handleLanguageChange('en')}>
-          <img src="/path/to/english-flag.png" alt="English" style={{ width: '30px', height: '20px' }} />
-        </button>
-        <button onClick={() => handleLanguageChange('fr')}>
-          <img src="/path/to/french-flag.png" alt="French" style={{ width: '30px', height: '20px' }} />
-        </button>
-        <button onClick={() => handleLanguageChange('sw')}>
-          <img src="/path/to/swahili-flag.png" alt="Swahili" style={{ width: '30px', height: '20px' }} />
-        </button>
-      </div>
-    </div>
-  );
-};
+
+
 
 const phoneNumber = '243820937002'; 
 const HomePage = () => {
     const [services, setServices] = useState([]);
-  const [error, setError] = useState('');
+    const [error, setError] = useState('');
+    const { t } = useTranslation();
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -996,21 +978,7 @@ const HomePage = () => {
 
 
 
- <div style={{ position: 'fixed', bottom: '20px', right: '20px' }}>
-      <IconButton
-        as="a"
-        href={`https://wa.me/${phoneNumber}`}
-        target="_blank"
-        aria-label="Chat with us on WhatsApp"
-        icon={<FaWhatsapp />}
-        size="lg"
-        bg="#2a8fc1"// Optional, for styling the button
-        borderRadius="full" // Optional, to make it circular
-        boxShadow="lg"
-        marginTop="-120px"
-        _hover={{ color: '#f7e135' }}
-      />
-    </div>
+
 
     </>
   );

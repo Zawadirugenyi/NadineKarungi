@@ -16,12 +16,14 @@ import ContactSection from './pages/contact_us';
 import SubServicesSection from './pages/epargne';
 import CreditSection from './pages/credit';
 import ApplicationForm from './pages/application';
+import './i18n';
+
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<MainLayout>< HeroSection/></MainLayout>} /> {/* Use MainLayout for consistency */}
-        <Route path="/home" element={<MainLayout>< Home/></MainLayout>} />
+        <Route path="/" element={<MainLayout>< HeroSection /></MainLayout>} />
+        <Route path="/home" element={<MainLayout>< Home /></MainLayout>} />
         <Route path="/about_us" element={<MainLayout><AboutUs /></MainLayout>} />
         <Route path="/services" element={<MainLayout><ServicesSection /></MainLayout>} />
         <Route path="/promotions" element={<MainLayout><PromotionsSection /></MainLayout>} />
