@@ -94,7 +94,7 @@ const ServicesSection = () => {
                     href="epargne"
                     mt="10px"
                   >
-                    Learn More
+                    En savoir plus
                   </Button>
                 </CardBody>
               </Card>

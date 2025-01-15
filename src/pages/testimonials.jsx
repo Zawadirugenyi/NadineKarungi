@@ -81,13 +81,12 @@ const TestimonialsSection = () => {
       minHeight="60vh"
     >
       <Box bg="rgba(0, 0, 0, 0.6)" p={8} borderRadius="md" boxShadow="lg" maxW="800px" mx="auto">
-        <Heading as="h2" size="xl" mb={4} textAlign="center" color="white">
-          Testimonials
-        </Heading>
-        <Text mb={4} textAlign="center" color="white">
-          Hear what our clients have to say about our services.
-        </Text>
-
+      <Heading as="h2" size="xl" mb={4} textAlign="center" color="white">
+        Témoignages
+      </Heading>
+      <Text mb={4} textAlign="center" color="white">
+        Découvrez ce que nos clients disent de nos services.
+      </Text>
         <Box overflow="hidden" position="relative">
           <AnimatePresence>
             {testimonials.length > 0 && (

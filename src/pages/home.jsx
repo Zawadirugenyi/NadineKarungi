@@ -285,31 +285,31 @@ const HomePage = () => {
           p={8}
           height="auto" // Allow content to adjust based on text height
         >
-          <Heading as="h2" size="xl" mb={4}>
-            About Us
-          </Heading>
-          <Text mb={4} fontSize="lg">
-            We are a leading company with a mission to revolutionize the industry. Our team of professionals is dedicated to providing top-notch services to our clients. With years of experience in the field, we strive to deliver innovative solutions tailored to meet the unique needs of each client. Our company is committed to excellence, and we pride ourselves on our customer-centric approach.
-          </Text>
-          <Text mb={4} fontSize="lg">
-            Our diverse team includes experts from various industries, ensuring that we bring the best ideas and strategies to the table. We understand the challenges that our clients face, and we work tirelessly to provide them with solutions that not only address their immediate needs but also position them for long-term success. Whether you're looking for cutting-edge technology or a reliable partner for your business, we are here to help you achieve your goals.
-          </Text>
+        <Heading as="h2" size="xl" mb={4}>
+          À propos de nous
+        </Heading>
+        <Text mb={4} fontSize="lg">
+          Nous sommes une entreprise de premier plan avec pour mission de révolutionner l'industrie. Notre équipe de professionnels est dédiée à fournir des services de qualité supérieure à nos clients. Forts de plusieurs années d'expérience dans le domaine, nous nous efforçons de proposer des solutions innovantes adaptées aux besoins uniques de chaque client. Notre entreprise est engagée dans l'excellence, et nous sommes fiers de notre approche centrée sur le client.
+        </Text>
+        <Text mb={4} fontSize="lg">
+          Notre équipe diversifiée comprend des experts de divers secteurs, garantissant ainsi que nous apportons les meilleures idées et stratégies. Nous comprenons les défis auxquels nos clients sont confrontés, et nous travaillons sans relâche pour leur fournir des solutions qui répondent non seulement à leurs besoins immédiats, mais aussi pour les positionner pour un succès à long terme. Que vous recherchiez une technologie de pointe ou un partenaire fiable pour votre entreprise, nous sommes là pour vous aider à atteindre vos objectifs.
+        </Text>
+
 
           {/* Learn More Button */}
-          <Button
-            color="#2a8fc1"
-            size="lg"
-            _hover={{ bg: 'yellow.200' }}
-            px={8}
-            as="a"
-            href="/about_us"
-            mt={4} // Adjusted margin for spacing
-            width="100%" // Ensure the button takes up full width on mobile screens
-            display={{ base: 'block', sm: 'inline-block' }} // Ensure the button is block on mobile and inline-block on larger screens
-            textAlign="center" // Center align text on smaller screens
-          >
-            Learn More
-          </Button>
+      <Button  
+                color="#2a8fc1"
+              size="lg"
+              _hover={{ bg: 'yellow.200' }}
+              px={8}
+              as="a"
+              href="home"
+              mt="10px"
+              marginTop="30px">
+                
+          En savoir plus
+        </Button>
+
         </Box>
       </Grid>
     </Box>
@@ -324,9 +324,9 @@ const HomePage = () => {
      
     >
  
-      <Heading as="h2" size="xl" mb={6} textAlign="center">
-        Our Services
-      </Heading>
+     <Heading as="h2" size="xl" mb={6} textAlign="center">
+      Nos Services
+    </Heading>
       {error && <Text color="red.500" mb={4}>{error}</Text>}
       <Box
         p={6}
@@ -373,12 +373,13 @@ const HomePage = () => {
         width={{ base: '100%', md: '95%', lg: '100%' }} // Adjust width based on screen size
         textAlign="center" // Center text horizontally
       >
-        <Heading as="h2" size="xl" mb={4}>
-          Promotions
-        </Heading>
-        <Text mb={4}>
-          Check out our latest promotions and special offers.
-        </Text>
+     <Heading as="h2" size="xl" mb={4}>
+      Promotions
+    </Heading>
+    <Text mb={4}>
+      Découvrez nos dernières promotions et offres spéciales.
+    </Text>
+
 
         {/* Render the promotions */}
         <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 3 }} spacing={8} mt={8}>
@@ -435,7 +436,7 @@ const HomePage = () => {
               mt="10px"
               marginTop="30px">
                 
-          Read More
+          En savoir plus
         </Button>
       </Box>
     </Flex>
@@ -462,12 +463,13 @@ const HomePage = () => {
         width={{ base: '100%', md: '95%', lg: '100%' }} // Adjust width based on screen size
         textAlign="center" 
       >
-        <Heading as="h2" size="xl" mb={4}>
-          Activities
-        </Heading>
-        <Text mb={4}>
-          Discover the various activities we organize to engage our clients and the community.
-        </Text>
+    <Heading as="h2" size="xl" mb={4}>
+      Activités
+    </Heading>
+    <Text mb={4}>
+      Découvrez les différentes activités que nous organisons pour engager nos clients et la communauté.
+    </Text>
+
 
         {/* Render the activities */}
         <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 3 }} spacing={8} mt={8}>
@@ -511,7 +513,7 @@ const HomePage = () => {
 
                 {/* Activity Date, Time, and Venue */}
                 <Text fontSize="sm" color="gray.600" mb={4}>
-                  Date: {activity.date} | Time: {activity.start_hour} - {activity.end_hour} | Venue: {activity.venue}
+                 Date: {activity.date} | Heure: {activity.start_hour} - {activity.end_hour} | Lieu: {activity.venue}
                 </Text>
 
                 {/* Button to redirect */}
@@ -527,11 +529,12 @@ const HomePage = () => {
       {/* Jobs & Internships Section */}
      <Box id="jobs" p={8} bg="gray.100">
       <Heading as="h2" size="xl" mb={4} textAlign="center">
-        Jobs & Internships
+        Emplois & Stages
       </Heading>
       <Text mb={4} textAlign="center">
-        Join our team! We are always looking for talented individuals to help us grow.
+        Rejoignez notre équipe ! Nous sommes toujours à la recherche de personnes talentueuses pour nous aider à grandir.
       </Text>
+
       {error && <Text color="red.500" mb={4}>{error}</Text>}
 
       <Grid templateColumns={{ base: '1fr', md: '1fr 1fr', lg: '1fr 1fr 1fr' }} gap={6}>
@@ -552,7 +555,7 @@ const HomePage = () => {
               href="application"
               mt="10px"
                 onClick={() => handleApply(job.id)}>
-                  Apply Now
+                 Postulez maintenant
                 </Button>
               </Stack>
             </CardBody>
@@ -572,13 +575,12 @@ const HomePage = () => {
       minHeight="60vh"
     >
       <Box bg="rgba(0, 0, 0, 0.6)" p={8} borderRadius="md" boxShadow="lg" maxW="800px" mx="auto">
-        <Heading as="h2" size="xl" mb={4} textAlign="center" color="white">
-          Testimonials
-        </Heading>
-        <Text mb={4} textAlign="center" color="white">
-          Hear what our clients have to say about our services.
-        </Text>
-
+    <Heading as="h2" size="xl" mb={4} textAlign="center" color="white">
+      Témoignages
+    </Heading>
+    <Text mb={4} textAlign="center" color="white">
+      Découvrez ce que nos clients pensent de nos services.
+    </Text>
         <Box overflow="hidden" position="relative">
           <AnimatePresence>
             {testimonials.length > 0 && (
@@ -670,122 +672,121 @@ const HomePage = () => {
 
       {/* FAQs Section */}
   <Flex
-      direction="column"
-      alignItems="center"
-      justifyContent="center"
-      minHeight="80vh"
-      bg="gray.100"
-      p={4}
-    >
-      <Box
-        bg="white"
-        borderRadius="md"
-        boxShadow="lg"
-        p={8}
-        width="80%"
-        maxWidth="800px"
-        textAlign="left"
-      >
-        <Heading as="h2" size="xl" mb={4}>
-          Frequently Asked Questions (FAQs)
-        </Heading>
-        <Text mb={4}>
-          Find answers to the most common questions regarding our banking services, accounts, loans, and more.
-        </Text>
+  direction="column"
+  alignItems="center"
+  justifyContent="center"
+  minHeight="80vh"
+  bg="gray.100"
+  p={4}
+>
+  <Box
+    bg="white"
+    borderRadius="md"
+    boxShadow="lg"
+    p={8}
+    width="80%"
+    maxWidth="800px"
+    textAlign="left"
+  >
+    <Heading as="h2" size="xl" mb={4}>
+      Questions fréquemment posées (FAQ)
+    </Heading>
+    <Text mb={4}>
+      Trouvez des réponses aux questions les plus courantes concernant nos services bancaires, comptes, prêts, et plus encore.
+    </Text>
 
-        {/* Accordion for Banking FAQ */}
-        <Accordion allowToggle>
-          <AccordionItem>
-            <h2>
-              <AccordionButton>
-                <Box flex="1" textAlign="left">
-                  How do I open a bank account?
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-            </h2>
-            <AccordionPanel pb={4}>
-              You can open a bank account online through our website or by visiting any of our branches. You'll need a valid ID, proof of address, and an initial deposit.
-            </AccordionPanel>
-          </AccordionItem>
+    {/* Accordion pour les FAQ bancaires */}
+    <Accordion allowToggle>
+      <AccordionItem>
+        <h2>
+          <AccordionButton>
+            <Box flex="1" textAlign="left">
+              Comment ouvrir un compte bancaire ?
+            </Box>
+            <AccordionIcon />
+          </AccordionButton>
+        </h2>
+        <AccordionPanel pb={4}>
+          Vous pouvez ouvrir un compte bancaire en ligne via notre site Web ou en visitant l'une de nos agences. Vous aurez besoin d'une pièce d'identité valide, d'une preuve de domicile et d'un dépôt initial.
+        </AccordionPanel>
+      </AccordionItem>
 
-          <AccordionItem>
-            <h2>
-              <AccordionButton>
-                <Box flex="1" textAlign="left">
-                  What types of bank accounts do you offer?
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-            </h2>
-            <AccordionPanel pb={4}>
-              We offer various types of bank accounts, including savings accounts, current accounts, and fixed deposits. Each account type has its own benefits, and you can choose one based on your financial needs.
-            </AccordionPanel>
-          </AccordionItem>
+      <AccordionItem>
+        <h2>
+          <AccordionButton>
+            <Box flex="1" textAlign="left">
+              Quels types de comptes bancaires proposez-vous ?
+            </Box>
+            <AccordionIcon />
+          </AccordionButton>
+        </h2>
+        <AccordionPanel pb={4}>
+          Nous proposons différents types de comptes bancaires, y compris les comptes d'épargne, les comptes courants et les dépôts à terme. Chaque type de compte a ses propres avantages, et vous pouvez choisir celui qui correspond à vos besoins financiers.
+        </AccordionPanel>
+      </AccordionItem>
 
-          <AccordionItem>
-            <h2>
-              <AccordionButton>
-                <Box flex="1" textAlign="left">
-                  How can I apply for a loan?
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-            </h2>
-            <AccordionPanel pb={4}>
-              You can apply for a loan by visiting our branch or by filling out an online application form. Depending on the type of loan, we may require proof of income and credit history.
-            </AccordionPanel>
-          </AccordionItem>
+      <AccordionItem>
+        <h2>
+          <AccordionButton>
+            <Box flex="1" textAlign="left">
+              Comment puis-je demander un prêt ?
+            </Box>
+            <AccordionIcon />
+          </AccordionButton>
+        </h2>
+        <AccordionPanel pb={4}>
+          Vous pouvez demander un prêt en visitant notre agence ou en remplissant un formulaire de demande en ligne. Selon le type de prêt, nous pourrions demander une preuve de revenu et un historique de crédit.
+        </AccordionPanel>
+      </AccordionItem>
 
-          <AccordionItem>
-            <h2>
-              <AccordionButton>
-                <Box flex="1" textAlign="left">
-                  How do I reset my online banking password?
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-            </h2>
-            <AccordionPanel pb={4}>
-              To reset your online banking password, click on the 'Forgot Password' link on the login page. You will receive an email with instructions to reset your password.
-            </AccordionPanel>
-          </AccordionItem>
+      <AccordionItem>
+        <h2>
+          <AccordionButton>
+            <Box flex="1" textAlign="left">
+              Comment réinitialiser mon mot de passe pour la banque en ligne ?
+            </Box>
+            <AccordionIcon />
+          </AccordionButton>
+        </h2>
+        <AccordionPanel pb={4}>
+          Pour réinitialiser votre mot de passe de la banque en ligne, cliquez sur le lien "Mot de passe oublié" sur la page de connexion. Vous recevrez un e-mail avec des instructions pour réinitialiser votre mot de passe.
+        </AccordionPanel>
+      </AccordionItem>
 
-          <AccordionItem>
-            <h2>
-              <AccordionButton>
-                <Box flex="1" textAlign="left">
-                  What is the interest rate on savings accounts?
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-            </h2>
-            <AccordionPanel pb={4}>
-              Our savings accounts offer competitive interest rates that vary depending on the account type and balance. Please visit our interest rates page for the most up-to-date information.
-            </AccordionPanel>
-          </AccordionItem>
+      <AccordionItem>
+        <h2>
+          <AccordionButton>
+            <Box flex="1" textAlign="left">
+              Quel est le taux d'intérêt des comptes d'épargne ?
+            </Box>
+            <AccordionIcon />
+          </AccordionButton>
+        </h2>
+        <AccordionPanel pb={4}>
+          Nos comptes d'épargne offrent des taux d'intérêt compétitifs qui varient en fonction du type de compte et du solde. Veuillez consulter notre page des taux d'intérêt pour obtenir les informations les plus récentes.
+        </AccordionPanel>
+      </AccordionItem>
 
-          <AccordionItem>
-            <h2>
-              <AccordionButton>
-                <Box flex="1" textAlign="left">
-                  Can I access my account from anywhere in the world?
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-            </h2>
-            <AccordionPanel pb={4}>
-              Yes, you can access your account from anywhere in the world using our online banking platform. Simply log in with your credentials, and you can manage your account from any device with an internet connection.
-            </AccordionPanel>
-          </AccordionItem>
+      <AccordionItem>
+        <h2>
+          <AccordionButton>
+            <Box flex="1" textAlign="left">
+              Puis-je accéder à mon compte depuis n'importe où dans le monde ?
+            </Box>
+            <AccordionIcon />
+          </AccordionButton>
+        </h2>
+        <AccordionPanel pb={4}>
+          Oui, vous pouvez accéder à votre compte depuis n'importe où dans le monde en utilisant notre plateforme de banque en ligne. Connectez-vous simplement avec vos identifiants et vous pourrez gérer votre compte depuis n'importe quel appareil avec une connexion Internet.
+        </AccordionPanel>
+      </AccordionItem>
 
-          {/* Add more AccordionItems as needed */}
-        </Accordion>
+      {/* Ajouter plus de AccordionItems si nécessaire */}
+    </Accordion>
 
-        {/* Read More Button */}
-      
-      </Box>
-    </Flex>
+    {/* Bouton Lire plus */}
+  </Box>
+</Flex>
 
     
       {/* Team Section */}
@@ -810,12 +811,13 @@ const HomePage = () => {
           width={{ base: '100%', md: '95%', lg: '100%' }} // Adjust width based on screen size
           textAlign="center" // Center text horizontally
         >
-          <Heading as="h2" size="xl" mb={4}>
-            Our Team
-          </Heading>
-          <Text mb={4}>
-            Meet the brilliant minds behind our success. Our team is the backbone of our business.
-          </Text>
+        <Heading as="h2" size="xl" mb={4}>
+          Notre équipe
+        </Heading>
+        <Text mb={4}>
+          Rencontrez les esprits brillants derrière notre succès. Notre équipe est l'épine dorsale de notre entreprise.
+        </Text>
+
 
           {/* Render the team members */}
           <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 5 }} spacing={8} mt={8}>
@@ -878,41 +880,38 @@ const HomePage = () => {
           mr={{ base: 0, md: 8 }}
           mb={{ base: 8, md: 0 }}
         >
-          <Heading as="h2" size="xl" mb={4}>
-            Contact Us
-          </Heading>
-          <form>
-            <FormControl id="full-name" mb={4} isRequired>
-              <FormLabel>Full Name</FormLabel>
-              <Input type="text" placeholder="Enter your full name" />
-            </FormControl>
+      <Heading as="h2" size="xl" mb={4}>
+  Contactez-nous
+</Heading>
+<form>
+  <FormControl id="full-name" mb={4} isRequired>
+    <FormLabel>Nom complet</FormLabel>
+    <Input type="text" placeholder="Entrez votre nom complet" />
+  </FormControl>
 
-            <FormControl id="email" mb={4} isRequired>
-              <FormLabel>Email</FormLabel>
-              <Input type="email" placeholder="Enter your email" />
-            </FormControl>
+  <FormControl id="email" mb={4} isRequired>
+    <FormLabel>Email</FormLabel>
+    <Input type="email" placeholder="Entrez votre email" />
+  </FormControl>
 
-            <FormControl id="message" mb={4} isRequired>
-              <FormLabel>Message</FormLabel>
-              <Textarea placeholder="Write your message here" />
-            </FormControl>
+  <FormControl id="message" mb={4} isRequired>
+    <FormLabel>Message</FormLabel>
+    <Textarea placeholder="Écrivez votre message ici" />
+  </FormControl>
 
-                 <Button
+  <Button
+    color="#2a8fc1"
+    size="lg"
+    _hover={{ bg: 'yellow.200' }}
+    px={8}
+    as="a"
+    href="home"
+    mt="10px"
+  >
+    Envoyer
+  </Button>
+</form>
 
-                           
-        color="#2a8fc1"
-        size="lg"
-        _hover={{ bg: 'yellow.200' }}
-        px={8}
-        as="a"
-        href="home"
-        mt="10px"
-                           
-                           >
-            Submit Application
-          </Button>
-     
-          </form>
           
         </Box>
 

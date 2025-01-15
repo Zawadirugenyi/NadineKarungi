@@ -13,13 +13,13 @@ import {
 } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import { HamburgerIcon, ChevronDownIcon } from '@chakra-ui/icons';
-import backgroundImage from '../Components/Assetes/microtous.png'; // Correctly imported the background image
+import backgroundImage from '../Components/Assetes/microtous.png'; // Image d'arrière-plan correctement importée
 
 function Navbar() {
-  const [activeButton, setActiveButton] = useState(null); // State to track the active button
+  const [activeButton, setActiveButton] = useState(null); // État pour suivre le bouton actif
 
   const handleButtonClick = (buttonName) => {
-    setActiveButton(buttonName); // Update active button on click
+    setActiveButton(buttonName); // Mettre à jour le bouton actif lors du clic
   };
 
   return (
@@ -42,12 +42,12 @@ function Navbar() {
         </Text>
       </Flex>
 
-      {/* Centered navigation buttons for larger screens */}
+      {/* Boutons de navigation centrés pour les écrans plus grands */}
       <Box display={{ base: 'none', md: 'flex' }} justifyContent="center" flex="1">
         {[
-          { name: 'Home', path: '/home' },
-          { name: 'About Us', path: '/about_us' },
-          { name: 'Contact Us', path: '/contact_us' },
+          { name: 'Accueil', path: '/home' },
+          { name: 'À propos de nous', path: '/about_us' },
+          { name: 'Contactez-nous', path: '/contact_us' },
         ].map((button) => (
           <Button
             key={button.name}
@@ -63,7 +63,7 @@ function Navbar() {
           </Button>
         ))}
 
-        {/* Dropdown Menu for Services */}
+        {/* Menu déroulant pour les services */}
         <Menu>
           <MenuButton
             as={Button}
@@ -82,7 +82,7 @@ function Navbar() {
         </Menu>
       </Box>
 
-      {/* Desktop Menu for additional options */}
+      {/* Menu de bureau pour options supplémentaires */}
       <Box display={{ base: 'none', md: 'block' }}>
         <Menu>
           <MenuButton
@@ -94,12 +94,12 @@ function Navbar() {
           />
           <MenuList>
             {[
-              { name: 'Job/Internship', path: '/jobs' },
+              { name: 'Offre/Stage', path: '/jobs' },
               { name: 'Promotion', path: '/promotions' },
-              { name: 'Activities', path: '/activities' },
-              { name: 'Testimonies', path: '/testimonials' },
+              { name: 'Activités', path: '/activities' },
+              { name: 'Témoignages', path: '/testimonials' },
               { name: 'FAQ', path: '/faq' },
-              { name: 'Teams', path: '/teams' },
+              { name: 'Équipes', path: '/teams' },
             ].map((item) => (
               <MenuItem
                 key={item.name}
@@ -116,7 +116,7 @@ function Navbar() {
         </Menu>
       </Box>
 
-      {/* Mobile Menu */}
+      {/* Menu mobile */}
       <Box display={{ base: 'block', md: 'none' }}>
         <Menu>
           <MenuButton
@@ -128,17 +128,17 @@ function Navbar() {
           />
           <MenuList>
             {[
-              { name: 'Home', path: '/home' },
-              { name: 'About Us', path: '/about_us' },
+              { name: 'Accueil', path: '/home' },
+              { name: 'À propos de nous', path: '/about_us' },
               { name: 'Services', path: '/services' },
-              { name: 'Epargne', path: '/epargne' },
+              { name: 'Épargne', path: '/epargne' },
               { name: 'Crédit', path: '/credit' },
-              { name: 'Contact Us', path: '/contact_us' },
-              { name: 'Job/Internship', path: '/jobs' },
-              { name: 'Activities', path: '/activities' },
+              { name: 'Contactez-nous', path: '/contact_us' },
+              { name: 'Offre/Stage', path: '/jobs' },
+              { name: 'Activités', path: '/activities' },
               { name: 'Promotion', path: '/promotions' },
-              { name: 'Teams', path: '/teams' },
-              { name: 'Testimonies', path: '/testimonials' },
+              { name: 'Équipes', path: '/teams' },
+              { name: 'Témoignages', path: '/testimonials' },
               { name: 'FAQ', path: '/faq' },
             ].map((item) => (
               <MenuItem

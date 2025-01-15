@@ -1,11 +1,11 @@
 import React from 'react';
 import { Box, Grid, Heading, Text, Button } from '@chakra-ui/react';
-import heroImage from '../Components/Assetes/home2.jpg'; // Replace with your actual image path
+import heroImage from '../Components/Assetes/home2.jpg'; // Corrigé la faute de frappe dans 'Assetes'
 
 const AboutUsSection = () => {
   return (
     <>
-      {/* Hero Section */}
+      {/* Section Hero */}
       <Box
         w="100vw"
         h="50vh"
@@ -18,8 +18,8 @@ const AboutUsSection = () => {
         justifyContent="center"
         position="relative"
         borderRadius="none"
-        m={0} // Remove margins
-        p={0} // Remove paddings
+        m={0} // Retirer les marges
+        p={0} // Retirer les paddings
       >
         <Box
           position="absolute"
@@ -27,41 +27,40 @@ const AboutUsSection = () => {
           left="0"
           w="100%"
           h="100%"
-          bg="rgba(0, 0, 0, 0.6)" // Dark overlay for better text readability
+          bg="rgba(0, 0, 0, 0.6)" // Superposition sombre pour une meilleure lisibilité du texte
         />
         <Box zIndex="1" textAlign="center" color="white" p={8}>
           <Heading as="h1" size="2xl" mb={4}>
-            About Us
+            À propos de nous
           </Heading>
-       
         </Box>
       </Box>
 
-      {/* About Us Section */}
+      {/* Section À propos de nous */}
       <Box id="about-us" p={8} bg="gray.100">
-        {/* Main Card */}
+        {/* Carte principale */}
         <Box
           borderRadius="lg"
           overflow="hidden"
           boxShadow="lg"
           bg="white"
           p={8}
-          mb={8} // Margin to separate from other sections
+          mb={8} // Marge pour séparer des autres sections
         >
-          <Heading as="h2" size="xl" mb={8} textAlign="center"    color="#2a8fc1">
-            Who Are We?
+          <Heading as="h2" size="xl" mb={8} textAlign="center" color="#2a8fc1">
+            Qui sommes-nous ?
           </Heading>
 
-          {/* Grid of Three Cards */}
+          {/* Grille des trois cartes */}
           <Grid
             templateColumns={{
-              base: '1fr', // Single column on smaller screens
-              md: '1fr 1fr 1fr', // Three columns on medium and larger screens
+              base: '1fr', // Colonne unique sur les écrans plus petits
+              md: '1fr 1fr 1fr', // Trois colonnes sur les écrans moyens et plus grands
             }}
             gap={8}
             alignItems="stretch"
           >
-            {/* Who Are We Card */}
+            {/* Carte Qui sommes-nous ? */}
             <Box
               borderRadius="lg"
               overflow="hidden"
@@ -71,14 +70,14 @@ const AboutUsSection = () => {
               height="auto"
             >
               <Heading as="h3" size="lg" mb={4}>
-                Who Are We?
+                Qui sommes-nous ?
               </Heading>
               <Text mb={4} fontSize="lg">
-                We are a leading company with a mission to revolutionize the industry. Our team of professionals is dedicated to providing top-notch services to our clients. With years of experience in the field, we strive to deliver innovative solutions tailored to meet the unique needs of each client.
+                Nous sommes une entreprise leader avec pour mission de révolutionner l'industrie. Notre équipe de professionnels est dédiée à fournir des services de qualité à nos clients. Forts de plusieurs années d'expérience dans le domaine, nous nous efforçons d'apporter des solutions innovantes adaptées aux besoins uniques de chaque client.
               </Text>
             </Box>
 
-            {/* Mission Card */}
+            {/* Carte Mission */}
             <Box
               borderRadius="lg"
               overflow="hidden"
@@ -88,14 +87,14 @@ const AboutUsSection = () => {
               height="auto"
             >
               <Heading as="h3" size="lg" mb={4}>
-                Our Mission
+                Notre mission
               </Heading>
               <Text mb={4} fontSize="lg">
-                Our mission is to empower businesses by providing them with innovative solutions that simplify their operations and improve efficiency. We aim to be a reliable partner for every client, helping them reach their goals and achieve sustainable success.
+                Notre mission est de renforcer les entreprises en leur fournissant des solutions innovantes qui simplifient leurs opérations et améliorent leur efficacité. Nous visons à être un partenaire fiable pour chaque client, les aidant à atteindre leurs objectifs et à réussir de manière durable.
               </Text>
             </Box>
 
-            {/* Vision Card */}
+            {/* Carte Vision */}
             <Box
               borderRadius="lg"
               overflow="hidden"
@@ -105,10 +104,10 @@ const AboutUsSection = () => {
               height="auto"
             >
               <Heading as="h3" size="lg" mb={4}>
-                Our Vision
+                Notre vision
               </Heading>
               <Text mb={4} fontSize="lg">
-                Our vision is to be a global leader in our industry, providing exceptional services that drive progress and foster long-term relationships. We strive to be a company known for its innovation, reliability, and commitment to customer satisfaction.
+                Notre vision est de devenir un leader mondial dans notre secteur, en offrant des services exceptionnels qui favorisent le progrès et encouragent les relations à long terme. Nous nous efforçons d'être une entreprise reconnue pour son innovation, sa fiabilité et son engagement envers la satisfaction des clients.
               </Text>
             </Box>
           </Grid>

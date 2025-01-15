@@ -13,7 +13,7 @@ import {
   Image 
 } from '@chakra-ui/react';
 import useSubmitApplication from '../Components/useSubmitApplication';
-import aboutImage from '../Components/Assetes/Gerante1.jpeg'; // Corrected path for image import
+import aboutImage from '../Components/Assetes/Gerante1.jpeg'; // Chemin corrigé pour l'importation de l'image
 
 const ApplicationForm = () => {
   const [formData, setFormData] = useState({
@@ -29,10 +29,10 @@ const ApplicationForm = () => {
     starting_date: '',
   });
 
-  const { submitApplication, loading } = useSubmitApplication(); // Use the hook for submission
+  const { submitApplication, loading } = useSubmitApplication(); // Utilisation du hook pour la soumission
   const toast = useToast();
 
-  // Handle text input changes
+  // Gérer les changements de texte dans les champs de saisie
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
@@ -41,22 +41,22 @@ const ApplicationForm = () => {
     }));
   };
 
-  // Handle file input changes
+  // Gérer les changements de fichiers dans les champs de saisie de fichier
   const handleFileChange = (e) => {
     const { name, files } = e.target;
     setFormData((prevState) => ({
       ...prevState,
-      [name]: files[0], // Store the first selected file
+      [name]: files[0], // Stocker le premier fichier sélectionné
     }));
   };
 
-  // Handle form submission
+  // Gérer la soumission du formulaire
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await submitApplication(formData);
       
-      // Reset the form data after successful submission
+      // Réinitialiser les données du formulaire après une soumission réussie
       setFormData({
         full_name: '',
         email: '',
@@ -71,14 +71,14 @@ const ApplicationForm = () => {
       });
 
       toast({
-        title: 'Application submitted.',
-        description: 'Your application has been successfully submitted!',
+        title: 'Candidature soumise.',
+        description: 'Votre candidature a été soumise avec succès !',
         status: 'success',
         duration: 3000,
         isClosable: true,
       });
     } catch (error) {
-      // Error handling is done in the custom hook
+      // La gestion des erreurs se fait dans le hook personnalisé
     }
   };
 
@@ -95,12 +95,12 @@ const ApplicationForm = () => {
     >
       <Box flex="1" p={6}>
         <Text fontSize="2xl" fontWeight="bold" mb={6} textAlign="center">
-          Application Form
+          Formulaire de Candidature
         </Text>
         <form onSubmit={handleSubmit}>
           <Grid templateColumns={['1fr', '1fr 1fr']} gap={6}>
             <FormControl isRequired>
-              <FormLabel htmlFor="full_name">Full Name</FormLabel>
+              <FormLabel htmlFor="full_name">Nom Complet</FormLabel>
               <Input 
                 id="full_name" 
                 name="full_name" 
@@ -121,7 +121,7 @@ const ApplicationForm = () => {
             </FormControl>
 
             <FormControl isRequired>
-              <FormLabel htmlFor="place">Place</FormLabel>
+              <FormLabel htmlFor="place">Lieu</FormLabel>
               <Input 
                 id="place" 
                 name="place" 
@@ -132,31 +132,31 @@ const ApplicationForm = () => {
             </FormControl>
 
             <FormControl isRequired>
-              <FormLabel htmlFor="nationality">Nationality</FormLabel>
+              <FormLabel htmlFor="nationality">Nationalité</FormLabel>
               <Select 
                 id="nationality" 
                 name="nationality" 
                 value={formData.nationality} 
                 onChange={handleChange} 
-                placeholder="Select Nationality"
+                placeholder="Sélectionner la nationalité"
               >
-                <option value="congolese">Congolese</option>
-                <option value="kenyan">Kenyan</option>
-                <option value="rwandan">Rwandan</option>
+                <option value="congolese">Congolaise</option>
+                <option value="kenyan">Kényane</option>
+                <option value="rwandan">Rwandaise</option>
               </Select>
             </FormControl>
 
             <FormControl isRequired>
-              <FormLabel htmlFor="sex">Gender</FormLabel>
+              <FormLabel htmlFor="sex">Sexe</FormLabel>
               <Select 
                 id="sex" 
                 name="sex" 
                 value={formData.sex} 
                 onChange={handleChange} 
-                placeholder="Select Gender"
+                placeholder="Sélectionner le sexe"
               >
-                <option value="male">Male</option>
-                <option value="female">Female</option>
+                <option value="male">Homme</option>
+                <option value="female">Femme</option>
               </Select>
             </FormControl>
 
@@ -171,7 +171,7 @@ const ApplicationForm = () => {
             </FormControl>
 
             <FormControl isRequired>
-              <FormLabel htmlFor="cover_letter">Cover Letter</FormLabel>
+              <FormLabel htmlFor="cover_letter">Lettre de Motivation</FormLabel>
               <Input 
                 id="cover_letter" 
                 name="cover_letter" 
@@ -181,7 +181,7 @@ const ApplicationForm = () => {
             </FormControl>
 
             <FormControl>
-              <FormLabel htmlFor="other_documents">Other Documents</FormLabel>
+              <FormLabel htmlFor="other_documents">Autres Documents</FormLabel>
               <Input 
                 id="other_documents" 
                 name="other_documents" 
@@ -191,22 +191,22 @@ const ApplicationForm = () => {
             </FormControl>
 
             <FormControl isRequired>
-              <FormLabel htmlFor="years_of_experience">Years of Experience</FormLabel>
+              <FormLabel htmlFor="years_of_experience">Années d'Expérience</FormLabel>
               <Select 
                 id="years_of_experience" 
                 name="years_of_experience" 
                 value={formData.years_of_experience} 
                 onChange={handleChange} 
-                placeholder="Select Experience Level"
+                placeholder="Sélectionner le niveau d'expérience"
               >
-                <option value="beginner">Beginner</option>
-                <option value="intermediate">Intermediate</option>
-                <option value="advanced">Advanced</option>
+                <option value="beginner">Débutant</option>
+                <option value="intermediate">Intermédiaire</option>
+                <option value="advanced">Avancé</option>
               </Select>
             </FormControl>
 
             <FormControl isRequired>
-              <FormLabel htmlFor="starting_date">Starting Date</FormLabel>
+              <FormLabel htmlFor="starting_date">Date de Début</FormLabel>
               <Input 
                 id="starting_date" 
                 name="starting_date" 
@@ -224,13 +224,13 @@ const ApplicationForm = () => {
             isLoading={loading} 
             type="submit"
           >
-            Submit
+            Soumettre
           </Button>
         </form>
       </Box>
 
       <Box flex="1" display={['none', 'none', 'block']} p={6}>
-        <Image src={aboutImage} alt="Application" />
+        <Image src={aboutImage} alt="Candidature" />
       </Box>
     </Flex>
   );

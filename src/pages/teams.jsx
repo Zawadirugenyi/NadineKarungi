@@ -74,12 +74,14 @@ const TeamSection = () => {
           width={{ base: '100%', md: '95%', lg: '100%' }} // Adjust width based on screen size
           textAlign="center" // Center text horizontally
         >
-          <Heading as="h2" size="xl" mb={4}>
-            Our Team
-          </Heading>
-          <Text mb={4}>
-            Meet the brilliant minds behind our success. Our team is the backbone of our business.
-          </Text>
+    <Heading as="h2" size="xl" mb={4}>
+        Notre Équipe
+      </Heading>
+      <Text mb={4}>
+        Rencontrez les esprits brillants derrière notre succès. Notre équipe est la colonne vertébrale de notre entreprise.
+      </Text>
+
+
 
           {/* Render the team members */}
           <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 5 }} spacing={8} mt={8}>

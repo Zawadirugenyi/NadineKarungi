@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { Box, Heading, Button, Stack, Input, Textarea, Flex, FormControl, FormLabel, Text } from '@chakra-ui/react';
-import contactImage from '../Components/Assetes/Equipe.jpeg';  // Corrected the path for consistency
-import heroImage from '../Components/Assetes/home1.webp';    // Corrected the path for consistency
+import contactImage from '../Components/Assetes/Equipe.jpeg';  // Correction du chemin pour la cohérence
+import heroImage from '../Components/Assetes/home1.webp';    // Correction du chemin pour la cohérence
 import emailjs from '@emailjs/browser';
 
 const ContactSection = () => {
@@ -14,21 +14,21 @@ const ContactSection = () => {
    const sendEmail = (e) => {
        e.preventDefault();
        setIsSubmitting(true);
-       setErrorMessage(null); // Reset error message on each submission attempt
+       setErrorMessage(null); // Réinitialiser le message d'erreur à chaque tentative d'envoi
 
        emailjs
-           .sendForm('service_u249j16', 'template_sty9mnt', form.current, 'YnzlhG7bfYsDDM0vz') // Replace with your public key
+           .sendForm('service_u249j16', 'template_sty9mnt', form.current, 'YnzlhG7bfYsDDM0vz') // Remplacer par votre clé publique
            .then(
                () => {
                    setIsSubmitting(false);
                    setIsSubmitted(true);
                    setFormData({ from_name: '', user_email: '', message: '' });
-                   setTimeout(() => setIsSubmitted(false), 5000); // Hide success message after 5 seconds
+                   setTimeout(() => setIsSubmitted(false), 5000); // Masquer le message de succès après 5 secondes
                },
                (error) => {
-                   console.log('FAILED...', error.text);
+                   console.log('ÉCHEC...', error.text);
                    setIsSubmitting(false);
-                   setErrorMessage("There was an issue sending your message. Please try again later.");
+                   setErrorMessage("Il y a eu un problème lors de l'envoi de votre message. Veuillez réessayer plus tard.");
                }
            );
    };
@@ -60,11 +60,11 @@ const ContactSection = () => {
                    left="0"
                    w="100%"
                    h="100%"
-                   bg="rgba(0, 0, 0, 0.6)" // Dark overlay for better text readability
+                   bg="rgba(0, 0, 0, 0.6)" // Superposition sombre pour une meilleure lisibilité du texte
                />
                <Box zIndex="1" textAlign="center" color="white" p={8}>
                    <Heading as="h1" size="2xl" mb={4}>
-                       Contact Us
+                       Contactez-nous
                    </Heading>
                </Box>
            </Box>
@@ -75,10 +75,10 @@ const ContactSection = () => {
                bg="gray.100" 
                justifyContent="center" 
                alignItems="center" 
-               flexDirection={{ base: 'column', md: 'row' }} // Stack vertically on small screens and horizontally on larger screens
+               flexDirection={{ base: 'column', md: 'row' }} // Empilement vertical sur petits écrans et horizontal sur grands écrans
                minHeight="80vh"
            >
-               {/* Contact Form Card */}
+               {/* Carte du formulaire de contact */}
                <Box
                    bg="white"
                    borderRadius="md"
@@ -89,15 +89,15 @@ const ContactSection = () => {
                    mb={{ base: 8, md: 0 }}
                >
                    <Heading as="h2" size="xl" mb={4}>
-                       Contact Us
+                       Contactez-nous
                    </Heading>
                    <form ref={form} onSubmit={sendEmail}>
                        <Stack spacing={4}>
                            <FormControl id="name" isRequired>
-                               <FormLabel>Name</FormLabel>
+                               <FormLabel>Nom</FormLabel>
                                <Input
                                    name="user_name"
-                                   placeholder="Your Name"
+                                   placeholder="Votre nom"
                                    value={formData.from_name}
                                    onChange={handleChange}
                                />
@@ -107,7 +107,7 @@ const ContactSection = () => {
                                <Input
                                    type="email"
                                    name="user_email"
-                                   placeholder="Your Email"
+                                   placeholder="Votre email"
                                    value={formData.user_email}
                                    onChange={handleChange}
                                />
@@ -116,7 +116,7 @@ const ContactSection = () => {
                                <FormLabel>Message</FormLabel>
                                <Textarea
                                    name="message"
-                                   placeholder="Your Message"
+                                   placeholder="Votre message"
                                    value={formData.message}
                                    onChange={handleChange}
                                />
@@ -127,44 +127,43 @@ const ContactSection = () => {
                                </Text>
                            )}
                            <Button
-                              
-                            color="#2a8fc1"
-                            size="lg"
-                            _hover={{ bg: 'yellow.200' }}
-                            px={8}
-                            as="a"
-                            href="services"
-                            mt="10px"
-                            isLoading={isSubmitting}
+                               color="#2a8fc1"
+                               size="lg"
+                               _hover={{ bg: 'yellow.200' }}
+                               px={8}
+                               as="a"
+                               href="services"
+                               mt="10px"
+                               isLoading={isSubmitting}
                            >
-                               Send Message
+                               Envoyer le message
                            </Button>
                            {isSubmitted && !errorMessage && (
                                <Text color="green.500" mt={2}>
-                                   Thank you for your message! We'll get back to you soon.
+                                   Merci pour votre message ! Nous reviendrons vers vous bientôt.
                                </Text>
                            )}
                        </Stack>
                    </form>
                </Box>
 
-               {/* Image on the Right */}
+               {/* Image à droite */}
                <Box
                    flexShrink={0}
                    width={{ base: '100%', md: '50%' }}
                    display="flex"
                    justifyContent="center"
                    alignItems="center"
-                   mt={{ base: 8, md: 0 }} // Add margin-top for small screens
+                   mt={{ base: 8, md: 0 }} // Ajouter une marge supérieure pour les petits écrans
                >
                    <img
                        src={contactImage} 
-                       alt="About Us"
+                       alt="À propos de nous"
                        style={{
                            width: '92%',
                            height: '60vh',
                            objectFit: 'cover',
-                           borderRadius: '8px', // Add rounded corners like the text card
+                           borderRadius: '8px', // Ajouter des coins arrondis comme pour la carte de texte
                        }}
                    />
                </Box>
