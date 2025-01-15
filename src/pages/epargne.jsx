@@ -94,8 +94,7 @@ const SubServicesSection = () => {
                       {subservice.name}
                     </Heading>
                     <Text mb={4}>{subservice.condition}</Text>
-                    <Text mb={4}>{subservice.taux}</Text>
-                    <Text mb={4}>{subservice.frequence}</Text>
+                
                   </CardBody>
                 </Card>
               ))}
