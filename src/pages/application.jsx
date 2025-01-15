@@ -12,8 +12,8 @@ import {
   Flex, 
   Image 
 } from '@chakra-ui/react';
-import axios from 'axios';
-import aboutImage from '../Components/Assetes/Gerante1.jpeg'; // Image import
+import useSubmitApplication from '../Components/useSubmitApplication';
+import aboutImage from '../Components/Assetes/Gerante1.jpeg'; // Corrected path for image import
 
 const ApplicationForm = () => {
   const [formData, setFormData] = useState({
@@ -29,8 +29,10 @@ const ApplicationForm = () => {
     starting_date: '',
   });
 
+  const { submitApplication, loading } = useSubmitApplication(); // Use the hook for submission
   const toast = useToast();
 
+  // Handle text input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
@@ -39,35 +41,22 @@ const ApplicationForm = () => {
     }));
   };
 
+  // Handle file input changes
   const handleFileChange = (e) => {
     const { name, files } = e.target;
     setFormData((prevState) => ({
       ...prevState,
-      [name]: files[0],
+      [name]: files[0], // Store the first selected file
     }));
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const formDataToSend = new FormData();
-    for (let key in formData) {
-      formDataToSend.append(key, formData[key]);
-    }
-
     try {
-      await axios.post('https://microtousadmin.onrender.com/api/applications/', formDataToSend, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      toast({
-        title: 'Application submitted.',
-        description: "Your application has been successfully submitted!",
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
+      await submitApplication(formData);
+      
+      // Reset the form data after successful submission
       setFormData({
         full_name: '',
         email: '',
@@ -80,14 +69,16 @@ const ApplicationForm = () => {
         years_of_experience: '',
         starting_date: '',
       });
-    } catch (error) {
+
       toast({
-        title: 'Submission failed.',
-        description: error.response?.data?.message || 'Something went wrong.',
-        status: 'error',
+        title: 'Application submitted.',
+        description: 'Your application has been successfully submitted!',
+        status: 'success',
         duration: 3000,
         isClosable: true,
       });
+    } catch (error) {
+      // Error handling is done in the custom hook
     }
   };
 
@@ -152,7 +143,6 @@ const ApplicationForm = () => {
                 <option value="congolese">Congolese</option>
                 <option value="kenyan">Kenyan</option>
                 <option value="rwandan">Rwandan</option>
-                {/* Add more options as needed */}
               </Select>
             </FormControl>
 
@@ -167,7 +157,6 @@ const ApplicationForm = () => {
               >
                 <option value="male">Male</option>
                 <option value="female">Female</option>
-                <option value="other">Other</option>
               </Select>
             </FormControl>
 
@@ -232,24 +221,16 @@ const ApplicationForm = () => {
             color="#2a8fc1"
             size="lg"
             _hover={{ bg: 'yellow.200' }}
-            px={8}
-            as="a"
-            width="full" 
+            isLoading={loading} 
             type="submit"
           >
-            Submit Application
+            Submit
           </Button>
         </form>
       </Box>
-      <Box flex="1" display={['none', 'none', 'block']} p={4}>
-        <Image 
-          src={aboutImage} 
-          alt="About Us" 
-          objectFit="cover" 
-          borderRadius="md" 
-          height="100%" 
-          width="100%" 
-        />
+
+      <Box flex="1" display={['none', 'none', 'block']} p={6}>
+        <Image src={aboutImage} alt="Application" />
       </Box>
     </Flex>
   );
