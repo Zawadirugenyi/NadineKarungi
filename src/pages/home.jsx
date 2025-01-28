@@ -129,17 +129,7 @@ const HomePage = () => {
               des entrepreneurs pour atteinte de leurs objectifs.
             </Text>
 
-                <Button
-              marginLeft="30%"
-              marginTop="-30%"
-              bg="black"
-              color="#c0cdd4"
-              size="lg"
-              _hover={{ bg: '#0097b2', color: 'white' }}
-              mt={4}
-        >
-          Voir mon CV
-        </Button>
+      
           </CardBody>
         </Card>
 
