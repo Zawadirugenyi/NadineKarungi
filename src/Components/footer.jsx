@@ -10,7 +10,7 @@ function Footer() {
       align="center"
       justify="space-between"
       wrap="wrap"
-      bg="#2a8fc1"
+      bg="#0097b2"
       color="white"
       p={4}
       position="fixed"
@@ -20,7 +20,7 @@ function Footer() {
       {/* Left Section - Brand Name */}
       <Box>
         <Text fontSize="lg" fontWeight="bold">
-          &copy;2025coopecmicrotous
+          &copy;2025NadineKarungi
         </Text>
       </Box>
 

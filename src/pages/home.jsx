@@ -1,984 +1,697 @@
+import React, { useState } from 'react';
+import { Typewriter } from 'react-simple-typewriter';
+import { Box, Button, Heading, Grid, Text, Card,Stack, CardBody,CardHeader, SimpleGrid, Divider, Link, Icon, Image, Flex, FormControl, FormLabel, Input, Textarea } from '@chakra-ui/react';
+import aboutImage from '../Components/Assetes/Gerante1.jpeg';
+import profilePic from '../Components/Assetes/Gerante1.jpeg';
+import { MdLanguage } from "react-icons/md";
+import { MdBusiness, MdSchool, MdPeople, MdSupervisedUserCircle, MdDescription, MdAccountBalance, MdWork } from "react-icons/md";
 
-import React, { useState, useEffect } from 'react';
-import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
-import { useTranslation } from 'react-i18next';
-import { motion, AnimatePresence } from 'framer-motion';
-import axios from 'axios';
-import { Box, Button, Heading, Grid,Text,Card, CardBody ,Image,
-         Accordion, SimpleGrid, AccordionItem, AccordionButton, 
-         AccordionPanel, AccordionIcon,  Flex,IconButton , Stack} from '@chakra-ui/react';
-import backgroundImage1 from '../Components/Assetes/home1.webp';
-import backgroundImage2 from '../Components/Assetes/111.webp';
-import backgroundImage3 from '../Components/Assetes/home3.jpg';
-import aboutImage from '../Components/Assetes/Gerante1.jpeg'
-import backgroundImage4 from '../Components/Assetes/1113.jpeg';
-import { FaWhatsapp } from 'react-icons/fa'; 
-import backgroundImage from '../Components/Assetes/home3.jpg'; 
-import home3 from '../Components/Assetes/home2.jpg'; 
-import { Input, Textarea,  FormControl, FormLabel } from '@chakra-ui/react';
-import contactImage from '../Components/Assetes/Equipe.jpeg'; 
+import { FaFacebook, FaInstagram, FaTwitter, FaSnapchat, FaLinkedin, FaPhoneAlt, FaEnvelope, FaAddressBook, FaClipboardList, FaBullhorn, FaChartBar, FaUsers } from 'react-icons/fa'; // Corrected import for icons
 
+import contactImage from '../Components/Assetes/moioi.jpg';
 
-
-
-
-
-
-const phoneNumber = '243820937002'; 
 const HomePage = () => {
-    const [services, setServices] = useState([]);
-    const [error, setError] = useState('');
-    const { t } = useTranslation();
-
-  useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const response = await axios.get('https://microtousadmin.onrender.com/api/services/');
-        setServices(response.data);
-        setError('');
-      } catch (err) {
-        console.error('Error fetching services:', err);
-        setError('Failed to fetch services. Please try again.');
-      }
-    };
-
-    fetchServices();
-  }, []);
-  
-
-   const [promotions, setPromotions] = useState([]);
- 
-
-  useEffect(() => {
-    const fetchPromotions = async () => {
-      try {
-        const response = await axios.get('https://microtousadmin.onrender.com/api/promotions/'); // Adjust endpoint as needed
-        setPromotions(response.data);
-        setError('');
-      } catch (err) {
-        console.error('Error fetching promotions:', err);
-        setError('Failed to fetch promotions. Please try again.');
-      }
-    };
-
-    fetchPromotions();
-  }, []);
-
-  const [activities, setActivities] = useState([]);
-
-
-  useEffect(() => {
-    const fetchActivities = async () => {
-      try {
-        const response = await axios.get('https://microtousadmin.onrender.com/api/activities/'); // Adjust endpoint as needed
-        setActivities(response.data);
-        setError('');
-      } catch (err) {
-        console.error('Error fetching activities:', err);
-        setError('Failed to fetch activities. Please try again.');
-      }
-    };
-
-    fetchActivities();
-  }, []);
-
-
- const [jobs, setJobs] = useState([]);
- 
-  useEffect(() => {
-    const fetchJobs = async () => {
-      try {
-        const response = await axios.get('https://microtousadmin.onrender.com/api/jobinternships/'); // Adjust the endpoint if needed
-        setJobs(response.data);
-        setError('');
-      } catch (err) {
-        console.error('Error fetching jobs:', err);
-        setError('Failed to fetch jobs. Please try again.');
-      }
-    };
-
-    fetchJobs();
-  }, []);
-
-  const handleApply = (jobId) => {
-    console.log(`Applying for job with ID: ${jobId}`);
-    // You can add logic here to navigate to an application form or submit a request.
-  };
-
-
-
-
-    const [testimonials, setTestimonials] = useState([]);
-
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  // Fetch testimonials data
-  useEffect(() => {
-    const fetchTestimonials = async () => {
-      try {
-        const response = await axios.get('https://microtousadmin.onrender.com/api/testimonials/');
-        setTestimonials(response.data);
-        setError('');
-      } catch (err) {
-        console.error('Error fetching testimonials:', err);
-        setError('Failed to fetch testimonials. Please try again.');
-      }
-    };
-
-    fetchTestimonials();
-  }, []);
-
-  // Automatic slideshow every 5 seconds with animation
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % testimonials.length);
-    }, 5000); // Change slide every 5 seconds
-
-    return () => clearInterval(interval); // Clean up the interval on unmount
-  }, [testimonials.length]);
-
-  const getNextTestimonial = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % testimonials.length);
-  };
-
-  const getPreviousTestimonial = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + testimonials.length) % testimonials.length);
-  };
-
-
-   const [teamMembers, setTeamMembers] = useState([]); // State to hold fetched data
-
-  useEffect(() => {
-    // Fetch team members data
-    const fetchTeamMembers = async () => {
-      try {
-        const response = await fetch('https://microtousadmin.onrender.com/api/team_members/');
-        const data = await response.json();
-        setTeamMembers(data); // Set the fetched data to the state
-      } catch (error) {
-        console.error('Error fetching team members:', error);
-      }
-    };
-
-    fetchTeamMembers(); // Fetch data when the component mounts
-  }, []);
+  const [services, setServices] = useState([]);
+  const [error, setError] = useState('');
 
   return (
     <>
       {/* Hero Section */}
-      <Box
-        w="100vw"
-        h="50vh" // Reduced height for a smaller Hero section
-        overflow="hidden"
-        position="relative"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-      >
-        <Box
-          display="flex"
-          width="300%"
-          position="absolute"
-          top="0"
-          left="0"
-          transform="translateX(0)"
-          transition="transform 1s ease-in-out"
-        >
-          <Box
-            width="100vw"
-            height="60vh" // Reduced height
-            backgroundImage={`url(${backgroundImage1})`}
-            backgroundSize="cover"
-            backgroundPosition="center"
-            flex="none"
-          />
-          <Box
-            width="100vw"
-            height="60vh" // Reduced height
-            backgroundImage={`url(${backgroundImage2})`}
-            backgroundSize="cover"
-            backgroundPosition="center"
-            flex="none"
-          />
-          <Box
-            width="100vw"
-            height="60vh" // Reduced height
-            backgroundImage={`url(${backgroundImage3})`}
-            backgroundSize="cover"
-            backgroundPosition="center"
-            flex="none"
-          />
-        </Box>
-
-        <Box
-          position="absolute"
-          top="0"
-          left="0"
+      <section id="home">
+        <Box   id="home"p={8} idbg="#c0cdd4" minH="50vh" display="flex" alignItems="center" justifyContent="center">
+        <Grid
+          templateColumns={{ base: '1fr', md: '1fr 1fr' }}
+          gap={8}
+          alignItems="center"
           w="100%"
-          h="100%"
-          bg="rgba(0, 0, 0, 0.5)"
-        />
-        <Box zIndex="2" textAlign="center" px={4} py={{ base: 8, md: 16 }}>
-          <Heading
-            color="white"
-            fontSize={{ base: '3xl', md: '4xl', lg: '5xl' }}
-            fontWeight="bold"
-            mb={4}
-            mt="-10px"
-           
-          >
-            Bienvenu chez nous
-          </Heading>
-         
-         
-        </Box>
-      </Box>
-
-      {/* About Us Section */}
-   
-    <Box id="about-us" p={8} bg="gray.100">
-      <Grid
-        templateColumns={{
-          base: '1fr', // Single column on smaller screens
-          md: '1fr 1fr', // Two columns on medium and larger screens
-        }}
-        gap={8}
-        alignItems="center"
-      >
-        {/* Image Card */}
-        <Box>
-          <img
-            src={aboutImage}
-            alt="About Us"
-          
-          width="100%"
-          height="100%"
-          objectFit="cover"
-          borderRadius="md"
-          />
-        </Box>
-
-        {/* Content Card */}
-        <Box
-          borderRadius="lg"
-          overflow="hidden"
-          boxShadow="lg"
-          bg="white"
-          p={8}
-          height="auto" // Allow content to adjust based on text height
+          maxW="1200px"
         >
-        <Heading as="h2" size="xl" mb={4}>
-          À propos de nous
-        </Heading>
-        <Text mb={4} fontSize="lg">
-          Nous sommes une entreprise de premier plan avec pour mission de révolutionner l'industrie. Notre équipe de professionnels est dédiée à fournir des services de qualité supérieure à nos clients. Forts de plusieurs années d'expérience dans le domaine, nous nous efforçons de proposer des solutions innovantes adaptées aux besoins uniques de chaque client. Notre entreprise est engagée dans l'excellence, et nous sommes fiers de notre approche centrée sur le client.
-        </Text>
-        <Text mb={4} fontSize="lg">
-          Notre équipe diversifiée comprend des experts de divers secteurs, garantissant ainsi que nous apportons les meilleures idées et stratégies. Nous comprenons les défis auxquels nos clients sont confrontés, et nous travaillons sans relâche pour leur fournir des solutions qui répondent non seulement à leurs besoins immédiats, mais aussi pour les positionner pour un succès à long terme. Que vous recherchiez une technologie de pointe ou un partenaire fiable pour votre entreprise, nous sommes là pour vous aider à atteindre vos objectifs.
-        </Text>
+          {/* Content with Typewriter */}
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="flex-start" // Align items to the left
+            justifyContent="center"
+            textAlign="left" // Set text alignment to left
+          >
+            <Heading as="h2" size="xl" mb={4} color="#0097b2" borderRadius="md">
+            Nadine Karungi Rugenyi
+            </Heading>
 
+            <Heading as="h3" size="lg" mb={4} color="black">
+              <Typewriter
+                words={[
+                  'Economiste par formation et Experte en Microfinance',
+                  'Directrice Générale de JUDE ASBL',
+                  'Fondatrice et Directrice Gérante de MICROTOUS',
+                  'Consultante, Formatrice, Coach et Entrepreneur',
+                  'Formatrice chez REHEMA HUB',
+                  'Gérante chez Ets. VIP WATU PRO',
+                ]}
+                loop={0} // Infinite loop
+                cursor
+                cursorStyle="|"
+                typeSpeed={70}
+                deleteSpeed={50}
+                delaySpeed={1000}
+              />
+            </Heading>
 
-          {/* Learn More Button */}
-      <Button  
-                color="#2a8fc1"
+            <Button
+              bg="black"
+              color="#c0cdd4"
               size="lg"
-              _hover={{ bg: 'yellow.200' }}
-              px={8}
-              as="a"
-              href="home"
-              mt="10px"
-              marginTop="30px">
-                
-          En savoir plus
-        </Button>
+              _hover={{ bg: '#0097b2', color: 'white' }}
+              mt={4}
+            >
+              Contactez Moi
+            </Button>
+          </Box>
 
-        </Box>
-      </Grid>
-    </Box>
-      {/* Services Section */}
-      <Box
-      id="services"
-      p={8}
-      bgImage={`url(${backgroundImage})`}
-      bgSize="cover"
-      bgPos="center"
-      color="white"
-     
-    >
- 
-     <Heading as="h2" size="xl" mb={6} textAlign="center">
-      Nos Services
-    </Heading>
-      {error && <Text color="red.500" mb={4}>{error}</Text>}
-      <Box
-        p={6}
-        bg="rgba(0, 0, 0, 0.6)"
-        borderRadius="lg"
-        boxShadow="lg"
-        maxW="1300px"
-        mx="auto"
-      >
-        <Grid templateColumns={{ base: '1fr', md: '1fr 1fr 1fr' }} gap={6}>
-          {services.map((service, index) => (
-            <Card key={index} bg="white" color="black" boxShadow="md" borderRadius="md">
-              <CardBody>
-                <Heading as="h3" size="md" mb={4}>
-                  {service.name}
-                </Heading>
-                <Text mb={4}>{service.description}</Text>
-          
-              </CardBody>
-            </Card>
-          ))}
+       
+          <Box>
+            <Image src={aboutImage} alt="About Us" borderRadius="md" maxW="100%" />
+          </Box>
         </Grid>
       </Box>
-    </Box>
+      </section>
+      
 
-      {/* Promotions Section */}
-      <Flex
-      direction="column"
-      alignItems="center"
-      justifyContent="center"
-      minHeight="80vh" // Adjust height to fit content
-     
-      bgSize="cover" // Ensure the image covers the section
-      bgPosition="center" // Center the image
-      p={4}
-      backgroundBlendMode="overlay" // Overlay effect to darken the image
-      backgroundColor="rgba(0, 0, 0, 0.5)" // Darken the background for better text contrast
+
+
+      {/* About Us Section */}
+      <section id="about">
+          <Box
+      id="abouUs"
+      as="section"
+      bg="gray.100"
+      py={16}
+      px={{ base: 6, md: 12 }}
+      textAlign="center"
     >
-      <Box
-        bg="white"
-        borderRadius="md"
-        boxShadow="lg"
-        p={8}
-        width={{ base: '100%', md: '95%', lg: '100%' }} // Adjust width based on screen size
-        textAlign="center" // Center text horizontally
-      >
-     <Heading as="h2" size="xl" mb={4}>
-      Promotions
-    </Heading>
-    <Text mb={4}>
-      Découvrez nos dernières promotions et offres spéciales.
-    </Text>
-
-
-        {/* Render the promotions */}
-        <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 3 }} spacing={8} mt={8}>
-          {promotions.map((promotion) => {
-            const imageUrl = promotion.image && promotion.image.startsWith('/media/')
-              ? `http://127.0.0.1:8000${promotion.image}`
-              : promotion.image;
-
-            return (
-              <Box
-                key={promotion.id}
-                bg="white"
-                p={6}
-                borderRadius="md"
-                boxShadow="lg"
-                textAlign="center"
-              >
-                {/* Conditionally render the image if URL is provided */}
-                {promotion.image && (
-                  <Image
-                    src={imageUrl}
-                    alt={promotion.title}
-                    borderRadius="md"
-                    mb={4}
-                    objectFit="cover"
-                    width="100%"
-                    height={{ base: '200px', md: '250px' }} // Adjust height for responsive design
-                    fallbackSrc="https://via.placeholder.com/150" // Use a fallback image in case of broken URL or loading failure
-                  />
-                )}
-
-                {/* Title */}
-                <Heading as="h3" size="md" mb={2}>
-                  {promotion.title}
-                </Heading>
-
-                {/* Description */}
-                <Text fontSize="sm" color="gray.600" mb={4}>
-                  {promotion.description}
-                </Text>
-              </Box>
-            );
-          })}
-        </SimpleGrid>
-
-        {/* Read More Button */}
-        <Button  
-                color="#2a8fc1"
-              size="lg"
-              _hover={{ bg: 'yellow.200' }}
-              px={8}
-              as="a"
-              href="home"
-              mt="10px"
-              marginTop="30px">
-                
-          En savoir plus
-        </Button>
-      </Box>
-    </Flex>
-
-
-      {/* Activities Section */}
-
-         <Flex
-      direction="column"
-      alignItems="center"
-      justifyContent="center"
-      minHeight="80vh" // Adjust height to fit content
-    
-      bgSize="cover" // Ensure the image covers the section
-      bgPosition="center" // Center the image
-      p={4}
-
-    >
-      <Box
-          bg="white"
-        borderRadius="md"
-       
-        p={8}
-        width={{ base: '100%', md: '95%', lg: '100%' }} // Adjust width based on screen size
-        textAlign="center" 
-      >
-    <Heading as="h2" size="xl" mb={4}>
-      Activités
-    </Heading>
-    <Text mb={4}>
-      Découvrez les différentes activités que nous organisons pour engager nos clients et la communauté.
-    </Text>
-
-
-        {/* Render the activities */}
-        <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 3 }} spacing={8} mt={8}>
-          {activities.map((activity) => {
-            const imageUrl = activity.image && activity.image.startsWith('/media/')
-              ? `http://127.0.0.1:8000${activity.image}`
-              : activity.image;
-
-            return (
-              <Box
-                key={activity.id}
-                bg="white"
-                p={6}
-                borderRadius="md"
-                boxShadow="lg"
-                textAlign="center"
-              >
-                {/* Conditionally render the image if URL is provided */}
-                {activity.image && (
-                  <Image
-                    src={imageUrl}
-                    alt={activity.name}
-                    borderRadius="md"
-                    mb={4}
-                    objectFit="cover"
-                    width="100%"
-                    height={{ base: '200px', md: '250px' }} // Adjust height for responsive design
-                    fallbackSrc="https://via.placeholder.com/150" // Use a fallback image in case of broken URL or loading failure
-                  />
-                )}
-
-                {/* Title */}
-                <Heading as="h3" size="md" mb={2}>
-                  {activity.name}
-                </Heading>
-
-                {/* Description */}
-                <Text fontSize="sm" color="gray.600" mb={4}>
-                  {activity.description}
-                </Text>
-
-                {/* Activity Date, Time, and Venue */}
-                <Text fontSize="sm" color="gray.600" mb={4}>
-                 Date: {activity.date} | Heure: {activity.start_hour} - {activity.end_hour} | Lieu: {activity.venue}
-                </Text>
-
-                {/* Button to redirect */}
-              
-              </Box>
-            );
-          })}
-        </SimpleGrid>
-      </Box>
-    </Flex>
-
-
-      {/* Jobs & Internships Section */}
-     <Box id="jobs" p={8} bg="gray.100">
-      <Heading as="h2" size="xl" mb={4} textAlign="center">
-        Emplois & Stages
+      {/* About Header */}
+      <Heading as="h2" size="2xl" mb={8}>
+        À propos de moi
       </Heading>
-      <Text mb={4} textAlign="center">
-        Rejoignez notre équipe ! Nous sommes toujours à la recherche de personnes talentueuses pour nous aider à grandir.
-      </Text>
 
-      {error && <Text color="red.500" mb={4}>{error}</Text>}
-
-      <Grid templateColumns={{ base: '1fr', md: '1fr 1fr', lg: '1fr 1fr 1fr' }} gap={6}>
-        {jobs.map((job, index) => (
-          <Card key={index} bg="white" boxShadow="md" borderRadius="md">
-            <CardBody>
-              <Stack spacing={4}>
-                <Heading as="h3" size="md">
-                  {job.title}
-                </Heading>
-                <Text>{job.description}</Text>
-                <Button         
-                color="#2a8fc1"
-              size="lg"
-              _hover={{ bg: 'yellow.200' }}
-              px={8}
-              as="a"
-              href="application"
-              mt="10px"
-                onClick={() => handleApply(job.id)}>
-                 Postulez maintenant
-                </Button>
-              </Stack>
-            </CardBody>
-          </Card>
-        ))}
-      </Grid>
-    </Box>
-
-      {/* Testimonials Section */}
- <Box
-      id="testimonials"
-      p={8}
-      bgImage={`url(${backgroundImage4})`} // Background image
-      bgSize="cover"
-      bgPosition="center"
-      position="relative"
-      minHeight="60vh"
-    >
-      <Box bg="rgba(0, 0, 0, 0.6)" p={8} borderRadius="md" boxShadow="lg" maxW="800px" mx="auto">
-    <Heading as="h2" size="xl" mb={4} textAlign="center" color="white">
-      Témoignages
-    </Heading>
-    <Text mb={4} textAlign="center" color="white">
-      Découvrez ce que nos clients pensent de nos services.
-    </Text>
-        <Box overflow="hidden" position="relative">
-          <AnimatePresence>
-            {testimonials.length > 0 && (
-              <motion.div
-                key={testimonials[currentIndex]?.id}
-                initial={{ opacity: 0, x: '100%' }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: '-100%' }}
-                transition={{
-                  type: 'tween',
-                  ease: 'easeInOut',
-                  duration: 0.6,
-                }}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  textAlign: 'center',
-                  padding: '1rem',
-                  backgroundColor: 'white',
-                  borderRadius: '10px',
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-                  maxWidth: '600px',
-                  margin: '0 auto',
-                }}
-              >
-                {/* Use requested image structure */}
-                {testimonials[currentIndex]?.image && (
-                  <Image
-                    src={
-                      testimonials[currentIndex].image.startsWith('/media/')
-                        ? `http://127.0.0.1:8000${testimonials[currentIndex].image}`
-                        : testimonials[currentIndex].image
-                    }
-                    borderRadius="full"
-                    boxSize="120px"
-                    objectFit="cover"
-                    alt={`${testimonials[currentIndex]?.name}'s profile`}
-                    mb={4}
-                  />
-                )}
-                <Heading as="h3" size="md" fontWeight="bold" mb={2} color="gray.800">
-                  {testimonials[currentIndex]?.name}
-                </Heading>
-                <Text maxW="400px" fontSize="sm" color="gray.600">
-                  "{testimonials[currentIndex]?.text}"
-                </Text>
-              </motion.div>
-            )}
-          </AnimatePresence>
+      {/* Profile Image and Divider */}
+      <Box mb={8}>
+        <Divider />
+        <Box mt={-7} display="flex" justifyContent="center" position="relative">
+          <Image 
+            borderRadius="full" 
+            boxSize="150px" 
+            src={profilePic} 
+            alt="Votre Photo" 
+            border="5px solid white" 
+            zIndex="1"
+          />
         </Box>
-
-        <Flex justify="center" mt={4}>
-          <IconButton
-            aria-label="Previous"
-            icon={<ChevronLeftIcon />}
-            onClick={getPreviousTestimonial}
-            color="#2a8fc1"
-            size="lg"
-            mr={4}
-          />
-          <IconButton
-            aria-label="Next"
-            icon={<ChevronRightIcon />}
-            onClick={getNextTestimonial}
-            color="#2a8fc1"
-            size="lg"
-          />
-        </Flex>
-
-        <Flex justify="center" mt={4}>
-          {testimonials.length > 0 &&
-            testimonials.map((_, index) => (
-              <Box
-                key={index}
-                as="span"
-                width="10px"
-                height="10px"
-                borderRadius="50%"
-                bg={currentIndex === index ? '#2a8fc1' : 'gray.300'}
-                mx={2}
-                cursor="pointer"
-                onClick={() => setCurrentIndex(index)}
-              />
-            ))}
-        </Flex>
+        <Divider />
       </Box>
+
+      {/* Cards Section */}
+      <SimpleGrid columns={{ base: 1, md: 3 }} spacing={10}>
+        {/* About Me Card */}
+        <Card>
+          <CardHeader>
+            <Heading  as="h3" size="md" mb={4} textAlign="center">
+              À propos de moi
+            </Heading>
+          </CardHeader>
+          <CardBody textAlign="left">
+            <Divider mb={4} />
+            <Stack spacing={6}></Stack>
+            <Text fontSize="md">
+              Dotée d’une capacité managériale, dynamique, rigoureuse dans le travail 
+              et motivée, je suis capable entretenir de bonnes relations avec les parties 
+              prenantes d’une organisation et jouer un rôle important dans la motivation 
+              des entrepreneurs pour atteinte de leurs objectifs.
+            </Text>
+
+                <Button
+              marginLeft="30%"
+              marginTop="-30%"
+              bg="black"
+              color="#c0cdd4"
+              size="lg"
+              _hover={{ bg: '#0097b2', color: 'white' }}
+              mt={4}
+        >
+          Voir mon CV
+        </Button>
+          </CardBody>
+        </Card>
+
+        {/* Personal Info Card */}
+        <Card>
+          <CardHeader>
+            <Heading  as="h3" size="md" mb={4} textAlign="center">
+              Mes Informations
+            </Heading>
+          </CardHeader>
+          <CardBody textAlign="left">
+            <Divider mb={4} />
+            <Stack spacing={6}></Stack>
+            <Text fontSize="md" mb={4}>
+              Je suis un(e) économiste, formatrice et entrepreneure, avec une expertise en microfinance. Actuellement Directrice 
+              Générale de JUDE ASBL et Fondatrice de MICROTOUS.
+            </Text>
+            <Text fontSize="md" mb={4}>
+              Vous pouvez me contacter via les moyens suivants :
+            </Text>
+
+            {/* Contact Information with Icons */}
+            <Stack spacing={4}>
+              <Flex align="center">
+                <Icon as={FaPhoneAlt} boxSize={6} color="teal.500" mr={4} />
+                <Text fontSize="md">
+                  <strong>Téléphone:</strong> +243 820 937 002
+                </Text>
+              </Flex>
+
+              <Flex align="center">
+                <Icon as={FaEnvelope} boxSize={6} color="teal.500" mr={4} />
+                <Text fontSize="md">
+                  <strong>Email:</strong> nadinekarungi@gmail.com
+                </Text>
+              </Flex>
+
+              <Flex align="center">
+                <Icon as={FaAddressBook} boxSize={6} color="teal.500" mr={4} />
+                <Text fontSize="md">
+                  <strong>Adresse:</strong> Bunia Ituri RD Congo
+                </Text>
+              </Flex>
+
+              {/* Social Media Links */}
+              <Text fontSize="md" mb={2}>
+                <strong>Suivez-moi:</strong>
+              </Text>
+          <Stack direction="row" spacing={4} justify="center">
+                <Link href="https://www.facebook.com" isExternal>
+                  <Icon as={FaFacebook} boxSize={6} color="teal.500" />
+                </Link>
+                <Link href="https://www.instagram.com" isExternal>
+                  <Icon as={FaInstagram} boxSize={6} color="teal.500" />
+                </Link>
+                <Link href="https://www.twitter.com" isExternal>
+                  <Icon as={FaTwitter} boxSize={6} color="teal.500" />
+                </Link>
+                <Link href="https://www.snapchat.com" isExternal>
+                  <Icon as={FaSnapchat} boxSize={6} color="teal.500" />
+                </Link>
+                <Link href="https://www.linkedin.com" isExternal>
+                  <Icon as={FaLinkedin} boxSize={6} color="teal.500" />
+                </Link>
+              </Stack>
+            </Stack>
+          </CardBody>
+        </Card>
+
+        {/* Expertise Card */}
+        <Card>
+          <CardHeader>
+            <Heading  as="h3" size="md" mb={4} textAlign="center">
+              Mes Expertises
+            </Heading>
+          </CardHeader>
+          <CardBody textAlign="left">
+            {/* Divider before expertise section */}
+            <Divider mb={4} />
+            <Stack spacing={6}>
+              {/* Expertise Items */}
+              <Flex align="center">
+                <Icon as={FaClipboardList} boxSize={6} color="teal.500" mr={4} />
+                <Text fontSize="md">
+                  Expertise en gestion d'organisations et accompagnement entrepreneurial.
+                </Text>
+              </Flex>
+
+              <Flex align="center">
+                <Icon as={FaBullhorn} boxSize={6} color="teal.500" mr={4} />
+                <Text fontSize="md">
+                  Formation et coaching dans le domaine de la microfinance.
+                </Text>
+              </Flex>
+
+              <Flex align="center">
+                <Icon as={FaChartBar} boxSize={6} color="teal.500" mr={4} />
+                <Text fontSize="md">
+                  Gestion des finances et développement des petites entreprises.
+                </Text>
+              </Flex>
+
+              <Flex align="center">
+                <Icon as={FaUsers} boxSize={6} color="teal.500" mr={4} />
+                <Text fontSize="md">
+                  Formatrice chez REHEMA HUB pour les jeunes entrepreneurs.
+                </Text>
+              </Flex>
+            </Stack>
+            {/* Divider after expertise section */}
+            <Divider mt={4} />
+          </CardBody>
+        </Card>
+      </SimpleGrid>
     </Box>
 
-      {/* FAQs Section */}
-  <Flex
-  direction="column"
-  alignItems="center"
-  justifyContent="center"
-  minHeight="80vh"
-  bg="gray.100"
-  p={4}
->
-  <Box
-    bg="white"
-    borderRadius="md"
-    boxShadow="lg"
-    p={8}
-    width="80%"
-    maxWidth="800px"
-    textAlign="left"
-  >
-    <Heading as="h2" size="xl" mb={4}>
-      Questions fréquemment posées (FAQ)
-    </Heading>
-    <Text mb={4}>
-      Trouvez des réponses aux questions les plus courantes concernant nos services bancaires, comptes, prêts, et plus encore.
-    </Text>
 
-    {/* Accordion pour les FAQ bancaires */}
-    <Accordion allowToggle>
-      <AccordionItem>
-        <h2>
-          <AccordionButton>
-            <Box flex="1" textAlign="left">
-              Comment ouvrir un compte bancaire ?
-            </Box>
-            <AccordionIcon />
-          </AccordionButton>
-        </h2>
-        <AccordionPanel pb={4}>
-          Vous pouvez ouvrir un compte bancaire en ligne via notre site Web ou en visitant l'une de nos agences. Vous aurez besoin d'une pièce d'identité valide, d'une preuve de domicile et d'un dépôt initial.
-        </AccordionPanel>
-      </AccordionItem>
+ <Box id="AboutUs" p={8} bg="grey" color="white">
+      <Heading as="h2" size="xl" mb={6} textAlign="center" color="white">
+        Mon Parcours, Compétences et Langues
+      </Heading>
 
-      <AccordionItem>
-        <h2>
-          <AccordionButton>
-            <Box flex="1" textAlign="left">
-              Quels types de comptes bancaires proposez-vous ?
-            </Box>
-            <AccordionIcon />
-          </AccordionButton>
-        </h2>
-        <AccordionPanel pb={4}>
-          Nous proposons différents types de comptes bancaires, y compris les comptes d'épargne, les comptes courants et les dépôts à terme. Chaque type de compte a ses propres avantages, et vous pouvez choisir celui qui correspond à vos besoins financiers.
-        </AccordionPanel>
-      </AccordionItem>
-
-      <AccordionItem>
-        <h2>
-          <AccordionButton>
-            <Box flex="1" textAlign="left">
-              Comment puis-je demander un prêt ?
-            </Box>
-            <AccordionIcon />
-          </AccordionButton>
-        </h2>
-        <AccordionPanel pb={4}>
-          Vous pouvez demander un prêt en visitant notre agence ou en remplissant un formulaire de demande en ligne. Selon le type de prêt, nous pourrions demander une preuve de revenu et un historique de crédit.
-        </AccordionPanel>
-      </AccordionItem>
-
-      <AccordionItem>
-        <h2>
-          <AccordionButton>
-            <Box flex="1" textAlign="left">
-              Comment réinitialiser mon mot de passe pour la banque en ligne ?
-            </Box>
-            <AccordionIcon />
-          </AccordionButton>
-        </h2>
-        <AccordionPanel pb={4}>
-          Pour réinitialiser votre mot de passe de la banque en ligne, cliquez sur le lien "Mot de passe oublié" sur la page de connexion. Vous recevrez un e-mail avec des instructions pour réinitialiser votre mot de passe.
-        </AccordionPanel>
-      </AccordionItem>
-
-      <AccordionItem>
-        <h2>
-          <AccordionButton>
-            <Box flex="1" textAlign="left">
-              Quel est le taux d'intérêt des comptes d'épargne ?
-            </Box>
-            <AccordionIcon />
-          </AccordionButton>
-        </h2>
-        <AccordionPanel pb={4}>
-          Nos comptes d'épargne offrent des taux d'intérêt compétitifs qui varient en fonction du type de compte et du solde. Veuillez consulter notre page des taux d'intérêt pour obtenir les informations les plus récentes.
-        </AccordionPanel>
-      </AccordionItem>
-
-      <AccordionItem>
-        <h2>
-          <AccordionButton>
-            <Box flex="1" textAlign="left">
-              Puis-je accéder à mon compte depuis n'importe où dans le monde ?
-            </Box>
-            <AccordionIcon />
-          </AccordionButton>
-        </h2>
-        <AccordionPanel pb={4}>
-          Oui, vous pouvez accéder à votre compte depuis n'importe où dans le monde en utilisant notre plateforme de banque en ligne. Connectez-vous simplement avec vos identifiants et vous pourrez gérer votre compte depuis n'importe quel appareil avec une connexion Internet.
-        </AccordionPanel>
-      </AccordionItem>
-
-      {/* Ajouter plus de AccordionItems si nécessaire */}
-    </Accordion>
-
-    {/* Bouton Lire plus */}
-  </Box>
-</Flex>
-
-    
-      {/* Team Section */}
-      
- <Flex
-        direction="column"
-        alignItems="center"
-        justifyContent="center"
-        minHeight="80vh" // Adjust height to fit content
-        bgImage={`url(${home3})`} // Background image
-        bgSize="cover" // Ensure the image covers the section
-        bgPosition="center" // Center the image
-        p={4}
-        backgroundBlendMode="overlay" // Overlay effect to darken the image
-        backgroundColor="rgba(0, 0, 0, 0.5)" // Darken the background for better text contrast
+      {/* 2x3 Grid Layout for Education, Skills, Languages, and Experience */}
+      <Grid
+        templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
+        gap={6}
       >
-        <Box
-          bg="white"
-          borderRadius="md"
-          boxShadow="lg"
-          p={8}
-          width={{ base: '100%', md: '95%', lg: '100%' }} // Adjust width based on screen size
-          textAlign="center" // Center text horizontally
-        >
-        <Heading as="h2" size="xl" mb={4}>
-          Notre équipe
-        </Heading>
-        <Text mb={4}>
-          Rencontrez les esprits brillants derrière notre succès. Notre équipe est l'épine dorsale de notre entreprise.
-        </Text>
+        {/* Education Card */}
+        <Card bg="white" color="black" boxShadow="md" borderRadius="md">
+          <CardBody display="flex" flexDirection="column" alignItems="flex-start">
+            <Icon as={MdSchool} w={12} h={12} color="#0097b2" mb={4} aria-label="Education" />
+            <Heading as="h3" size="md" mb={4}>
+              Education
+            </Heading>
 
-
-          {/* Render the team members */}
-          <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 5 }} spacing={8} mt={8}>
-            {teamMembers.map((member) => (
-              <Box
-                key={member.id}
-                bg="white"
-                p={6}
-                borderRadius="md"
-                boxShadow="lg"
-                textAlign="center"
-              >
-                {/* Display team member's photo */}
-                <Image
-                  src={member.image} // Team member photo
-                  borderRadius="full"
-                  boxSize={{ base: '100px', md: '120px' }} // Make image size responsive
-                  objectFit="cover"
-                  mb={4}
-                  mx="auto" // Center the image horizontally
-                />
-                <Heading as="h3" size="md" mb={2}>
-                  {member.name}
-                </Heading>
-                <Text fontSize="sm" color="gray.500">
-                  {member.role}
+            {/* Education Details */}
+            <Box w="100%" p={4} mb={4} borderBottom="2px" borderColor="gray.300">
+              <Grid templateColumns="1fr 2fr" gap={4}>
+                <Text fontWeight="bold">
+                  <strong>Oct 2016 - Oct 2018</strong>
                 </Text>
-              </Box>
-            ))}
-          </SimpleGrid>
+                <Box>
+                  <Text fontWeight="bold" mb={1}>
+                    <strong> License en MicroFinance </strong>
+                  </Text>
+                  <Text fontWeight="bold"> Université Protestante du Congo UPC/ CCAM</Text>
+                  <Text>
+                   Un diplôme axé sur la gestion financière et les opérations commerciales, couvrant la finance d'entreprise, la comptabilité, la stratégie d'entreprise et la gestion organisationnelle. Il prépare les diplômés avec des compétences en analyse financière, gestion budgétaire et prise de décision pour des carrières dans les secteurs bancaires, du conseil et des entreprises.
+                  </Text>
+                </Box>
+              </Grid>
+            </Box>
+
+             <Box w="100%" p={4} mb={4} borderBottom="2px" borderColor="gray.300">
+              <Grid templateColumns="1fr 2fr" gap={4}>
+                <Text fontWeight="bold">
+                  <strong>Août 2014 - Sept 2014</strong>
+                </Text>
+                <Box>
+                  <Text fontWeight="bold" mb={1}>
+                    <strong>SyscOHADA</strong>
+                  </Text>
+                  <Text fontWeight="bold">Université Protestante du Congo UPC</Text>
+                  <Text>
+                    Un programme axé sur l'économie, la gestion et les pratiques administratives, offrant des connaissances en gestion des ressources, opérations commerciales et administration publique. Il prépare les diplômés avec des compétences analytiques et organisationnelles pour des rôles dans les secteurs public et privé.
+                  </Text>
+                </Box>
+              </Grid>
+            </Box>
+
+
+            <Box w="100%" p={4} mb={4} borderBottom="2px" borderColor="gray.300">
+              <Grid templateColumns="1fr 2fr" gap={4}>
+                <Text fontWeight="bold">
+                  <strong>Août 2013 - Déc 2016</strong>
+                </Text>
+                <Box>
+                  <Text fontWeight="bold" mb={1}>
+                    <strong>Graduant en Economie de Gestion et Admistration</strong>
+                  </Text>
+                  <Text fontWeight="bold">Université Protestante du Congo UPC</Text>
+                  <Text>
+                    Un programme axé sur l'économie, la gestion et les pratiques administratives, offrant des connaissances en gestion des ressources, opérations commerciales et administration publique. Il prépare les diplômés avec des compétences analytiques et organisationnelles pour des rôles dans les secteurs public et privé.
+                  </Text>
+                </Box>
+              </Grid>
+            </Box>
+
+
+
+            <Box w="100%" p={4}>
+              <Grid templateColumns="1fr 2fr" gap={4}>
+                <Text fontWeight="bold">
+                  <strong>Sep 2006 - Juin 2013</strong>
+                </Text>
+                <Box>
+                  <Text fontWeight="bold" mb={1}>
+                    <strong>Diplome d'Etat en  Commerciale Administrtive</strong>
+                  </Text>
+                  <Text fontWeight="bold">Institut UJIWO LA HERI</Text>
+                  <Text>
+                    Un diplôme axé sur la gestion commerciale et administrative, offrant des compétences dans la gestion des opérations commerciales, la relation client, la gestion de stocks et la comptabilité. Il prépare les diplômés à des rôles clés dans les départements commerciaux et administratifs des entreprises, leur permettant de gérer efficacement les processus commerciaux et les ressources organisationnelles.
+                  </Text>
+                </Box>
+              </Grid>
+            </Box>
+          </CardBody>
+        </Card>
+
+        {/* Experience Card */}
+        <Card bg="white" color="black" boxShadow="md" borderRadius="md">
+          <CardBody display="flex" flexDirection="column" alignItems="flex-start">
+            <Icon as={MdWork} w={12} h={12} color="yellow.500" mb={4} aria-label="Experience" />
+            <Heading as="h3" size="md" mb={4}>
+              Expérience Professionnelle
+            </Heading>
+
+            {/* Experience Details */}
+            <Box w="100%" p={4} mb={4} borderBottom="2px" borderColor="gray.300">
+              <Grid templateColumns="1fr 2fr" gap={4}>
+                <Text fontWeight="bold">
+                  <strong>Jan 2021 - Présent</strong>
+                </Text>
+                <Box>
+                  <Text fontWeight="bold" mb={1}>
+                    <strong>Directrice et Gerante </strong>
+                  </Text>
+                  <Text fontWeight="bold">Microtous</Text>
+                  <Text>
+                    En tant que Directrice et Gérante de Microtous, j'ai supervisé les opérations quotidiennes, dirigé une équipe dynamique et assuré la croissance de l'entreprise. Mon rôle consistait à élaborer et mettre en œuvre des stratégies efficaces, optimiser les processus et maintenir de solides relations avec les clients et partenaires. Grâce à mon leadership, j'ai contribué à la rentabilité et à l'innovation, tout en veillant à une gestion optimale des ressources humaines et financières.    </Text>
+                </Box>
+              </Grid>
+            </Box>
+
+
+        <Box w="100%" p={4} mb={4} borderBottom="2px" borderColor="gray.300">
+              <Grid templateColumns="1fr 2fr" gap={4}>
+                <Text fontWeight="bold">
+                  <strong>Jan 2022 - Présent</strong>
+                </Text>
+                <Box>
+                  <Text fontWeight="bold" mb={1}>
+                    <strong>Formatrice</strong>
+                  </Text>
+                  <Text fontWeight="bold">Herema Hub</Text>
+                  <Text>
+                  En tant que Formatrice en Finance et Élaboration de Business Plan chez Herema Hub, j'ai formé des entrepreneurs sur les principes financiers essentiels et la création de business plans efficaces. J'ai accompagné les participants dans la gestion des budgets, l'analyse des flux de trésorerie et la mise en place de stratégies financières. Mon approche pratique visait à fournir des outils concrets pour réussir leur planification financière et stratégique.
+     </Text>
+                </Box>
+              </Grid>
+            </Box>  
+
+            <Box w="100%" p={4} mb={4} borderBottom="2px" borderColor="gray.300">
+              <Grid templateColumns="1fr 2fr" gap={4}>
+                <Text fontWeight="bold">
+                  <strong>Août 2020 - Présent</strong>
+                </Text>
+                <Box>
+                  <Text fontWeight="bold" mb={1}>
+                    <strong>Gerante</strong>
+                  </Text>
+                  <Text fontWeight="bold">Ets. VIP WATU PRO</Text>
+                  <Text>
+                   En tant que Gérante chez Ets. VIP WATU PRO, une entreprise spécialisée dans le branding et l'imprimerie, j'ai dirigé l'orientation stratégique de l'entreprise en définissant des objectifs clairs pour renforcer notre position sur le marché. J'ai supervisé la mise en œuvre de stratégies innovantes pour développer nos services, optimiser la satisfaction client et accroître la visibilité de la marque. Grâce à une gestion axée sur l'efficacité et l'innovation, j'ai assuré une croissance durable tout en adaptant l'entreprise aux tendances du marché.    </Text>
+                </Box>
+              </Grid>
+            </Box>
+
+            <Box w="100%" p={4}>
+              <Grid templateColumns="1fr 2fr" gap={4}>
+                <Text fontWeight="bold">
+                  <strong>Jan 2017 - Présent</strong>
+                </Text>
+                <Box>
+                  <Text fontWeight="bold" mb={1}>
+                    <strong>Directrice Générale</strong>
+                  </Text>
+                  <Text fontWeight="bold"> JUDE ASBL</Text>
+                  <Text>
+                 En tant que Directrice Générale de JUDE ASBL, j'ai piloté la stratégie organisationnelle et veillé à la mise en œuvre de projets à fort impact social. Ma mission a été de diriger les équipes vers une gestion efficace des ressources, d’assurer la coordination des actions en faveur du développement communautaire et de garantir l'atteinte des objectifs à long terme de l'association. Grâce à une vision claire et à un leadership collaboratif, j'ai contribué à renforcer l'impact de l'ASBL tout en assurant une gestion transparente et responsable.  </Text>
+                </Box>
+              </Grid>
+            </Box>
+          </CardBody>
+        </Card>
+
+        {/* Skills Card */}
+         <Card id="contactUs" bg="white" color="black" boxShadow="md" borderRadius="md">
+      <CardBody display="flex" flexDirection="column" alignItems="flex-start">
+        <Icon as={MdWork} w={12} h={12} color="green.500" mb={4} aria-label="Compétences" />
+        <Heading as="h3" size="md" mb={4}>
+          Connaissance
+        </Heading>
+
+        {/* Section Compétences Douces */}
+        <Heading as="h4" size="sm" color="gray.700" mb={2}>
+          Compétences Douces
+        </Heading>
+        <Text mb={2}>Communication</Text>
+        <Box position="relative" width="100%" height="8px" borderRadius="md" bg="gray.300" mb={4}>
+          <Box position="absolute" top="0" left="0" height="100%" width="80%" bg="blue.500" borderRadius="md" />
         </Box>
-      </Flex>
+             <Text mb={2}>Leadership</Text>
+        <Box position="relative" width="100%" height="8px" borderRadius="md" bg="gray.300" mb={4}>
+          <Box position="absolute" top="0" left="0" height="100%" width="90%" bg="red.500" borderRadius="md" />
+        </Box>
+             <Text mb={2}>Travail en équipe</Text>
+        <Box position="relative" width="100%" height="8px" borderRadius="md" bg="gray.300" mb={4}>
+          <Box position="absolute" top="0" left="0" height="100%" width="87%" bg="yellow.500" borderRadius="md" />
+        </Box>
+             <Text mb={2}>Respect des délais</Text>
+        <Box position="relative" width="100%" height="8px" borderRadius="md" bg="gray.300" mb={4}>
+          <Box position="absolute" top="0" left="0" height="100%" width="99%" bg="purple.500" borderRadius="md" />
+        </Box>
+        <Divider mb={4} />
+        {/* Section Compétences Techniques */}
+        <Heading as="h4" size="sm" color="gray.700" mb={2}>
+          Compétences Techniques
+        </Heading>
 
-      {/* Contact Section */}
-      
-<Box id="about-us"   
-        bg="white"
-        borderRadius="md"
-        boxShadow="lg"
-        p={8}
-        width={{ base: '100%', md: '95%', lg: '100%' }} // Adjust width based on screen size
-        textAlign="center" >
+        <Text mb={2}>GRETEL</Text>
+        <Box position="relative" width="100%" height="8px" borderRadius="md" bg="gray.300" mb={4}>
+          <Box position="absolute" top="0" left="0" height="100%" width="60%" bg="blue.500" borderRadius="md" />
+        </Box>
 
-      <Flex 
-        id="contact" 
-        p={8} 
-        bg="gray.10" 
-        justifyContent="center" 
-        alignItems="center" 
-        flexDirection={{ base: 'column', md: 'row' }} // Stack vertically on small screens and horizontally on larger screens
-        minHeight="80vh"
-      >
-        {/* Contact Form Card */}
-        <Box
-          bg="white"
-          borderRadius="md"
-          boxShadow="lg"
-          p={8}
-          width={{ base: '100%', md: '100%' }}
-          mr={{ base: 0, md: 8 }}
-          mb={{ base: 8, md: 0 }}
-        >
-      <Heading as="h2" size="xl" mb={4}>
-  Contactez-nous
-</Heading>
-<form>
-  <FormControl id="full-name" mb={4} isRequired>
-    <FormLabel>Nom complet</FormLabel>
-    <Input type="text" placeholder="Entrez votre nom complet" />
-  </FormControl>
+        <Text mb={2}>EPIDATA</Text>
+       <Box position="relative" width="100%" height="8px" borderRadius="md" bg="gray.300" mb={4}>
+          <Box position="absolute" top="0" left="0" height="100%" width="60%" bg="yellow.300" borderRadius="md" />
+        </Box>
 
-  <FormControl id="email" mb={4} isRequired>
-    <FormLabel>Email</FormLabel>
-    <Input type="email" placeholder="Entrez votre email" />
-  </FormControl>
+        <Text mb={2}>SPSS</Text>
+        <Box position="relative" width="100%" height="8px" borderRadius="md" bg="gray.300" mb={4}>
+          <Box position="absolute" top="0" left="0" height="100%" width="50%" bg="green.500" borderRadius="md" />
+        </Box>
 
-  <FormControl id="message" mb={4} isRequired>
-    <FormLabel>Message</FormLabel>
-    <Textarea placeholder="Écrivez votre message ici" />
-  </FormControl>
+        <Text mb={2}>Microsoft Office</Text>
+        <Box position="relative" width="100%" height="8px" borderRadius="md" bg="gray.300" mb={4}>
+          <Box position="absolute" top="0" left="0" height="100%" width="75%" bg="orange.500" borderRadius="md" />
+        </Box>
 
-  <Button
-    color="#2a8fc1"
-    size="lg"
-    _hover={{ bg: 'yellow.200' }}
-    px={8}
-    as="a"
-    href="home"
-    mt="10px"
-  >
-    Envoyer
-  </Button>
-</form>
+        <Text mb={2}>Design</Text>
+        <Box position="relative" width="100%" height="8px" borderRadius="md" bg="gray.300">
+          <Box position="absolute" top="0" left="0" height="100%" width="65%" bg="pink.500" borderRadius="md" />
+        </Box>
+      </CardBody>
+    </Card>
+
+        {/* Languages Card */}
+        <Card bg="white" color="black" boxShadow="md" borderRadius="md">
+          <CardBody display="flex" flexDirection="column" alignItems="flex-start">
+            <Icon as={MdLanguage} w={12} h={12} color="purple.500" mb={4} aria-label="Languages" />
+            <Heading as="h3" size="md" mb={4}>
+              Langues
+            </Heading>
+
+            {/* Language Level Bars */}
+            <Text mb={2}>Français</Text>
+            <Box position="relative" width="100%" height="8px" borderRadius="md" bg="gray.300" mb={4}>
+              <Box position="absolute" top="0" left="0" height="100%" width="90%" bg="orange.500" borderRadius="md" />
+            </Box>
 
           
-        </Box>
+            <Text mb={2}>Anglais</Text>
+            <Box position="relative" width="100%" height="8px" borderRadius="md" bg="gray.300" mb={4}>
+              <Box position="absolute" top="0" left="0" height="100%" width="45%" bg="green.500" borderRadius="md" />
+            </Box>
+           
+            <Text mb={2}>Lingala</Text>
+            <Box position="relative" width="100%" height="8px" borderRadius="md" bg="gray.300" mb={4}>
+              <Box position="absolute" top="0" left="0" height="100%" width="90%" bg="purple.500" borderRadius="md" />
+            </Box>
+
+            <Text mb={2}>Swahili</Text>
+            <Box position="relative" width="100%" height="8px" borderRadius="md" bg="gray.300" mb={4}>
+              <Box position="absolute" top="0" left="0" height="100%" width="60%" bg="blue.500" borderRadius="md" />
+            </Box>
+
+    
+          </CardBody>
+        </Card>
+      </Grid>
+    </Box>
+      </section>
+ 
+
+      {/* cv Section*/}
+
+    
+    
+{/* Services Section */}
+    <section id="services">
+       <Box p={8} bg="black" color="white" id="services">
+      <Heading as="h2" size="xl" mb={6} textAlign="center" color="white">
+        Mes Services
+      </Heading>
+      {/* Responsive Grid for Services */}
+      <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={6}>
+        {/* Service 1: Consultance */}
+        <Card bg="white" color="black" boxShadow="md" borderRadius="md">
+          <CardBody display="flex" flexDirection="column" alignItems="center">
+            <Icon as={MdBusiness} w={12} h={12} color="teal.500" mb={4} aria-label="Consultance" />
+            <Heading as="h3" size="md" mb={4} textAlign="center">
+              Consultance
+            </Heading>
+            <Text textAlign="left">
+              J'offre des conseils stratégiques approfondis et personnalisés pour analyser et comprendre les spécificités de votre projet. Mon approche consiste à élaborer des stratégies sur mesure, adaptées à vos besoins uniques, afin d'optimiser vos ressources, résoudre les défis auxquels vous êtes confrontés et saisir les opportunités.
+            </Text>
+          </CardBody>
+        </Card>
+
+        {/* Service 2: Formation */}
+        <Card bg="white" color="black" boxShadow="md" borderRadius="md">
+          <CardBody display="flex" flexDirection="column" alignItems="center">
+            <Icon as={MdSchool} w={12} h={12} color="purple.500" mb={4} aria-label="Formation" />
+            <Heading as="h3" size="md" mb={4} textAlign="center">
+              Formation
+            </Heading>
+            <Text textAlign="left">
+              Je propose des formations spécialisées et adaptées à vos besoins spécifiques, visant à vous fournir les compétences nécessaires pour exceller dans votre domaine. Ces formations couvrent une large gamme de sujets, allant des compétences techniques aux compétences en gestion, et sont conçues pour vous offrir une compréhension approfondie des concepts clés. 
+            </Text>
+          </CardBody>
+        </Card>
+
+        {/* Service 3: Coaching */}
+        <Card bg="white" color="black" boxShadow="md" borderRadius="md">
+          <CardBody display="flex" flexDirection="column" alignItems="center">
+            <Icon as={MdPeople} w={12} h={12} color="blue.500" mb={4} aria-label="Coaching" />
+            <Heading as="h3" size="md" mb={4} textAlign="center">
+              Coaching
+            </Heading>
+            <Text textAlign="left">
+              J'accompagne individuellement chaque personne pour atteindre ses objectifs professionnels en offrant des conseils pratiques et des stratégies adaptées à ses besoins. Mon approche personnalisée vous aide à surmonter les défis et à progresser dans votre carrière, avec un plan d'action clair pour atteindre vos ambitions avec confiance et efficacité.
+            </Text>
+          </CardBody>
+        </Card>
+
+        {/* Service 4: Mentorant */}
+        <Card bg="white" color="black" boxShadow="md" borderRadius="md">
+          <CardBody display="flex" flexDirection="column" alignItems="center">
+            <Icon as={MdSupervisedUserCircle} w={12} h={12} color="green.500" mb={4} aria-label="Mentorant" />
+            <Heading as="h3" size="md" mb={4} textAlign="center">
+              Mentorant
+            </Heading>
+            <Text textAlign="left">
+             Je guide les entrepreneurs en leur offrant un mentorat personnalisé, conçu pour répondre à leurs besoins spécifiques. Grâce à des échanges réguliers et des conseils stratégiques, je les aide à surmonter les obstacles, à prendre des décisions éclairées et à développer leur entreprise de manière durable. Mon rôle est de les accompagner tout au long de leur parcours entrepreneurial, en les soutenant dans la mise en œuvre de leurs idées et la gestion des défis quotidiens.
+            </Text>
+          </CardBody>
+        </Card>
+
+        {/* Service 5: Élaboration de Business Plan */}
+        <Card bg="white" color="black" boxShadow="md" borderRadius="md">
+          <CardBody display="flex" flexDirection="column" alignItems="center">
+            <Icon as={MdDescription} w={12} h={12} color="orange.500" mb={4} aria-label="Élaboration de Business Plan" />
+            <Heading as="h3" size="md" mb={4} textAlign="center">
+              Élaboration de Business Plan
+            </Heading>
+            <Text textAlign="left">
+              J'élabore des plans d'affaires solides et bien structurés pour soutenir vos initiatives et assurer leur succès à long terme. Ces plans sont conçus pour offrir une vision claire de vos objectifs, définir les stratégies nécessaires pour les atteindre, et anticiper les défis à venir. En tenant compte de vos ressources, du marché cible et des tendances actuelles, je vous aide à créer un document stratégique qui servira de feuille de route pour la croissance et la rentabilité de votre entreprise.
+            </Text>
+          </CardBody>
+        </Card>
+
+        {/* Service 6: Inclusion Financière */}
+        <Card bg="white" color="black" boxShadow="md" borderRadius="md">
+          <CardBody display="flex" flexDirection="column" alignItems="center">
+            <Icon as={MdAccountBalance} w={12} h={12} color="red.500" mb={4} aria-label="Inclusion Financière" />
+            <Heading as="h3" size="md" mb={4} textAlign="center">
+              Inclusion Financière
+            </Heading>
+            <Text textAlign="left">
+              Je développe des solutions innovantes et accessibles pour améliorer l'accès aux services financiers, en particulier pour les populations sous-desservies. En tenant compte des besoins spécifiques de chaque individu ou entreprise, j'intègre des technologies adaptées et des approches inclusives pour faciliter l'accès à des produits financiers tels que les prêts, l'épargne, et l'assurance.
+            </Text>
+          </CardBody>
+        </Card>
+
+        {/* Service 7: Autonomiser les Femmes Entrepreneurs */}
+        <Card bg="white" color="black" boxShadow="md" borderRadius="md">
+          <CardBody display="flex" flexDirection="column" alignItems="center">
+            <Icon as={MdWork} w={12} h={12} color="pink.500" mb={4} aria-label="Autonomiser les Femmes Entrepreneurs" />
+            <Heading as="h3" size="md" mb={4} textAlign="center">
+              Autonomiser les Femmes Entrepreneurs
+            </Heading>
+            <Text textAlign="left">
+              J'encourage et soutiens activement les femmes entrepreneures en les accompagnant à chaque étape de leur parcours. Je les aide à surmonter les défis uniques auxquels elles sont confrontées dans le monde des affaires en leur fournissant des conseils stratégiques, des ressources financières et des opportunités de développement personnel. 
+            </Text>
+          </CardBody>
+        </Card>
+      </Grid>
+    </Box>
+      </section>        
+    
 
 
-  
-        {/* Image on the Right */}
-        <Box
-          flexShrink={0}
-          width={{ base: '100%', md: '50%' }}
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          mt={{ base: 8, md: 0 }} // Add margin-top for small screens
+
+      {/* Contact Section */}
+
+  <section id="contact">
+            <Box p={8} bg="white" textAlign="center" id="contactMe" >
+  <Flex
+    p={8}
+    bg="gray.100"
+    justifyContent="center"
+    alignItems="center"
+    flexDirection={{ base: 'column', md: 'row' }}
+    minHeight="80vh"
+  >
+    {/* Contact Form */}
+    <Box bg="white" borderRadius="md" boxShadow="lg" p={8} width={{ base: '100%', md: '50%' }}>
+      <Heading as="h2" size="xl" mb={4}>
+        Contactez-nous
+      </Heading>
+      <form>
+        <FormControl id="full-name" mb={4} isRequired>
+          <FormLabel>Nom complet</FormLabel>
+          <Input type="text" placeholder="Entrez votre nom complet" />
+        </FormControl>
+        <FormControl id="email" mb={4} isRequired>
+          <FormLabel>Email</FormLabel>
+          <Input type="email" placeholder="Entrez votre email" />
+        </FormControl>
+        <FormControl id="message" mb={4} isRequired>
+          <FormLabel>Message</FormLabel>
+          <Textarea placeholder="Écrivez votre message ici" />
+        </FormControl>
+        <Button
+          bg="black"
+              color="#c0cdd4"
+              size="lg"
+              _hover={{ bg: '#0097b2', color: 'white' }}
+              mt={4}
         >
-          <img
-            src={contactImage} 
-            alt="About Us"
-            style={{
-              width: '92%',
-              height: '60vh',
-              objectFit: 'cover',
-              borderRadius: '8px', // Add rounded corners like the text card
-            }}
-          />
-        </Box>
-      </Flex>
+          Envoyer
+        </Button>
+      </form>
     </Box>
 
+    {/* Contact Image */}
+    <Box
+      width={{ base: '100%', md: '50%' }}
+      minH="80vh"
+      display="flex" 
+      justifyContent="center"
+      alignItems="center"
+      mt={{ base: 8, md: 0 }}
+    >
+      <Image src={contactImage} alt="Contact" borderRadius="md" maxW="90%" maxH="100%" />
+    </Box>
+  </Flex>
+    </Box>
 
-
-      {/* Footer or Other Sections */}
-    
-    <Flex 
-  id="map" 
-  p={8} 
-  bg="white" 
-  justifyContent="center" 
-  alignItems="center" 
-  minHeight="60vh"
-  flexDirection="column"
->
-  <Heading as="h2" size="xl" mb={4}>
-    Our Location
-  </Heading>
-
-  <Box 
-    position="relative" 
-    width={{ base: '100%', md: '80%' }} 
-    height="400px" 
-    border="2px solid teal" 
-    borderRadius="md" 
-    overflow="hidden"
-  >
-    {/* Clickable overlay */}
-    <a 
-      href="https://www.google.com/maps/place/H67R+JCF,+Bunia" 
-      target="_blank" 
-      rel="noopener noreferrer"
-      style={{ 
-        position: 'absolute', 
-        top: 0, 
-        left: 0, 
-        width: '100%', 
-        height: '100%', 
-        zIndex: 10, 
-        cursor: 'pointer' 
-      }}
-    ></a>
-
-    {/* Embedded Google Map */}
-    <iframe
-      src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3988.3318402502914!2d30.238472!3d1.5640625!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x17642b5e630902fd%3A0x8b261e95f84ac109!2sH67R%2BJCF%2C%20Bunia!5e0!3m2!1sen!2scd!4v1736498502843!5m2!1sen!2scd"
-      width="100%" 
-      height="100%" 
-      style={{ border: 0 }}
-      allowFullScreen
-      loading="lazy"
-      referrerPolicy="no-referrer-when-downgrade"
-    ></iframe>
-  </Box>
-</Flex>
-
-
-
-
+      </section>
+  
 
     </>
   );

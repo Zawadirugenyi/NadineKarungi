@@ -24,7 +24,7 @@ const Chatbot = () => {
           borderRadius="full" // Optional, to make it circular
           boxShadow="lg"
           marginTop="-120px"
-          _hover={{ color: '#f7e135' }}
+          _hover={{ color: 'white' }}
         />
       </div>
     </div>
