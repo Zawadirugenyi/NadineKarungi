@@ -667,16 +667,7 @@ const HomePage = () => {
     </Box>
 
     {/* Contact Image */}
-    <Box
-      width={{ base: '100%', md: '50%' }}
-      minH="80vh"
-      display="flex" 
-      justifyContent="center"
-      alignItems="center"
-      mt={{ base: 8, md: 0 }}
-    >
-      <Image src={contactImage} alt="Contact" borderRadius="md" maxW="90%" maxH="100%" />
-    </Box>
+
   </Flex>
     </Box>
 
