@@ -290,11 +290,11 @@ const HomePage = () => {
                 </Text>
                 <Box>
                   <Text fontWeight="bold" mb={1}>
-                    <strong>SiscOHADA</strong>
+                    <strong>SyscOHADA</strong>
                   </Text>
                   <Text fontWeight="bold">Université Protestante du Congo UPC</Text>
                   <Text>
-                    SiscOHADA est un programme spécialisé en droit des affaires, comptabilité et gestion financière, conçu pour offrir une maîtrise approfondie des normes OHADA. Il forme des professionnels compétents en gestion juridique et économique des entreprises, en conformité avec les réglementations africaines, et développe des compétences analytiques et organisationnelles adaptées aux secteurs public et privé.  </Text>
+                    SyscOHADA est un programme spécialisé en droit des affaires, comptabilité et gestion financière, conçu pour offrir une maîtrise approfondie des normes OHADA. Il forme des professionnels compétents en gestion juridique et économique des entreprises, en conformité avec les réglementations africaines, et développe des compétences analytiques et organisationnelles adaptées aux secteurs public et privé.  </Text>
                 </Box>
               </Grid>
             </Box>
