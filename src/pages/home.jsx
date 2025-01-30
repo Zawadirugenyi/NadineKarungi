@@ -163,7 +163,7 @@ const HomePage = () => {
               <Flex align="center">
                 <Icon as={FaEnvelope} boxSize={6} color="teal.500" mr={4} />
                 <Text fontSize="md">
-                  <strong>Email:</strong> nadinekarungi@gmail.com
+                  <strong>Email:</strong> karunadine@gmail.com
                 </Text>
               </Flex>
 
@@ -235,7 +235,7 @@ const HomePage = () => {
               <Flex align="center">
                 <Icon as={FaUsers} boxSize={6} color="teal.500" mr={4} />
                 <Text fontSize="md">
-                  Formatrice chez REHEMA HUB pour les jeunes entrepreneurs.
+                  Formatrice chez REHEMA ACADEMIE HUB pour les jeunes entrepreneurs.
                 </Text>
               </Flex>
             </Stack>
@@ -290,12 +290,11 @@ const HomePage = () => {
                 </Text>
                 <Box>
                   <Text fontWeight="bold" mb={1}>
-                    <strong>SyscOHADA</strong>
+                    <strong>SiscOHADA</strong>
                   </Text>
                   <Text fontWeight="bold">Université Protestante du Congo UPC</Text>
                   <Text>
-                    Un programme axé sur l'économie, la gestion et les pratiques administratives, offrant des connaissances en gestion des ressources, opérations commerciales et administration publique. Il prépare les diplômés avec des compétences analytiques et organisationnelles pour des rôles dans les secteurs public et privé.
-                  </Text>
+                    SiscOHADA est un programme spécialisé en droit des affaires, comptabilité et gestion financière, conçu pour offrir une maîtrise approfondie des normes OHADA. Il forme des professionnels compétents en gestion juridique et économique des entreprises, en conformité avec les réglementations africaines, et développe des compétences analytiques et organisationnelles adaptées aux secteurs public et privé.  </Text>
                 </Box>
               </Grid>
             </Box>
@@ -355,7 +354,7 @@ const HomePage = () => {
                 </Text>
                 <Box>
                   <Text fontWeight="bold" mb={1}>
-                    <strong>Directrice et Gerante </strong>
+                    <strong>Fondatrice Directrice  Gerante </strong>
                   </Text>
                   <Text fontWeight="bold">Microtous</Text>
                   <Text>
@@ -374,9 +373,9 @@ const HomePage = () => {
                   <Text fontWeight="bold" mb={1}>
                     <strong>Formatrice</strong>
                   </Text>
-                  <Text fontWeight="bold">Herema Hub</Text>
+                  <Text fontWeight="bold">Rehema Academie Hub</Text>
                   <Text>
-                  En tant que Formatrice en Finance et Élaboration de Business Plan chez Herema Hub, j'ai formé des entrepreneurs sur les principes financiers essentiels et la création de business plans efficaces. J'ai accompagné les participants dans la gestion des budgets, l'analyse des flux de trésorerie et la mise en place de stratégies financières. Mon approche pratique visait à fournir des outils concrets pour réussir leur planification financière et stratégique.
+                  En tant que Formatrice en Finance et Élaboration de Business Plan chez Rehema Hub, j'ai formé des entrepreneurs sur les principes financiers essentiels et la création de business plans efficaces. J'ai accompagné les participants dans la gestion des budgets, l'analyse des flux de trésorerie et la mise en place de stratégies financières. Mon approche pratique visait à fournir des outils concrets pour réussir leur planification financière et stratégique.
      </Text>
                 </Box>
               </Grid>

@@ -7,8 +7,8 @@ const Footer1 = () => {
       as="footer"
       bg="gray.800"
       color="white"
-      py={2} // Reduced padding for height
-      px={{ base: 4, md: 8 }} // Reduced horizontal padding for a more compact look
+      py={2} 
+      px={{ base: 4, md: 8 }} 
       direction="column"
       justify="center"
       align="center"
@@ -74,7 +74,7 @@ const Footer1 = () => {
             Contact
           </Heading>
           <Text fontSize="md" mb={1}>
-            Email: nadinekarungi@gmail.com
+            Email: karunadine@gmail.com
           </Text>
           <Text fontSize="md" mb={1}>Téléphone: +243 820 937 002</Text>
           <Text fontSize="md">Basée à: Bunia Ituri, République Démocratique du Congo</Text>
