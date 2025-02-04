@@ -681,7 +681,7 @@ const HomePage = () => {
             mb={{ base: 8, md: 0 }}
         >
             <Heading as="h2" size="xl" mb={4}>
-                Contactez-nous
+                Contactez-Me
             </Heading>
             <form ref={form} onSubmit={sendEmail}>
                 <Stack spacing={4}>
