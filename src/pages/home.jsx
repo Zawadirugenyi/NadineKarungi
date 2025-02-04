@@ -313,7 +313,7 @@ const HomePage = () => {
                   </Text>
                   <Text fontWeight="bold"> Université Protestante du Congo UPC/ CCAM</Text>
                   <Text>
-                  Un diplôme spécialisé en **microfinance**, couvrant la gestion des institutions de microfinance, l’analyse des risques, l’inclusion financière et le financement des petites entreprises. Il forme des professionnels capables de concevoir et gérer des solutions de crédit, d’épargne et d’investissement adaptées aux populations et entreprises à faible revenu, contribuant ainsi au développement économique et social.   </Text>
+                  Un diplôme spécialisé en Microfinance, couvrant la gestion des institutions de microfinance, l’analyse des risques, l’inclusion financière et le financement des petites entreprises. Il forme des professionnels capables de concevoir et gérer des solutions de crédit, d’épargne et d’investissement adaptées aux populations et entreprises à faible revenu, contribuant ainsi au développement économique et social.   </Text>
                 </Box>
               </Grid>
             </Box>
