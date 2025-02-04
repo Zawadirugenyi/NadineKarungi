@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
+import emailjs from '@emailjs/browser';
 import { Typewriter } from 'react-simple-typewriter';
 import { Box, Button, Heading, Grid, Text, Card,Stack, CardBody,CardHeader, SimpleGrid, Divider, Link, Icon, Image, Flex, FormControl, FormLabel, Input, Textarea } from '@chakra-ui/react';
 import aboutImage from '../Components/Assetes/Gerante1.jpeg';
@@ -13,6 +14,41 @@ import contactImage from '../Components/Assetes/moioi.jpg';
 const HomePage = () => {
   const [services, setServices] = useState([]);
   const [error, setError] = useState('');
+
+  const form = useRef();
+    const [formData, setFormData] = useState({ user_name: "", user_email: "", message: "" });
+    const [isSubmitted, setIsSubmitted] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [errorMessage, setErrorMessage] = useState(null);
+
+    const sendEmail = (e) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+        setErrorMessage(null); // Reset error message before sending
+
+        emailjs
+            .sendForm("service_v6vbdel", "template_dk31vq3", form.current, "FKC3JrNHx-Rc7h92G") // Use your correct public key
+            .then(
+                () => {
+                    setIsSubmitting(false);
+                    setIsSubmitted(true);
+                    setFormData({ user_name: "", user_email: "", message: "" }); // Reset form fields
+
+                    // Hide success message after 5 seconds
+                    setTimeout(() => setIsSubmitted(false), 5000);
+                },
+                (error) => {
+                    console.error("Email sending failed:", error.text);
+                    setIsSubmitting(false);
+                    setErrorMessage("Il y a eu un problème lors de l'envoi de votre message. Veuillez réessayer plus tard.");
+                }
+            );
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+    };
 
   return (
     <>
@@ -277,8 +313,7 @@ const HomePage = () => {
                   </Text>
                   <Text fontWeight="bold"> Université Protestante du Congo UPC/ CCAM</Text>
                   <Text>
-                   Un diplôme axé sur la gestion financière et les opérations commerciales, couvrant la finance d'entreprise, la comptabilité, la stratégie d'entreprise et la gestion organisationnelle. Il prépare les diplômés avec des compétences en analyse financière, gestion budgétaire et prise de décision pour des carrières dans les secteurs bancaires, du conseil et des entreprises.
-                  </Text>
+                  Un diplôme spécialisé en **microfinance**, couvrant la gestion des institutions de microfinance, l’analyse des risques, l’inclusion financière et le financement des petites entreprises. Il forme des professionnels capables de concevoir et gérer des solutions de crédit, d’épargne et d’investissement adaptées aux populations et entreprises à faible revenu, contribuant ainsi au développement économique et social.   </Text>
                 </Box>
               </Grid>
             </Box>
@@ -636,35 +671,75 @@ const HomePage = () => {
     minHeight="80vh"
   >
     {/* Contact Form */}
-    <Box bg="white" borderRadius="md" boxShadow="lg" p={8} width={{ base: '100%', md: '50%' }}>
-      <Heading as="h2" size="xl" mb={4}>
-        Contactez-nous
-      </Heading>
-      <form>
-        <FormControl id="full-name" mb={4} isRequired>
-          <FormLabel>Nom complet</FormLabel>
-          <Input type="text" placeholder="Entrez votre nom complet" />
-        </FormControl>
-        <FormControl id="email" mb={4} isRequired>
-          <FormLabel>Email</FormLabel>
-          <Input type="email" placeholder="Entrez votre email" />
-        </FormControl>
-        <FormControl id="message" mb={4} isRequired>
-          <FormLabel>Message</FormLabel>
-          <Textarea placeholder="Écrivez votre message ici" />
-        </FormControl>
-        <Button
-          bg="black"
-              color="#c0cdd4"
-              size="lg"
-              _hover={{ bg: '#0097b2', color: 'white' }}
-              mt={4}
+    <Box
+            bg="white"
+            borderRadius="md"
+            boxShadow="lg"
+            p={8}
+            width={{ base: "100%", md: "50%" }}
+            mr={{ base: 0, md: 8 }}
+            mb={{ base: 8, md: 0 }}
         >
-          Envoyer
-        </Button>
-      </form>
-    </Box>
+            <Heading as="h2" size="xl" mb={4}>
+                Contactez-nous
+            </Heading>
+            <form ref={form} onSubmit={sendEmail}>
+                <Stack spacing={4}>
+                    <FormControl id="name" isRequired>
+                        <FormLabel>Nom</FormLabel>
+                        <Input
+                            name="user_name"
+                            placeholder="Votre nom"
+                            value={formData.user_name}
+                            onChange={handleChange}
+                        />
+                    </FormControl>
+                    <FormControl id="email" isRequired>
+                        <FormLabel>Email</FormLabel>
+                        <Input
+                            type="email"
+                            name="user_email"
+                            placeholder="Votre email"
+                            value={formData.user_email}
+                            onChange={handleChange}
+                        />
+                    </FormControl>
+                    <FormControl id="message" isRequired>
+                        <FormLabel>Message</FormLabel>
+                        <Textarea
+                            name="message"
+                            placeholder="Votre message"
+                            value={formData.message}
+                            onChange={handleChange}
+                        />
+                    </FormControl>
 
+                    {errorMessage && (
+                        <Text color="red.500" mt={2}>
+                            {errorMessage}
+                        </Text>
+                    )}
+
+                    <Button
+                      bg="black"
+                        color="#c0cdd4"
+                        size="lg"
+                        _hover={{ bg: '#0097b2', color: 'white' }}
+                        mt={4}
+                        type="submit"
+                        isLoading={isSubmitting} // Show loading state
+                    >
+                        Envoyer le message
+                    </Button>
+
+                    {isSubmitted && !errorMessage && (
+                        <Text color="green.500" mt={2}>
+                            Merci pour votre message ! Nous reviendrons vers vous bientôt.
+                        </Text>
+                    )}
+                </Stack>
+            </form>
+        </Box>
     {/* Contact Image */}
 
   </Flex>

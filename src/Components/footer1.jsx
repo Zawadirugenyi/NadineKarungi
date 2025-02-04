@@ -40,7 +40,7 @@ const Footer1 = () => {
           </Heading>
           <Stack spacing={1} align="left">
             <Text>Directrice Générale de JUDE ASBL</Text>
-            <Text>Fondatrice et Gérante de MICROTOUS</Text>
+            <Text>Fondatrice Directrice Gérante de MICROTOUS</Text>
             <Text>Consultante, Formatrice, Coach et Entrepreneur</Text>
             <Text>Formatrice chez REHEMA HUB</Text>
             <Text>Gérante chez Ets. VIP WATU PRO</Text>
