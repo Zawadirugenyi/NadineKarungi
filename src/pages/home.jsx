@@ -734,7 +734,7 @@ const HomePage = () => {
 
                     {isSubmitted && !errorMessage && (
                         <Text color="green.500" mt={2}>
-                            Merci pour votre message ! Nous reviendrons vers vous bientôt.
+                            Merci pour votre message ! Je reviens vers vous bientôt.
                         </Text>
                     )}
                 </Stack>
